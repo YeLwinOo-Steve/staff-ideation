@@ -1,5 +1,4 @@
 import Link from "next/link"
-import Logo from "@/public/uog-logo.svg"
 import Image from "next/image"
 
 export default function Home() {
@@ -7,7 +6,7 @@ export default function Home() {
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content">
         <div className="max-w-lg text-center">
-          <Image src={Logo} alt="University of Greenwich Logo" className="w-52 mb-8" />
+          <Image src='/uog-logo.svg' width="250" height="52" alt="University of Greenwich Logo" className="mb-8" />
           <h1 className="text-5xl font-bold">Welcome</h1>
           <p className="mt-4 mb-8">EWSD Staff Ideation Website</p>
           <div>
