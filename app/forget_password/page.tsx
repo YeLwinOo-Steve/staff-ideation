@@ -29,7 +29,7 @@ export default function ForgetPasswordPage() {
         setIsLoading(true)
         try {
             resetPassword(data.email)
-            router.push("/dashboard")
+            router.replace("/forget_password/success")
         } catch (error) {
             console.error("Reset password failed:", error)
         } finally {
