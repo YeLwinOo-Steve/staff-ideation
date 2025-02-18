@@ -45,12 +45,12 @@ export default function ForgetPasswordPage() {
                 transition={{ duration: 0.5 }}
                 className="hero-content flex-col"
             >
-                <div>
-                    <h1 className="text-5xl font-bold">Forgot Password?</h1>
+                <div className="text-center lg:text-left">
+                    <h1 className="text-4xl lg:text-5xl font-bold">Forgot Password?</h1>
                     <p className="py-6">Enter the email address you used for sign up and we&apos;ll send you instructions to reset your password.</p>
                 </div>
                 <div className="w-full max-w-sm">
-                    <form onSubmit={handleSubmit(onSubmit)}>
+                    <form onSubmit={handleSubmit(onSubmit)} className="card-body">
                         <div className="form-control">
                             <label className="label">
                                 <span className="label-text">Email Address</span>
