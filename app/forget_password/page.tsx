@@ -1,5 +1,5 @@
 'use client';
-import { forgetPasswordSchema, loginSchema } from '@/schema/validations'
+import { forgetPasswordSchema } from '@/schema/validations'
 import { useAuthStore } from '@/store/authStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
