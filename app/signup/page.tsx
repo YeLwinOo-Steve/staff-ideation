@@ -49,7 +49,7 @@ export default function Signup() {
                     <h1 className="text-5xl font-bold">Sign up</h1>
                     <p className="py-6">Create a staff account and join a department!</p>
                 </div>
-                <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
+                <div className="flex-shrink-0 w-full max-w-sm">
                     <form onSubmit={handleSubmit(onSubmit)} className="card-body">
                         <div className="form-control">
                             <label className="label">
@@ -65,11 +65,11 @@ export default function Signup() {
                         </div>
                         <div className="form-control">
                             <label className="label">
-                                <span className="label-text">Email</span>
+                                <span className="label-text">Email Address</span>
                             </label>
                             <input
                                 type="email"
-                                placeholder="email"
+                                placeholder="example@gmail.com"
                                 className={`input input-bordered ${errors.email ? "input-error" : ""}`}
                                 {...register("email")}
                             />
