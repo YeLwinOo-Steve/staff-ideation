@@ -76,9 +76,9 @@ export default function Login() {
                             />
                             {errors.password && <span className="text-error text-xs mt-1">{errors.password.message}</span>}
                             <label className="label">
-                                <a href="#" className="label-text-alt link link-hover">
+                                <Link href="/forget_password" className="label-text-alt link link-hover">
                                     Forgot password?
-                                </a>
+                                </Link>
                             </label>
                         </div>
                         <div className="form-control mt-6">
