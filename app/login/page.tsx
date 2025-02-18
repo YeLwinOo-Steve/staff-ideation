@@ -50,15 +50,15 @@ export default function Login() {
                     <h1 className="text-5xl font-bold">Login</h1>
                     <p className="py-6">Login to your account to propose your ideas to admins.</p>
                 </div>
-                <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
+                <div className="flex-shrink-0 w-full max-w-sm">
                     <form onSubmit={handleSubmit(onSubmit)} className="card-body">
                         <div className="form-control">
                             <label className="label">
-                                <span className="label-text">Email</span>
+                                <span className="label-text">Email Address</span>
                             </label>
                             <input
                                 type="email"
-                                placeholder="email"
+                                placeholder="example@gmail.com"
                                 className={`input input-bordered ${errors.email ? "input-error" : ""}`}
                                 {...register("email")}
                             />
