@@ -1,6 +1,7 @@
 'use client';
 import { forgetPasswordSchema } from '@/schema/validations'
 import { useAuthStore } from '@/store/authStore'
+import { sleep } from '@/util/sleep';
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
@@ -28,6 +29,7 @@ export default function ForgetPasswordPage() {
     const onSubmit = async (data: ForgetPasswordForm) => {
         setIsLoading(true)
         try {
+            await sleep(1000)
             resetPassword(data.email)
             router.replace("/forget_password/success")
         } catch (error) {

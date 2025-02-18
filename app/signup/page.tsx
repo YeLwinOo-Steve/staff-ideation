@@ -9,6 +9,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAuthStore } from "@/store/authStore"
 import { signupSchema } from "@/schema/validations"
+import { sleep } from "@/util/sleep"
 
 type SignupForm = z.infer<typeof signupSchema>
 
@@ -28,6 +29,7 @@ export default function Signup() {
     const onSubmit = async (data: SignupForm) => {
         setIsLoading(true)
         try {
+            await sleep(1000)
             signup(data.name, data.email, data.password)
             router.push("/dashboard")
         } catch (error) {

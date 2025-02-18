@@ -9,8 +9,8 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAuthStore } from "@/store/authStore"
 import { loginSchema } from "@/schema/validations"
+import { sleep } from "@/util/sleep"
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 type LoginForm = z.infer<typeof loginSchema>
 
