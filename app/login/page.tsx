@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation"
 import { useAuthStore } from "@/store/authStore"
 import { loginSchema } from "@/schema/validations"
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 type LoginForm = z.infer<typeof loginSchema>
 
@@ -29,6 +30,7 @@ export default function Login() {
     const onSubmit = async (data: LoginForm) => {
         setIsLoading(true)
         try {
+            await sleep(1000)
             login(data.email, data.password)
             router.push("/dashboard")
         } catch (error) {
@@ -82,8 +84,8 @@ export default function Login() {
                             </label>
                         </div>
                         <div className="form-control mt-6">
-                            <button type="submit" className={`btn btn-primary ${isLoading ? "loading" : ""}`} disabled={isLoading}>
-                                Login
+                            <button type="submit" className="btn btn-primary" disabled={isLoading}>
+                                {isLoading ? <span className="loading loading-spinner"></span> : `Login`}
                             </button>
                         </div>
                         <div className="text-center mt-4">
