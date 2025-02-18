@@ -75,7 +75,7 @@ export default function Login() {
                                 {...register("password")}
                             />
                             {errors.password && <span className="text-error text-xs mt-1">{errors.password.message}</span>}
-                            <label className="label">
+                            <label className="label justify-end">
                                 <Link href="/forget_password" className="label-text-alt link link-hover">
                                     Forgot password?
                                 </Link>
