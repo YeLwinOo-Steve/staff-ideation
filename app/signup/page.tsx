@@ -102,9 +102,10 @@ export default function Signup() {
                             )}
                         </div>
                         <div className="form-control mt-6">
-                            <button type="submit" className={`btn btn-primary ${isLoading ? "loading" : ""}`} disabled={isLoading}>
-                                Sign Up
+                            <button type="submit" className="btn btn-primary" disabled={isLoading}>
+                                {isLoading ? <span className="loading loading-spinner"></span> : `Sign Up`}
                             </button>
+
                         </div>
                         <div className="text-center mt-4">
                             <Link href="/login" className="link link-hover">

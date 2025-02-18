@@ -68,8 +68,8 @@ export default function ForgetPasswordPage() {
                             </Link>
                         </div>
                         <div className="form-control mt-6">
-                            <button type="submit" className={`btn btn-outline ${isLoading ? "loading" : ""}`} disabled={isLoading}>
-                                Send Password Reset
+                            <button type="submit" className="btn btn-outline" disabled={isLoading}>
+                                {isLoading ? <span className="loading loading-spinner"></span> : `Send Password Reset`}
                             </button>
                         </div>
                     </form>
