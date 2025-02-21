@@ -1,5 +1,10 @@
 # EWSD-project
 
+![Coverage Statements](./coverage/badge-statements.svg)
+![Coverage Branches](./coverage/badge-branches.svg)
+![Coverage Functions](./coverage/badge-functions.svg)
+![Coverage Lines](./coverage/badge-lines.svg)
+
 ## Getting Started
 
 First, run the development server:
