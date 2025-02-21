@@ -35,5 +35,11 @@ jobs:
       - name: Run Tests
         run: npm run test
 
+      - name: Get Coverage Reports
+        run: npm test -- --coverage
+      
+      - name: Generate Coverage Report files
+        run: npm run test:badges
+
       - name: Build Next.js App
         run: npm run build
