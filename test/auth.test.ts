@@ -8,7 +8,15 @@ test('initial use should be null', () => {
     expect(useAuthStore.getState().user).toBe(null);
 });
 
-test('login should set user and return the same user', () => {
+test('signup should set user and return the same user name and email', () => {
+    const { signup } = useAuthStore.getState();
+    signup('tuco', 'b@gmail.com', 'a');
+    const user = useAuthStore.getState().user;
+    expect(user?.name).toBe('tuco');
+    expect(user?.email).toBe('b@gmail.com');
+});
+
+test('login should set user and return the same user email', () => {
     const { login } = useAuthStore.getState();
     login('a@gmail.com', 'a');
     const user = useAuthStore.getState().user;
