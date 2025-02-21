@@ -17,7 +17,12 @@ const config: Config = {
     'ts-jest': {
       tsconfig: 'tsconfig.jest.json'
     }
-  }
+  },
+  "coverageReporters": [
+    "json-summary",
+    "text",
+    "lcov"
+  ]
 };
 
 export default config;
