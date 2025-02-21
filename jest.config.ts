@@ -7,6 +7,17 @@ const config: Config = {
     '^@/(.*)$': '<rootDir>/$1',
   },
   preset: 'ts-jest',
+  transform: {
+    '^.+\\.(ts|tsx)$': ['ts-jest', {
+      tsconfig: 'tsconfig.jest.json'
+    }],
+  },
+  testMatch: ['**/*.test.ts', '**/*.test.tsx'],
+  globals: {
+    'ts-jest': {
+      tsconfig: 'tsconfig.jest.json'
+    }
+  }
 };
 
 export default config;
