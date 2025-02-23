@@ -15,7 +15,8 @@ const downloadZipFile = async () => {
   ];
 
   const promises = urls.map(async (url, index) => {
-    const res = await fetch(url);
+    const proxyUrl = "https://api.allorigins.win/raw?url=";
+    const res = await fetch(proxyUrl + encodeURIComponent(url));
     const blob = await res.blob();
     zip.file(`file${index + 1}.${blob.type.split("/")[1]}`, blob);
   });
@@ -26,14 +27,14 @@ const downloadZipFile = async () => {
 }
 
 const ZipDownloadBtn = () => (
-  <>
+  <div>
     <button
       onClick={downloadZipFile}
       className="btn btn-outline mb-8"
     >
       Download Zip Files
     </button>
-  </>
+  </div>
 );
 
 export default function Dashboard() {
