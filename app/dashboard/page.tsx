@@ -32,9 +32,11 @@ export default function Dashboard() {
           <h1 className="text-5xl font-bold">Welcome, {user.name}!</h1>
           <p className="py-6">You have successfully logged in to your dashboard.</p>
 
-          <CSVLink data={data} filename="data.csv">
-            Download CSV
-          </CSVLink>
+          <div className="mb-8">
+            <CSVLink data={data} filename="data.csv" className="btn btn-link">
+              Download CSV
+            </CSVLink>
+          </div>
           <button
             onClick={() => {
               logout()
