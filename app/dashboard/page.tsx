@@ -11,34 +11,84 @@ const zip = new JSZip();
 
 const ZipDownloadBtn = () => {
   const [isLoading, setIsLoading] = useState(false)
+  const [status, setStatus] = useState<'idle' | 'downloading' | 'zipping' | 'error'>('idle')
+  const [error, setError] = useState<string | null>(null)
+
+  const urls = [
+    'https://i.pinimg.com/736x/7e/f3/00/7ef3009e0efeb251f1d6d16f56ddff64.jpg',
+    'https://i.pinimg.com/236x/ac/0d/b7/ac0db732637f7a08231ea4cd23d411a9.jpg',
+  ];
 
   const downloadZipFile = async () => {
-    const urls = [
-      'https://i.pinimg.com/736x/7e/f3/00/7ef3009e0efeb251f1d6d16f56ddff64.jpg',
-      'https://i.pinimg.com/236x/ac/0d/b7/ac0db732637f7a08231ea4cd23d411a9.jpg',
-    ];
-    setIsLoading(true);
-    const promises = urls.map(async (url, index) => {
-      const proxyUrl = "https://api.allorigins.win/raw?url=";
-      const res = await fetch(proxyUrl + encodeURIComponent(url));
-      const blob = await res.blob();
-      zip.file(`file${index + 1}.${blob.type.split("/")[1]}`, blob);
-    });
-    await Promise.all(promises);
+    try {
+      setIsLoading(true);
+      setStatus('downloading')
+      setError(null);
 
-    const zipBlob = await zip.generateAsync({ type: 'blob' });
-    saveAs(zipBlob, 'downloaded_documents.zip');
-    setIsLoading(false);
+      for (const [index, url] of urls.entries()) {
+        try {
+          const proxyUrl = "https://api.allorigins.win/raw?url=";
+          const res = await fetch(proxyUrl + encodeURIComponent(url));
+          if (!res.ok) throw new Error(`Failed to download file ${index + 1}`);
+
+          const blob = await res.blob();
+          zip.file(`file${index + 1}.${blob.type.split("/")[1]}`, blob);
+        } catch (err) {
+          const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+          throw new Error(`Error downloading file ${index + 1}: ${errorMessage}`)
+        }
+      }
+      setStatus('zipping')
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      saveAs(zipBlob, 'downloaded_documents.zip');
+      setStatus('idle')
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+      setError(errorMessage)
+      setStatus('error')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const getButtonText = () => {
+    switch (status) {
+      case 'downloading':
+        return (
+          <>
+            <span className="loading loading-spinner"></span>
+            <span className="ml-2">Downloading files...</span>
+          </>
+        )
+      case 'zipping':
+        return (
+          <>
+            <span className="loading loading-spinner"></span>
+            <span className="ml-2">Creating ZIP file...</span>
+          </>
+        )
+      case 'error':
+        return 'Try Again'
+      default:
+        return 'Download Zip Files'
+    }
   }
 
   return (
     <div>
       <button
         onClick={downloadZipFile}
-        className="btn btn-outline mb-8" disabled={isLoading}
+        className={`btn btn-outline mb-2 ${status === 'error' ? 'btn-error' : ''}`} disabled={isLoading}
       >
-        {isLoading ? <span className="loading loading-spinner"></span> : `Download Zip Files`}
+        {getButtonText()}
       </button>
+      {
+        error && (
+          <div className="txt-error text-base">
+            {error}
+          </div>
+        )
+      }
     </div>
   )
 };
@@ -62,6 +112,7 @@ export default function Dashboard() {
     { name: "John", age: 30, city: "New York" },
     { name: "Jane", age: 25, city: "Los Angeles" },
   ];
+
 
   return (
     <div className="hero min-h-screen bg-base-200">
