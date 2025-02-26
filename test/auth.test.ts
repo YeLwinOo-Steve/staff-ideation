@@ -4,7 +4,7 @@ beforeEach(() => {
   useAuthStore.setState({ user: null });
 });
 
-test("initial use should be null", () => {
+test("initial user should be null", () => {
   expect(useAuthStore.getState().user).toBe(null);
 });
 
