@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
+import { FilePlus2 } from "lucide-react";
 
 interface FileWithPreview extends File {
   preview: string;
@@ -49,11 +50,12 @@ const FilePreview: React.FC = () => {
       <div
         {...getRootProps({
           className:
-            "dropzone border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-gray-400 transition-colors",
+            "dropzone border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-gray-400 transition-colors  flex flex-col items-center justify-center",
         })}
       >
         <input {...getInputProps()} />
-        <p className="text-gray-600">Click to select files</p>
+        <FilePlus2 size={36} />
+        <p className="text-gray-600 mt-4">Click to select files</p>
       </div>
       <aside className="flex flex-row flex-wrap mt-4">{thumbs}</aside>
     </section>
