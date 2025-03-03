@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
-import "dotenv/config";
 import { FilePlus2 } from "lucide-react";
 import axios from "axios";
 
@@ -19,11 +18,11 @@ const FilePreview: React.FC = () => {
   const uploadToCloudinary = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", `${process.env.CLOUDINARY_UPLOAD_PRESET}`);
+    formData.append("upload_preset", `${process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}`);
 
     try {
       const response = await axios.post(
-        `${process.env.CLOUDINARY_BASE_URL}/${process.env.CLOUDINARY_CLOUD_NAME}/upload`,
+        `${process.env.NEXT_PUBLIC_CLOUDINARY_BASE_URL}/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`,
         formData,
         {
           onUploadProgress: (progressEvent) => {
@@ -121,9 +120,7 @@ const FilePreview: React.FC = () => {
         <button
           onClick={handleUpload}
           disabled={isUploading}
-          className={`btn btn-info btn-wide my-8 ${
-            isUploading ? "loading" : ""
-          }`}
+          className="btn btn-info btn-wide my-8"
         >
           {isUploading ? "Uploading..." : "Upload file"}
         </button>
