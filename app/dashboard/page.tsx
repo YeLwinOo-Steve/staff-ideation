@@ -4,7 +4,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import JSZip from "jszip";
-import FilePreview from "@/app/dashboard/file_preview";
+import FilePreview from "@/app/dashboard/components/file_preview";
 import { saveAs } from "file-saver";
 
 const zip = new JSZip();
