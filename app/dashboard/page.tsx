@@ -110,12 +110,6 @@ export default function Dashboard() {
   if (!user) {
     return null;
   }
-
-  const data = [
-    { name: "John", age: 30, city: "New York" },
-    { name: "Jane", age: 25, city: "Los Angeles" },
-  ];
-
   return (
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content text-center">
