@@ -14,8 +14,9 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.0",
-    "axios": "^1.7.9",
+    "axios": "^1.8.1",
     "daisyui": "^4.12.23",
+    "dotenv": "^16.4.7",
     "file-saver": "^2.0.5",
     "framer-motion": "^12.4.3",
     "jszip": "^3.10.1",
