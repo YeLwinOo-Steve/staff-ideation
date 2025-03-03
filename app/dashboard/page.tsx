@@ -3,9 +3,8 @@
 import { useAuthStore } from "@/store/authStore";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { CSVLink } from "react-csv";
 import JSZip from "jszip";
-import FilePreview from "@/app/dashboard/file_preview"
+import FilePreview from "@/app/dashboard/file_preview";
 import { saveAs } from "file-saver";
 
 const zip = new JSZip();
@@ -141,11 +140,6 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-          {/* <div className="mb-8">
-            <CSVLink data={data} filename="data.csv" className="btn btn-link">
-              Download CSV
-            </CSVLink>
-          </div> */}
           <FilePreview />
           <ZipDownloadBtn />
           <button
