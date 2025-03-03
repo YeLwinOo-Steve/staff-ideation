@@ -1,6 +1,6 @@
 # EWSD-project
 
-![Tests](https://img.shields.io/github/actions/workflow/status/YeLwinOo-Steve/staff-ideate/ci.yml?branch=master&style=flat-square&label=tests)
+![CI Workflow](https://github.com/YeLwinOo-Steve/staff-ideation/actions/workflows/ci.yml/badge.svg)
 ![Coverage Statements](./coverage/badge-statements.svg)
 ![Coverage Branches](./coverage/badge-branches.svg)
 ![Coverage Functions](./coverage/badge-functions.svg)
