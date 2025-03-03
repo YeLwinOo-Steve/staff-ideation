@@ -19,11 +19,11 @@ const FilePreview: React.FC = () => {
   const uploadToCloudinary = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "staff-ideate");
+    formData.append("upload_preset", `${process.env.CLOUDINARY_UPLOAD_PRESET}`);
 
     try {
       const response = await axios.post(
-        `https://api.cloudinary.com/v1_1/dnudlcxj2/upload`,
+        `${process.env.CLOUDINARY_BASE_URL}/${process.env.CLOUDINARY_CLOUD_NAME}/upload`,
         formData,
         {
           onUploadProgress: (progressEvent) => {
@@ -121,7 +121,9 @@ const FilePreview: React.FC = () => {
         <button
           onClick={handleUpload}
           disabled={isUploading}
-          className={`btn btn-info btn-wide my-8 ${isUploading ? "loading" : ""}`}
+          className={`btn btn-info btn-wide my-8 ${
+            isUploading ? "loading" : ""
+          }`}
         >
           {isUploading ? "Uploading..." : "Upload file"}
         </button>
