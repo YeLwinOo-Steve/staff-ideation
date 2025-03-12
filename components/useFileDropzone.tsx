@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { useState } from "react";
+import { useDropzone } from "react-dropzone";
 
 interface FileWithPreview extends File {
   preview: string;
@@ -14,8 +14,8 @@ export const useFileDropzone = () => {
         acceptedFiles.map((file) =>
           Object.assign(file, {
             preview: URL.createObjectURL(file),
-          })
-        ) as FileWithPreview[]
+          }),
+        ) as FileWithPreview[],
       );
     },
   });

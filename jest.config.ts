@@ -1,28 +1,27 @@
-import type { Config } from 'jest';
+import type { Config } from "jest";
 
 const config: Config = {
-  testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  testEnvironment: "jsdom",
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/$1',
+    "^@/(.*)$": "<rootDir>/$1",
   },
-  preset: 'ts-jest',
+  preset: "ts-jest",
   transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', {
-      tsconfig: 'tsconfig.jest.json'
-    }],
+    "^.+\\.(ts|tsx)$": [
+      "ts-jest",
+      {
+        tsconfig: "tsconfig.jest.json",
+      },
+    ],
   },
-  testMatch: ['**/*.test.ts', '**/*.test.tsx'],
+  testMatch: ["**/*.test.ts", "**/*.test.tsx"],
   globals: {
-    'ts-jest': {
-      tsconfig: 'tsconfig.jest.json'
-    }
+    "ts-jest": {
+      tsconfig: "tsconfig.jest.json",
+    },
   },
-  "coverageReporters": [
-    "json-summary",
-    "text",
-    "lcov"
-  ]
+  coverageReporters: ["json-summary", "text", "lcov"],
 };
 
 export default config;

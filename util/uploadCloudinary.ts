@@ -6,13 +6,13 @@ interface UploadProgressCallback {
 
 export const uploadToCloudinary = async (
   file: File,
-  onProgress: UploadProgressCallback
+  onProgress: UploadProgressCallback,
 ) => {
   const formData = new FormData();
   formData.append("file", file);
   formData.append(
     "upload_preset",
-    `${process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}`
+    `${process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}`,
   );
   formData.append("resource_type", "auto");
 
@@ -23,11 +23,11 @@ export const uploadToCloudinary = async (
       {
         onUploadProgress: (progressEvent) => {
           const progress = Math.round(
-            (progressEvent.loaded * 100) / (progressEvent.total ?? 0)
+            (progressEvent.loaded * 100) / (progressEvent.total ?? 0),
           );
           onProgress(file.name, progress);
         },
-      }
+      },
     );
     return response.data.secure_url;
   } catch (error) {
@@ -39,7 +39,7 @@ export const uploadToCloudinary = async (
 export const handleUpload = async (
   files: File[],
   onProgress: UploadProgressCallback,
-  setIsUploading: (value: boolean) => void
+  setIsUploading: (value: boolean) => void,
 ) => {
   setIsUploading(true);
   try {
@@ -48,7 +48,7 @@ export const handleUpload = async (
         const cloudinaryUrl = await uploadToCloudinary(file, onProgress);
         console.log("Uploaded:", file.name, cloudinaryUrl);
         return cloudinaryUrl;
-      })
+      }),
     );
   } catch (error) {
     console.error("Upload failed:", error);
