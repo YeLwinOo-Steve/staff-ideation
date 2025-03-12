@@ -1,4 +1,4 @@
-name: EWSD workflow 
+name: EWSD workflow
 
 on:
   push:
@@ -32,12 +32,15 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
+      - name: Run Prettier
+        run: npm run pretty
+
       - name: Run Tests
         run: npm run test
 
       - name: Get Coverage Reports
         run: npm test -- --coverage
-      
+
       - name: Generate Coverage Report files
         run: npm run test:badges
 
