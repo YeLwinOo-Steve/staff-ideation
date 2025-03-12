@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { Department, User, Idea, Category, SystemSetting } from "@/api/models";
 import * as api from "@/api/repository";
+import { showToast } from "@/util/toast";
 
 interface ApiState {
   departments: Department[];
@@ -51,7 +52,9 @@ export const useApiStore = create<ApiState>((set, get) => ({
       const response = await api.departmentApi.getAll();
       set({ departments: response.data });
     } catch (error) {
-      set({ error: "Failed to fetch departments" });
+      const message = "Failed to fetch departments";
+      set({ error: message });
+      showToast(message, "error");
     } finally {
       set({ isLoading: false });
     }
@@ -61,9 +64,12 @@ export const useApiStore = create<ApiState>((set, get) => ({
     try {
       set({ isLoading: true });
       await api.departmentApi.create(data);
-      get().fetchDepartments(); // Refresh list
+      get().fetchDepartments();
+      showToast("Department created successfully", "success");
     } catch (error) {
-      set({ error: "Failed to create department" });
+      const message = "Failed to create department";
+      set({ error: message });
+      showToast(message, "error");
     } finally {
       set({ isLoading: false });
     }
@@ -85,9 +91,12 @@ export const useApiStore = create<ApiState>((set, get) => ({
     try {
       set({ isLoading: true });
       await api.ideaApi.create(data);
-      get().fetchIdeas(); // Refresh list
+      get().fetchIdeas();
+      showToast("Idea created successfully", "success");
     } catch (error) {
-      set({ error: "Failed to create idea" });
+      const message = "Failed to create idea";
+      set({ error: message });
+      showToast(message, "error");
     } finally {
       set({ isLoading: false });
     }
@@ -97,9 +106,12 @@ export const useApiStore = create<ApiState>((set, get) => ({
     try {
       set({ isLoading: true });
       await api.ideaApi.submit(id);
-      get().fetchIdeas(); // Refresh list
+      get().fetchIdeas();
+      showToast("Idea submitted successfully", "success");
     } catch (error) {
-      set({ error: "Failed to submit idea" });
+      const message = "Failed to submit idea";
+      set({ error: message });
+      showToast(message, "error");
     } finally {
       set({ isLoading: false });
     }
@@ -121,8 +133,11 @@ export const useApiStore = create<ApiState>((set, get) => ({
       set({ isLoading: true });
       await api.categoryApi.create({ name });
       get().fetchCategories();
+      showToast("Category created successfully", "success");
     } catch (error) {
-      set({ error: "Failed to create category" });
+      const message = "Failed to create category";
+      set({ error: message });
+      showToast(message, "error");
     } finally {
       set({ isLoading: false });
     }
@@ -134,7 +149,9 @@ export const useApiStore = create<ApiState>((set, get) => ({
       const response = await api.systemSettingApi.getAll();
       set({ systemSettings: response.data });
     } catch (error) {
-      set({ error: "Failed to fetch system settings" });
+      const message = "Failed to fetch system settings";
+      set({ error: message });
+      showToast(message, "error");
     } finally {
       set({ isLoading: false });
     }
@@ -145,13 +162,21 @@ export const useApiStore = create<ApiState>((set, get) => ({
       set({ isLoading: true });
       await api.systemSettingApi.update(id, data);
       get().fetchSystemSettings();
+      showToast("System setting updated successfully", "success");
     } catch (error) {
-      set({ error: "Failed to update system setting" });
+      const message = "Failed to update system setting";
+      set({ error: message });
+      showToast(message, "error");
     } finally {
       set({ isLoading: false });
     }
   },
 
-  setError: (error) => set({ error }),
+  setError: (error) => {
+    set({ error });
+    if (error) {
+      showToast(error, "error");
+    }
+  },
   clearError: () => set({ error: null }),
 }));
