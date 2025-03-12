@@ -20,3 +20,30 @@ export const signupSchema = z
     message: "Passwords don't match",
     path: ["confirmPassword"],
   });
+
+export const departmentSchema = z.object({
+  department_name: z.string().min(1, "Department name is required"),
+  QACoordinatorID: z.number().positive("QA Coordinator ID is required"),
+});
+
+export const ideaSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  content: z.string().min(1, "Content is required"),
+  is_anonymous: z.boolean(),
+  category: z.number().positive("Category is required"),
+  document: z
+    .array(
+      z.object({
+        file_name: z.string(),
+        file_path: z.string(),
+      }),
+    )
+    .optional(),
+});
+
+export const systemSettingSchema = z.object({
+  idea_closure_date: z.string().min(1, "Idea closure date is required"),
+  final_closure_date: z.string().min(1, "Final closure date is required"),
+  academic_year: z.string().min(1, "Academic year is required"),
+  status: z.boolean(),
+});
