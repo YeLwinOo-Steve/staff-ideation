@@ -1,6 +1,7 @@
 import Login from "@/app/login/page";
 import mockRouter from "next-router-mock";
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { ToastProvider } from "@/components/toast";
 
 jest.mock("next/navigation", () => jest.requireActual("next-router-mock"));
 jest.mock("@/util/sleep", () => ({
@@ -14,7 +15,11 @@ describe("Login page", () => {
     mockRouter.push("/login");
   });
   it("should stay on login page after failed authentication", async () => {
-    render(<Login />);
+    render(
+      <ToastProvider>
+        <Login />
+      </ToastProvider>,
+    );
     fireEvent.change(screen.getByPlaceholderText("example@gmail.com"), {
       target: { value: "test@idea.com" },
     });

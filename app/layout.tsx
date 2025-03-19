@@ -1,6 +1,7 @@
 import type React from "react";
 import "./globals.css";
 import { Inter } from "next/font/google";
+import { ToastProvider } from "@/components/toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +18,7 @@ export default function RootLayout({
   return (
     <html data-theme="lemonade" lang="en">
       <body className={inter.className} suppressHydrationWarning>
-        {children}
+        <ToastProvider>{children}</ToastProvider>
       </body>
     </html>
   );

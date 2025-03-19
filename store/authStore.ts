@@ -2,7 +2,6 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { User } from "@/api/models";
 import { authApi } from "@/api/auth";
-import { showToast } from "@/util/toast";
 
 interface AuthState {
   user: User | null;
@@ -37,13 +36,12 @@ export const useAuthStore = create<AuthState>()(
             token: response.data.token,
             isLoading: false,
           });
-          showToast("Login successful", "success");
+
           // return response.data.user;
           return response.data.status;
         } catch (error: any) {
           const errorMessage = error.response?.data?.message || "Login failed";
           set({ error: errorMessage, isLoading: false });
-          showToast(errorMessage, "error");
           return null;
         }
       },
@@ -53,13 +51,11 @@ export const useAuthStore = create<AuthState>()(
         try {
           await authApi.resetPassword(id);
           set({ isLoading: false });
-          showToast("Password reset email sent successfully", "info");
           return true;
         } catch (error: any) {
           const errorMessage =
             error.response?.data?.message || "Password reset failed";
           set({ error: errorMessage, isLoading: false });
-          showToast(errorMessage, "error");
           return false;
         }
       },
@@ -73,14 +69,12 @@ export const useAuthStore = create<AuthState>()(
             token: response.data.token,
             isLoading: false,
           });
-          showToast("Registration successful", "success");
           // return response.data.user;
           return response.data.status;
         } catch (error: any) {
           const errorMessage =
             error.response?.data?.message || "Registration failed";
           set({ error: errorMessage, isLoading: false });
-          showToast(errorMessage, "error");
           return null;
         }
       },
@@ -89,10 +83,8 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true });
         try {
           await authApi.logout();
-          showToast("Logged out successfully", "success");
         } catch (error) {
-          // Even if logout API fails, we still clear the user
-          showToast("Something went wrong", "error");
+          console.log(error);
         } finally {
           set({ user: null, token: null, isLoading: false });
         }
