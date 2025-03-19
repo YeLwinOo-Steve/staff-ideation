@@ -40,7 +40,7 @@ const ZipDownloadBtn = () => {
           const errorMessage =
             err instanceof Error ? err.message : "An unknown error occurred";
           throw new Error(
-            `Error downloading file ${index + 1}: ${errorMessage}`,
+            `Error downloading file ${index + 1}: ${errorMessage}`
           );
         }
       }
@@ -99,7 +99,6 @@ const ZipDownloadBtn = () => {
 
 export default function Dashboard() {
   const token = useAuthStore((state) => state.token);
-  const logout = useAuthStore((state) => state.logout);
   const router = useRouter();
 
   useEffect(() => {

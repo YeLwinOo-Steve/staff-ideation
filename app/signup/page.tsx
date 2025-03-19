@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,7 +12,7 @@ import { signupSchema } from "@/schema/validations";
 type SignupForm = z.infer<typeof signupSchema>;
 
 export default function Signup() {
-  const { signup, isLoading, error, clearError } = useAuthStore();
+  const { signup, isLoading, clearError } = useAuthStore();
   const router = useRouter();
 
   const {

@@ -27,6 +27,8 @@ export default function ForgetPasswordPage() {
   });
 
   const onSubmit = async (data: ForgetPasswordForm) => {
+    console.log("data", data);
+    
     setIsLoading(true);
     try {
       await sleep(1000);
