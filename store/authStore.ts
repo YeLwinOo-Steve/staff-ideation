@@ -10,7 +10,7 @@ interface AuthState {
   isLoading: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<number | null>;
-  resetPassword: (email: string) => Promise<boolean>;
+  resetPassword: (id: number) => Promise<boolean>;
   signup: (
     name: string,
     email: string,
@@ -48,10 +48,10 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      resetPassword: async (email) => {
+      resetPassword: async (id: number) => {
         set({ isLoading: true, error: null });
         try {
-          await authApi.resetPassword({ email });
+          await authApi.resetPassword(id);
           set({ isLoading: false });
           showToast("Password reset email sent successfully", "info");
           return true;
