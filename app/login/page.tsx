@@ -9,13 +9,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { loginSchema } from "@/schema/validations";
-import { sleep } from "@/util/sleep";
 
 type LoginForm = z.infer<typeof loginSchema>;
 
 export default function Login() {
-  const [isLoading, setIsLoading] = useState(false);
-  const login = useAuthStore((state) => state.login);
+  const { login, isLoading, error, clearError } = useAuthStore();
   const router = useRouter();
 
   const {
@@ -28,15 +26,10 @@ export default function Login() {
   });
 
   const onSubmit = async (data: LoginForm) => {
-    setIsLoading(true);
-    try {
-      await sleep(1000);
-      login(data.email, data.password);
+    clearError();
+    const status = await login(data.email, data.password);
+    if (status === 200) {
       router.push("/dashboard");
-    } catch (error) {
-      console.error("Login failed:", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -56,6 +49,27 @@ export default function Login() {
         </div>
         <div className="flex-shrink-0 w-full max-w-sm">
           <form onSubmit={handleSubmit(onSubmit)} className="card-body">
+            {error && (
+              <div className="alert alert-error shadow-lg mb-4">
+                <div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="stroke-current flex-shrink-0 h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <span>{error}</span>
+                </div>
+              </div>
+            )}
+
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Email Address</span>

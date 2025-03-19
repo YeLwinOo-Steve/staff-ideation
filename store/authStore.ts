@@ -1,31 +1,108 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { User } from "@/api/models";
+import { authApi } from "@/api/auth";
+import { showToast } from "@/util/toast";
 
-type User = {
-  id: string;
-  name: string;
-  email: string;
-};
-
-type AuthStore = {
+interface AuthState {
   user: User | null;
-  login: (email: string, password: string) => void;
-  resetPassword: (email: string) => void;
-  signup: (name: string, email: string, password: string) => void;
-  logout: () => void;
-};
+  token: string | null;
+  isLoading: boolean;
+  error: string | null;
+  login: (email: string, password: string) => Promise<number | null>;
+  resetPassword: (email: string) => Promise<boolean>;
+  signup: (
+    name: string,
+    email: string,
+    password: string,
+  ) => Promise<number | null>;
+  logout: () => Promise<void>;
+  clearError: () => void;
+}
 
-export const useAuthStore = create<AuthStore>((set) => ({
-  user: null,
-  login: (email, password) => {
-    set({ user: { id: "1", name: "John Doe", email } });
-  },
-  resetPassword: (email) => {
-    set({ user: { id: "3", name: "Haha", email } });
-  },
-  signup: (name, email, password) => {
-    set({ user: { id: "2", name, email } });
-  },
-  logout: () => {
-    set({ user: null });
-  },
-}));
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set, get) => ({
+      user: null,
+      token: null,
+      isLoading: false,
+      error: null,
+
+      login: async (email, password) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await authApi.login({ email, password });
+          set({
+            // user: response.data.user,
+            token: response.data.token,
+            isLoading: false,
+          });
+          showToast("Login successful", "success");
+          // return response.data.user;
+          return response.data.status;
+        } catch (error: any) {
+          const errorMessage = error.response?.data?.message || "Login failed";
+          set({ error: errorMessage, isLoading: false });
+          showToast(errorMessage, "error");
+          return null;
+        }
+      },
+
+      resetPassword: async (email) => {
+        set({ isLoading: true, error: null });
+        try {
+          await authApi.resetPassword({ email });
+          set({ isLoading: false });
+          showToast("Password reset email sent successfully", "info");
+          return true;
+        } catch (error: any) {
+          const errorMessage =
+            error.response?.data?.message || "Password reset failed";
+          set({ error: errorMessage, isLoading: false });
+          showToast(errorMessage, "error");
+          return false;
+        }
+      },
+
+      signup: async (name, email, password) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await authApi.signup({ name, email, password });
+          set({
+            // user: response.data.user,
+            token: response.data.token,
+            isLoading: false,
+          });
+          showToast("Registration successful", "success");
+          // return response.data.user;
+          return response.data.status;
+        } catch (error: any) {
+          const errorMessage =
+            error.response?.data?.message || "Registration failed";
+          set({ error: errorMessage, isLoading: false });
+          showToast(errorMessage, "error");
+          return null;
+        }
+      },
+
+      logout: async () => {
+        set({ isLoading: true });
+        try {
+          await authApi.logout();
+          showToast("Logged out successfully", "success");
+        } catch (error) {
+          // Even if logout API fails, we still clear the user
+          showToast("Something went wrong", "error");
+        } finally {
+          set({ user: null, token: null, isLoading: false });
+        }
+      },
+
+      clearError: () => set({ error: null }),
+    }),
+    {
+      name: "auth-storage",
+      partialize: (state) => ({ user: state.user, token: state.token }),
+    },
+  ),
+);

@@ -13,19 +13,19 @@ describe("Login page", () => {
   beforeEach(() => {
     mockRouter.push("/login");
   });
-  it("should navigate to home page after successful authentication", async () => {
+  it("should stay on login page after failed authentication", async () => {
     render(<Login />);
     fireEvent.change(screen.getByPlaceholderText("example@gmail.com"), {
-      target: { value: "a@gmail.com" },
+      target: { value: "test@idea.com" },
     });
     fireEvent.change(screen.getByPlaceholderText("password"), {
-      target: { value: "123456" },
+      target: { value: "admin" },
     });
 
     fireEvent.click(screen.getByRole("button", { name: /login/i }));
 
     await waitFor(() => {
-      expect(mockRouter.pathname).toBe("/dashboard");
+      expect(mockRouter.pathname).toBe("/login");
     });
   });
 });

@@ -9,13 +9,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { signupSchema } from "@/schema/validations";
-import { sleep } from "@/util/sleep";
 
 type SignupForm = z.infer<typeof signupSchema>;
 
 export default function Signup() {
-  const [isLoading, setIsLoading] = useState(false);
-  const signup = useAuthStore((state) => state.signup);
+  const { signup, isLoading, error, clearError } = useAuthStore();
   const router = useRouter();
 
   const {
@@ -28,15 +26,10 @@ export default function Signup() {
   });
 
   const onSubmit = async (data: SignupForm) => {
-    setIsLoading(true);
-    try {
-      await sleep(1000);
-      signup(data.name, data.email, data.password);
+    clearError();
+    const user = await signup(data.name, data.email, data.password);
+    if (user) {
       router.push("/dashboard");
-    } catch (error) {
-      console.error("Signup failed:", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 

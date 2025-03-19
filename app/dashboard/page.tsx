@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import JSZip from "jszip";
 import FilePreview from "@/app/dashboard/components/file_preview";
 import { saveAs } from "file-saver";
+import NavBar from "./components/navBar";
 
 const zip = new JSZip();
 
@@ -97,24 +98,25 @@ const ZipDownloadBtn = () => {
 };
 
 export default function Dashboard() {
-  const user = useAuthStore((state) => state.user);
+  const token = useAuthStore((state) => state.token);
   const logout = useAuthStore((state) => state.logout);
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) {
+    if (!token) {
       router.push("/login");
     }
-  }, [user, router]);
+  }, [token, router]);
 
-  if (!user) {
+  if (!token) {
     return null;
   }
   return (
-    <div className="hero min-h-screen bg-base-200">
-      <div className="hero-content text-center">
+    <div className="min-h-screen bg-base-200">
+      <NavBar />
+      <div className="flex flex-row min-h-screen justify-center items-center">
         <div className="max-w-md">
-          <h1 className="text-5xl font-bold">Welcome, {user.name}!</h1>
+          <h1 className="text-2xl font-bold">Welcome!</h1>
           <p className="py-6">
             You have successfully logged in to your dashboard.
           </p>
@@ -136,15 +138,6 @@ export default function Dashboard() {
           </div>
           <FilePreview />
           <ZipDownloadBtn />
-          <button
-            onClick={() => {
-              logout();
-              router.push("/");
-            }}
-            className="btn btn-primary"
-          >
-            Logout
-          </button>
         </div>
       </div>
     </div>
