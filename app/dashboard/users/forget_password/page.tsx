@@ -30,7 +30,7 @@ export default function ForgetPasswordPage() {
     setIsLoading(true);
     try {
       await sleep(1000);
-      resetPassword(data.email);
+      resetPassword(1);
       router.replace("/forget_password/success");
     } catch (error) {
       console.error("Reset password failed:", error);

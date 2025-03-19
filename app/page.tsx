@@ -20,11 +20,6 @@ export default function Home() {
               Login
             </Link>
           </div>
-          <div>
-            <Link href="/signup" className="btn btn-wide btn-outline">
-              Sign Up
-            </Link>
-          </div>
         </div>
       </div>
     </div>

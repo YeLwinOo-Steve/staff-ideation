@@ -105,14 +105,6 @@ export default function Login() {
                   {errors.password.message}
                 </span>
               )}
-              <label className="label justify-end">
-                <Link
-                  href="/forget_password"
-                  className="label-text-alt link link-hover"
-                >
-                  Forgot password?
-                </Link>
-              </label>
             </div>
             <div className="form-control mt-6">
               <button
@@ -126,11 +118,6 @@ export default function Login() {
                   `Login`
                 )}
               </button>
-            </div>
-            <div className="text-center mt-4">
-              <Link href="/signup" className="link link-hover">
-                Don&apos;t have an account? Sign up
-              </Link>
             </div>
           </form>
         </div>
