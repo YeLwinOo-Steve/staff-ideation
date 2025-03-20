@@ -7,6 +7,7 @@ import {
   SystemSetting,
   Comment,
   Vote,
+  PaginatedResponse,
 } from "@/api/models";
 
 export const departmentApi = {
@@ -20,7 +21,8 @@ export const departmentApi = {
 };
 
 export const userApi = {
-  getAll: () => apiClient.get<User[]>("/users"),
+  getAll: (page: number = 1) =>
+    apiClient.get<PaginatedResponse<User>>(`/users?page=${page}`),
   getOne: (id: number) => apiClient.get<User>(`/users/${id}`),
   create: (data: FormData) => apiClient.post<User>("/users", data),
   update: (id: number, data: FormData) =>
