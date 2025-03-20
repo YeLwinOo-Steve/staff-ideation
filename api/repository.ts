@@ -8,6 +8,7 @@ import {
   Comment,
   Vote,
   PaginatedResponse,
+  Role,
 } from "@/api/models";
 
 export const departmentApi = {
@@ -18,6 +19,10 @@ export const departmentApi = {
   update: (id: number, data: Partial<Department>) =>
     apiClient.put<Department>(`/departments/${id}`, data),
   delete: (id: number) => apiClient.delete(`/departments/${id}`),
+};
+
+export const roleApi = {
+  getAll: () => apiClient.get<Role[]>("/roles"),
 };
 
 export const userApi = {

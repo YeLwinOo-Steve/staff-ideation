@@ -1,5 +1,12 @@
 import { create } from "zustand";
-import { Department, User, Idea, Category, SystemSetting } from "@/api/models";
+import {
+  Department,
+  User,
+  Idea,
+  Category,
+  SystemSetting,
+  Role,
+} from "@/api/models";
 import * as api from "@/api/repository";
 import { PaginatedResponse } from "@/api/models";
 
@@ -11,6 +18,7 @@ interface ApiState {
   systemSettings: SystemSetting[];
   isLoading: boolean;
   error: string | null;
+  roles: Role[];
   userPagination: {
     data: User[];
     currentPage: number;
@@ -19,6 +27,8 @@ interface ApiState {
     loading: boolean;
   };
 
+  // Roles
+  fetchRoles: () => Promise<void>;
   // Departments
   fetchDepartments: () => Promise<void>;
   createDepartment: (data: Partial<Department>) => Promise<void>;
@@ -42,7 +52,7 @@ interface ApiState {
   fetchSystemSettings: () => Promise<void>;
   updateSystemSetting: (
     id: number,
-    data: Partial<SystemSetting>,
+    data: Partial<SystemSetting>
   ) => Promise<void>;
 
   // Error handling
@@ -58,6 +68,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
   systemSettings: [],
   isLoading: false,
   error: null,
+  roles: [],
   userPagination: {
     data: [],
     currentPage: 1,
@@ -150,6 +161,19 @@ export const useApiStore = create<ApiState>((set, get) => ({
       await get().fetchUsers();
     } catch (error) {
       const message = "Failed to update user";
+      set({ error: message });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  fetchRoles: async () => {
+    try {
+      set({ isLoading: true });
+      const response = await api.roleApi.getAll();
+      set({ roles: response.data });
+    } catch (error) {
+      const message = "Failed to fetch roles";
       set({ error: message });
     } finally {
       set({ isLoading: false });

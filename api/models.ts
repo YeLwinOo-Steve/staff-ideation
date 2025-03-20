@@ -4,6 +4,17 @@ export interface Department {
   QACoordinatorID: number;
 }
 
+export interface Permission {
+  id: number;
+  permission: string;
+}
+
+export interface Role {
+  id: number;
+  role: string;
+  permissions: Permission[];
+}
+
 export interface User {
   id: number;
   name: string;
