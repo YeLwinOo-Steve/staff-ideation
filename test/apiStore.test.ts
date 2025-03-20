@@ -37,6 +37,7 @@ describe("API Store", () => {
       systemSettings: [],
       isLoading: false,
       error: null,
+      roles: [],
     });
   });
 
