@@ -11,6 +11,9 @@ const Users = () => {
     userPagination: { data: users, currentPage, lastPage, loading },
     fetchUsers,
     fetchDepartments,
+    fetchRoles,
+    departments,
+    roles
   } = useApiStore();
 
   const router = useRouter();
@@ -18,7 +21,8 @@ const Users = () => {
   useEffect(() => {
     fetchUsers();
     fetchDepartments();
-  }, [fetchUsers, fetchDepartments]);
+    fetchRoles();
+  }, [fetchUsers, fetchDepartments, fetchRoles]);
 
   const getDepartmentName = (department: string[] | null) => {
     if (!department) return "No Department";
@@ -114,8 +118,8 @@ const Users = () => {
                             </span>
                           ))
                         ) : (
-                          <span className="badge badge-ghost badge-sm">
-                            No Role
+                          <span className="badge badge-neutral badge-sm">
+                           Staff 
                           </span>
                         )}
                       </td>
@@ -123,12 +127,13 @@ const Users = () => {
                       <td>
                         <div className="flex gap-2">
                           <button
-                            className="btn btn-sm btn-ghost btn-square"
+                            className="btn btn-sm btn-ghost"
                             onClick={() =>
                               router.push(`/dashboard/users/edit/${user.id}`)
                             }
                           >
                             <PencilIcon className="w-4 h-4" />
+                            <span className="text-xs">Edit</span>
                           </button>
                         </div>
                       </td>
