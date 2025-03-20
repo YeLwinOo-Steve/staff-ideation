@@ -32,7 +32,7 @@ export const Toast = ({ messages, duration = 2000, onClose }: ToastProps) => {
         />
       ))}
     </div>,
-    document.body,
+    document.body
   );
 };
 
@@ -59,10 +59,16 @@ const ToastMessage = ({
 
     return () => clearTimeout(timer);
   }, [duration, onClose]);
+  const alertClass = {
+    success: "alert-success",
+    error: "alert-error",
+    warning: "alert-warning",
+    info: "alert-info",
+  }[type];
 
   return (
     <div
-      className={`alert alert-${type} transition-opacity duration-300 ${
+      className={`alert ${alertClass} transition-opacity duration-300 ${
         isVisible ? "opacity-100" : "opacity-0"
       }`}
     >
@@ -107,22 +113,22 @@ export const ToastProvider = ({
 
   const showSuccessToast = useCallback(
     (message: string) => showToast(message, "success"),
-    [showToast],
+    [showToast]
   );
 
   const showErrorToast = useCallback(
     (message: string) => showToast(message, "error"),
-    [showToast],
+    [showToast]
   );
 
   const showInfoToast = useCallback(
     (message: string) => showToast(message, "info"),
-    [showToast],
+    [showToast]
   );
 
   const showWarningToast = useCallback(
     (message: string) => showToast(message, "warning"),
-    [showToast],
+    [showToast]
   );
 
   return (
