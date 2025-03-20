@@ -1,37 +1,36 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import NavBar from "../components/navBar";
-import Image from "next/image";
 import { PencilIcon, PlusIcon } from "lucide-react";
 import { useApiStore } from "@/store/apiStore";
 import { useRouter } from "next/navigation";
 
 const Users = () => {
-  const { users, fetchUsers, fetchDepartments, departments, isLoading } =
-    useApiStore();
+  const {
+    userPagination: { data: users, currentPage, lastPage, loading },
+    fetchUsers,
+    fetchDepartments,
+  } = useApiStore();
+
   const router = useRouter();
-  const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 10;
 
   useEffect(() => {
     fetchUsers();
     fetchDepartments();
   }, [fetchUsers, fetchDepartments]);
 
-  const getDepartmentName = (deptId: number) => {
-    const department = departments.find((d) => d.id === deptId);
-    return department ? department.department_name : "Unknown Department";
+  const getDepartmentName = (department: string[] | null) => {
+    if (!department) return "No Department";
+    if (Array.isArray(department) && department.length > 0) {
+      return department.join(", ");
+    }
+    return "No Department";
   };
 
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = Array.isArray(users)
-    ? users.slice(indexOfFirstUser, indexOfLastUser)
-    : [];
-  const totalPages = Array.isArray(users)
-    ? Math.ceil(users.length / usersPerPage)
-    : 0;
+  const handlePageChange = (page: number) => {
+    fetchUsers(page);
+  };
 
   return (
     <div className="bg-base-100 min-h-screen">
@@ -48,7 +47,7 @@ const Users = () => {
           </button>
         </div>
 
-        {isLoading ? (
+        {loading ? (
           <div className="flex justify-center items-center h-64">
             <span className="loading loading-spinner loading-lg"></span>
           </div>
@@ -65,23 +64,23 @@ const Users = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentUsers.length === 0 ? (
+                {users.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="text-center py-4">
                       No users found
                     </td>
                   </tr>
                 ) : (
-                  currentUsers.map((user, index) => (
+                  users.map((user, index) => (
                     <tr key={user.id}>
                       <th>
-                        <label>{indexOfFirstUser + index + 1}.</label>
+                        <label>{index + 1}</label>
                       </th>
                       <td>
                         <div className="flex items-center gap-3">
                           <div className="avatar">
                             <div className="mask mask-squircle h-12 w-12 bg-base-200 flex items-center justify-center relative">
-                              {user.photo ? (
+                              {/* {user.photo ? (
                                 <Image
                                   src={user.photo}
                                   width={48}
@@ -89,10 +88,11 @@ const Users = () => {
                                   alt={`${user.name}'s Avatar`}
                                 />
                               ) : (
-                                <div className="bg-primary text-white rounded-full h-full w-full flex items-center justify-center text-xl font-bold">
-                                  {user.name.charAt(0)}
-                                </div>
-                              )}
+                                
+                              )} */}
+                              <div className="bg-primary text-white rounded-full h-full w-full flex items-center justify-center text-xl font-bold">
+                                {user.name.charAt(0)}
+                              </div>
                             </div>
                           </div>
                           <div>
@@ -104,17 +104,22 @@ const Users = () => {
                         </div>
                       </td>
                       <td>
-                        <span className="badge badge-accent badge-sm mr-2">
-                          {user.role_id === 1
-                            ? "Admin"
-                            : user.role_id === 2
-                              ? "QA Manager"
-                              : user.role_id === 3
-                                ? "QA Coordinator"
-                                : "Staff"}
-                        </span>
+                        {user.roles.length > 0 ? (
+                          user.roles.map((role, i) => (
+                            <span
+                              key={i}
+                              className="badge badge-accent badge-sm mr-2"
+                            >
+                              {role}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="badge badge-ghost badge-sm">
+                            No Role
+                          </span>
+                        )}
                       </td>
-                      <td>{getDepartmentName(user.department_id)}</td>
+                      <td>{getDepartmentName(user.department)}</td>
                       <td>
                         <div className="flex gap-2">
                           <button
@@ -136,7 +141,7 @@ const Users = () => {
                 <tr>
                   <td colSpan={5} className="text-center">
                     <div className="join">
-                      {Array.from({ length: totalPages }).map((_, index) => (
+                      {Array.from({ length: lastPage }).map((_, index) => (
                         <input
                           key={index}
                           className="join-item btn btn-square"
@@ -144,7 +149,7 @@ const Users = () => {
                           name="options"
                           aria-label={`${index + 1}`}
                           checked={currentPage === index + 1}
-                          onChange={() => setCurrentPage(index + 1)}
+                          onChange={() => handlePageChange(index + 1)}
                         />
                       ))}
                     </div>
