@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { Department, User, Idea, Category, SystemSetting } from "@/api/models";
 import * as api from "@/api/repository";
+import { PaginatedResponse } from "@/api/models";
 
 interface ApiState {
   departments: Department[];
@@ -10,13 +11,20 @@ interface ApiState {
   systemSettings: SystemSetting[];
   isLoading: boolean;
   error: string | null;
+  userPagination: {
+    data: User[];
+    currentPage: number;
+    lastPage: number;
+    total: number;
+    loading: boolean;
+  };
 
   // Departments
   fetchDepartments: () => Promise<void>;
   createDepartment: (data: Partial<Department>) => Promise<void>;
 
   // Users
-  fetchUsers: () => Promise<void>;
+  fetchUsers: (page?: number) => Promise<void>;
   getUser: (id: number) => Promise<User | null>;
   createUser: (data: FormData) => Promise<void>;
   updateUser: (id: number, data: FormData) => Promise<void>;
@@ -50,12 +58,19 @@ export const useApiStore = create<ApiState>((set, get) => ({
   systemSettings: [],
   isLoading: false,
   error: null,
+  userPagination: {
+    data: [],
+    currentPage: 1,
+    lastPage: 1,
+    total: 0,
+    loading: false,
+  },
 
   fetchDepartments: async () => {
     try {
       set({ isLoading: true });
       const response = await api.departmentApi.getAll();
-      set({ departments: response.data });
+      set({ departments: Array.isArray(response.data) ? response.data : [] });
     } catch (error) {
       const message = "Failed to fetch departments";
       set({ error: message });
@@ -63,16 +78,41 @@ export const useApiStore = create<ApiState>((set, get) => ({
       set({ isLoading: false });
     }
   },
-  fetchUsers: async () => {
+
+  fetchUsers: async (page = 1) => {
     try {
-      set({ isLoading: true });
-      const response = await api.userApi.getAll();
-      set({ users: Array.isArray(response.data) ? response.data : [] });
+      set((state) => ({
+        ...state,
+        userPagination: {
+          ...state.userPagination,
+          loading: true,
+        },
+      }));
+
+      const response = await api.userApi.getAll(page);
+
+      set((state) => ({
+        ...state,
+        users: response.data.data, // Keep backward compatibility
+        userPagination: {
+          data: response.data.data,
+          currentPage: response.data.meta.current_page,
+          lastPage: response.data.meta.last_page,
+          total: response.data.meta.total,
+          loading: false,
+        },
+      }));
     } catch (error) {
       const message = "Failed to fetch users";
       set({ error: message });
     } finally {
-      set({ isLoading: false });
+      set((state) => ({
+        ...state,
+        userPagination: {
+          ...state.userPagination,
+          loading: false,
+        },
+      }));
     }
   },
 
