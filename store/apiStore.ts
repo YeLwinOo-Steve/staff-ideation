@@ -15,6 +15,12 @@ interface ApiState {
   fetchDepartments: () => Promise<void>;
   createDepartment: (data: Partial<Department>) => Promise<void>;
 
+  // Users
+  fetchUsers: () => Promise<void>;
+  getUser: (id: number) => Promise<User | null>;
+  createUser: (data: FormData) => Promise<void>;
+  updateUser: (id: number, data: FormData) => Promise<void>;
+
   // Ideas
   fetchIdeas: (params?: Record<string, string>) => Promise<void>;
   createIdea: (data: FormData) => Promise<void>;
@@ -53,7 +59,58 @@ export const useApiStore = create<ApiState>((set, get) => ({
     } catch (error) {
       const message = "Failed to fetch departments";
       set({ error: message });
-      
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  fetchUsers: async () => {
+    try {
+      set({ isLoading: true });
+      const response = await api.userApi.getAll();
+      set({ users: Array.isArray(response.data) ? response.data : [] });
+    } catch (error) {
+      const message = "Failed to fetch users";
+      set({ error: message });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  getUser: async (id) => {
+    try {
+      set({ isLoading: true });
+      const response = await api.userApi.getOne(id);
+      return response.data;
+    } catch (error) {
+      const message = "Failed to get user details";
+      set({ error: message });
+      return null;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  createUser: async (data) => {
+    try {
+      set({ isLoading: true });
+      await api.userApi.create(data);
+      await get().fetchUsers();
+    } catch (error) {
+      const message = "Failed to create user";
+      set({ error: message });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  updateUser: async (id, data) => {
+    try {
+      set({ isLoading: true });
+      await api.userApi.update(id, data);
+      await get().fetchUsers();
+    } catch (error) {
+      const message = "Failed to update user";
+      set({ error: message });
     } finally {
       set({ isLoading: false });
     }
