@@ -47,3 +47,11 @@ export const systemSettingSchema = z.object({
   academic_year: z.string().min(1, "Academic year is required"),
   status: z.boolean(),
 });
+
+export const userFormSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Valid email is required"),
+  role_id: z.string().min(1, "Role is required"),
+  department_id: z.string().min(1, "Department is required"),
+  permissions_id: z.array(z.string()).optional(),
+});
