@@ -28,7 +28,7 @@ export const roleApi = {
 export const userApi = {
   getAll: (page: number = 1) =>
     apiClient.get<PaginatedResponse<User>>(`/users?page=${page}`),
-  getOne: (id: number) => apiClient.get<User>(`/users/${id}`),
+  getOne: (id: number) => apiClient.get<{ data: User }>(`/users/${id}`),
   create: (data: FormData) => apiClient.post<User>("/users", data),
   update: (id: number, data: FormData) =>
     apiClient.put<User>(`/users/${id}`, data),
