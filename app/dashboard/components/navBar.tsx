@@ -15,12 +15,12 @@ const NavBar = () => {
 
   return (
     <>
-      <div className="navbar bg-base-200">
+      <div className="navbar bg-base-100">
         <div className="flex-1">
           <a className="btn btn-ghost text-xl">EWSD</a>
         </div>
 
-        {/* Desktop menu - hidden on small screens */}
+        {/* Desktop menu */}
         <div className="hidden md:flex gap-2">
           <ul className="menu bg-base-200 menu-horizontal rounded-box">
             <li>
@@ -56,7 +56,7 @@ const NavBar = () => {
           </ul>
         </div>
 
-        {/* Mobile menu - visible on small screens */}
+        {/* Mobile menu */}
         <div className="flex md:hidden">
           <div className="dropdown dropdown-end">
             <div
