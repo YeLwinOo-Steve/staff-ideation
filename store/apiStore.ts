@@ -87,6 +87,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
     } catch (error) {
       const message = "Failed to fetch departments";
       set({ error: message });
+      throw error;
     } finally {
       set({ isLoading: false });
     }
@@ -118,6 +119,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
     } catch (error) {
       const message = "Failed to fetch users";
       set({ error: message });
+      throw error;
     } finally {
       set((state) => ({
         ...state,
@@ -137,7 +139,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
     } catch (error) {
       const message = "Failed to get user details";
       set({ error: message });
-      return null;
+      throw error;
     } finally {
       set({ isLoading: false });
     }
@@ -151,6 +153,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
     } catch (error) {
       const message = "Failed to create user";
       set({ error: message });
+      throw error;
     } finally {
       set({ isLoading: false });
     }
@@ -164,6 +167,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
     } catch (error) {
       const message = "Failed to update user";
       set({ error: message });
+      throw error;
     } finally {
       set({ isLoading: false });
     }
@@ -178,6 +182,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
     } catch (error) {
       const message = "Failed to fetch roles";
       set({ error: message });
+      throw error;
     } finally {
       set({ isLoading: false });
     }
@@ -191,6 +196,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
     } catch (error) {
       const message = "Failed to create department";
       set({ error: message });
+      throw error;
     } finally {
       set({ isLoading: false });
     }
@@ -202,7 +208,9 @@ export const useApiStore = create<ApiState>((set, get) => ({
       const response = await api.ideaApi.getAll(params);
       set({ ideas: response.data });
     } catch (error) {
-      set({ error: "Failed to fetch ideas" });
+      const message = "Failed to fetch ideas";
+      set({ error: message });
+      throw error;
     } finally {
       set({ isLoading: false });
     }
@@ -216,6 +224,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
     } catch (error) {
       const message = "Failed to create idea";
       set({ error: message });
+      throw error;
     } finally {
       set({ isLoading: false });
     }
@@ -229,6 +238,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
     } catch (error) {
       const message = "Failed to submit idea";
       set({ error: message });
+      throw error;
     } finally {
       set({ isLoading: false });
     }
@@ -239,7 +249,9 @@ export const useApiStore = create<ApiState>((set, get) => ({
       const response = await api.categoryApi.getAll();
       set({ categories: response.data });
     } catch (error) {
-      set({ error: "Failed to fetch categories" });
+      const message = "Failed to fetch categories";
+      set({ error: message });
+      throw error;
     } finally {
       set({ isLoading: false });
     }
