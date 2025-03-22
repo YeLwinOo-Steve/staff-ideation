@@ -12,8 +12,6 @@ const Users = () => {
     fetchUsers,
     fetchDepartments,
     fetchRoles,
-    departments,
-    roles
   } = useApiStore();
 
   const router = useRouter();
@@ -119,7 +117,7 @@ const Users = () => {
                           ))
                         ) : (
                           <span className="badge badge-neutral badge-sm">
-                           Staff 
+                            Staff
                           </span>
                         )}
                       </td>
