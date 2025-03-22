@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useApiStore } from "@/store/apiStore";
 import { useForm, FormProvider } from "react-hook-form";
@@ -64,17 +64,25 @@ const EditUser = () => {
     selectedPermissions,
   } = useRolePermissions(roles, setValue, watch);
 
+  const hasFetchedData = useRef(false);
+
   useEffect(() => {
     const loadData = async () => {
+      if (hasFetchedData.current) return;
+      hasFetchedData.current = true;
       setIsPageLoading(true);
 
       try {
-        if (roles.length === 0) {
-          await fetchRoles();
+        const promises = [];
+        if (!roles.length) {
+          promises.push(fetchRoles());
+        }
+        if (!departments.length) {
+          promises.push(fetchDepartments());
         }
 
-        if (departments.length === 0) {
-          await fetchDepartments();
+        if (promises.length > 0) {
+          await Promise.all(promises);
         }
 
         if (userId) {
@@ -134,13 +142,14 @@ const EditUser = () => {
     userId,
     getUser,
     fetchDepartments,
-    fetchRoles,
-    setValue,
     allPermissions,
-    departments.length,
+    departments,
+    fetchRoles,
     roles,
+    setValue,
     showErrorToast,
   ]);
+
   const handlePhotoChange = (file: File | null) => {
     setPhotoFile(file);
   };
@@ -160,7 +169,7 @@ const EditUser = () => {
 
     try {
       await updateUser(userId, formData);
-      router.push("/dashboard/users");
+      router.back();
       showSuccessToast("User updated successfully");
     } catch (error) {
       showErrorToast("Failed to update user");
