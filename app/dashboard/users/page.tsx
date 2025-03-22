@@ -39,7 +39,14 @@ const Users = () => {
       <NavBar />
       <div className="p-6">
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">Users</h1>
+          <div>
+            <h1 className="text-2xl font-bold">
+              Users{" "}
+              <span className="badge badge-outline badge-lg">
+                {users.length}
+              </span>
+            </h1>
+          </div>
           <button
             className="btn btn-primary"
             onClick={() => router.push("/dashboard/users/create")}
@@ -92,7 +99,7 @@ const Users = () => {
                               ) : (
                                 
                               )} */}
-                              <div className="bg-primary text-white rounded-full h-full w-full flex items-center justify-center text-xl font-bold">
+                              <div className="bg-primary text-white mask mask-squircle h-full w-full flex items-center justify-center text-xl font-bold">
                                 {user.name.charAt(0)}
                               </div>
                             </div>
