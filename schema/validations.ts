@@ -36,7 +36,7 @@ export const ideaSchema = z.object({
       z.object({
         file_name: z.string(),
         file_path: z.string(),
-      })
+      }),
     )
     .optional(),
 });
@@ -54,7 +54,7 @@ export const userFormSchema = z.object({
   role_ids: z.array(z.string()).min(1, "At least one role is required"),
   department_ids: z
     .array(z.string())
-    .min(1, "At least one department is required"),
+    .min(0, "At least one department is required"),
   permission_ids: z
     .array(z.string())
     .min(1, "At least one permission is required"),
