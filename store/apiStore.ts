@@ -52,7 +52,7 @@ interface ApiState {
   fetchSystemSettings: () => Promise<void>;
   updateSystemSetting: (
     id: number,
-    data: Partial<SystemSetting>
+    data: Partial<SystemSetting>,
   ) => Promise<void>;
 
   // Error handling
@@ -78,6 +78,8 @@ export const useApiStore = create<ApiState>((set, get) => ({
   },
 
   fetchDepartments: async () => {
+    if (get().departments.length > 0) return;
+
     try {
       set({ isLoading: true });
       const response = await api.departmentApi.getAll();
@@ -131,7 +133,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await api.userApi.getOne(id);
-      return response.data;
+      return response.data.data;
     } catch (error) {
       const message = "Failed to get user details";
       set({ error: message });
@@ -168,6 +170,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
   },
 
   fetchRoles: async () => {
+    if (get().roles.length > 0) return;
     try {
       set({ isLoading: true });
       const response = await api.roleApi.getAll();
