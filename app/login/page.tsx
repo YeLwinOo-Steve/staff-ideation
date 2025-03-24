@@ -13,7 +13,7 @@ type LoginForm = z.infer<typeof loginSchema>;
 
 export default function Login() {
   const { showSuccessToast, showErrorToast } = useToast();
-  const { login, isLoading, error, clearError } = useAuthStore();
+  const { login, user, isLoading, error, clearError } = useAuthStore();
   const router = useRouter();
 
   const {
@@ -27,11 +27,11 @@ export default function Login() {
 
   const onSubmit = async (data: LoginForm) => {
     clearError();
-    const status = await login(data.email, data.password);
-    if (status === 200) {
+    try {
+      await login(data.email, data.password);
       router.push("/dashboard");
       showSuccessToast("Login successful");
-    } else {
+    } catch (e) {
       showErrorToast(error || "Login failed");
     }
   };
@@ -59,9 +59,8 @@ export default function Login() {
               <input
                 type="email"
                 placeholder="example@gmail.com"
-                className={`input input-bordered ${
-                  errors.email ? "input-error" : ""
-                }`}
+                className={`input input-bordered ${errors.email ? "input-error" : ""
+                  }`}
                 {...register("email")}
               />
               {errors.email && (
@@ -77,9 +76,8 @@ export default function Login() {
               <input
                 type="password"
                 placeholder="password"
-                className={`input input-bordered ${
-                  errors.password ? "input-error" : ""
-                }`}
+                className={`input input-bordered ${errors.password ? "input-error" : ""
+                  }`}
                 {...register("password")}
               />
               {errors.password && (
