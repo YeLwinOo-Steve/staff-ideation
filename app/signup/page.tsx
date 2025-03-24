@@ -5,15 +5,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { signupSchema } from "@/schema/validations";
 
 type SignupForm = z.infer<typeof signupSchema>;
 
 export default function Signup() {
-  const { signup, isLoading, clearError } = useAuthStore();
-  const router = useRouter();
+  const { isLoading, clearError } = useAuthStore();
 
   const {
     register,
@@ -26,10 +24,11 @@ export default function Signup() {
 
   const onSubmit = async (data: SignupForm) => {
     clearError();
-    const user = await signup(data.name, data.email, data.password);
-    if (user) {
-      router.push("/dashboard");
-    }
+    console.log(data);
+    // const user = await signup(data.name, data.email, data.password);
+    // if (user) {
+    //   router.push("/dashboard");
+    // }
   };
 
   return (

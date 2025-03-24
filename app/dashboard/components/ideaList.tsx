@@ -1,6 +1,5 @@
 import IdeaCard from "./ideaCard";
 import { useApiStore } from "@/store/apiStore";
-import { ChevronDown, Filter, Search } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface IdeaListProps {

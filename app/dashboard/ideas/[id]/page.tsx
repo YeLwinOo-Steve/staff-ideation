@@ -1,13 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import {
-  Download,
-  Lightbulb,
-  MessageCircle,
-  Paperclip,
-  ThumbsDown,
-  ThumbsUp,
-} from "lucide-react";
+import { Download, Lightbulb, ThumbsDown, ThumbsUp } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useApiStore } from "@/store/apiStore";
@@ -88,7 +81,7 @@ const ZipDownloadBtn = () => {
       default:
         return (
           <>
-            <Download size={16}/>
+            <Download size={16} />
             <span className="ml-2">Download Files</span>
           </>
         );
@@ -99,8 +92,9 @@ const ZipDownloadBtn = () => {
     <div>
       <button
         onClick={downloadZipFile}
-        className={`btn btn-sm btn-outline mb-2 ${status === "error" ? "btn-error" : ""
-          }`}
+        className={`btn btn-sm btn-outline mb-2 ${
+          status === "error" ? "btn-error" : ""
+        }`}
         disabled={isLoading}
       >
         {getButtonText()}
@@ -204,7 +198,7 @@ const IdeaDetail = () => {
         <div className="flex justify-center items-center h-64">
           <div className="alert alert-error max-w-md">
             <span>
-              Failed to load idea. The idea may not exist or you don't have
+              Failed to load idea. The idea may not exist or you don&apos;t have
               permission to view it.
             </span>
           </div>

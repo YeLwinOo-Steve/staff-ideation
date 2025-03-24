@@ -2,7 +2,7 @@
 
 import { useAuthStore } from "@/store/authStore";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import FilePreview from "@/app/dashboard/components/filePreview";
 import NavBar from "./components/navBar";
 import IdeaList from "./components/ideaList";
@@ -40,7 +40,7 @@ export default function Dashboard() {
       }
     };
     loadData();
-  }, [fetchIdeas, fetchUsers, router, user]);
+  }, [fetchIdeas, fetchUsers, router, user, userTotal, total]);
 
   return (
     <div className="min-h-screen bg-base-100">
