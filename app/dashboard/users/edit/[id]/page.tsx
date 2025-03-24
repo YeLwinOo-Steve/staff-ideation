@@ -28,6 +28,7 @@ const EditUser = () => {
     fetchRoles,
     departments,
     roles,
+    error,
     isLoading,
   } = useApiStore();
 
@@ -108,7 +109,7 @@ const EditUser = () => {
             if (user.department && Array.isArray(user.department)) {
               const deptIds = user.department.map(
                 (dept: string | Department) =>
-                  typeof dept === "string" ? dept : dept.id.toString(),
+                  typeof dept === "string" ? dept : dept.id.toString()
               );
               setValue("department_ids", deptIds);
             }
@@ -118,7 +119,7 @@ const EditUser = () => {
                 .map((perm: string | Permission) => {
                   if (typeof perm === "string") {
                     const foundPerm = allPermissions.find(
-                      (p) => p.permission === perm,
+                      (p) => p.permission === perm
                     );
                     return foundPerm ? foundPerm.id.toString() : null;
                   }
@@ -171,9 +172,9 @@ const EditUser = () => {
       await updateUser(userId, formData);
       router.back();
       showSuccessToast("User updated successfully");
-    } catch (error) {
-      showErrorToast("Failed to update user");
-      console.error("Failed to update user:", error);
+    } catch (e) {
+      showErrorToast(error || "Failed to update user");
+      console.error("Failed to update user:", e);
     }
   };
 
