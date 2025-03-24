@@ -67,7 +67,7 @@ interface ApiState {
   fetchSystemSettings: () => Promise<void>;
   updateSystemSetting: (
     id: number,
-    data: Partial<SystemSetting>
+    data: Partial<SystemSetting>,
   ) => Promise<void>;
 
   // Error handling

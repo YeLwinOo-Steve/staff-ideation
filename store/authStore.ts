@@ -31,7 +31,6 @@ export const useAuthStore = create<AuthState>()(
             token: response.data.token,
             isLoading: false,
           });
-
         } catch (error: any) {
           const errorMessage = error.response?.data?.message || "Login failed";
           set({ user: null, error: errorMessage, isLoading: false });
@@ -70,6 +69,6 @@ export const useAuthStore = create<AuthState>()(
     {
       name: "auth-storage",
       partialize: (state) => ({ user: state.user, token: state.token }),
-    }
-  )
+    },
+  ),
 );

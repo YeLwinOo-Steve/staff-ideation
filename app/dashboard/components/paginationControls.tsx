@@ -7,20 +7,20 @@ interface PaginationControlsProps {
   baseUrl: string;
 }
 
-export default function PaginationControls({ 
-  currentPage, 
-  lastPage, 
-  baseUrl 
+export default function PaginationControls({
+  currentPage,
+  lastPage,
+  baseUrl,
 }: PaginationControlsProps) {
   const renderPageLink = (page: number, label?: string) => {
     const isActive = page === currentPage;
     const url = `${baseUrl}?page=${page}`;
-    
+
     return (
-      <Link 
+      <Link
         href={url}
         aria-current={isActive ? "page" : undefined}
-        className={`join-item btn ${isActive ? 'btn-active' : ''}`}
+        className={`join-item btn ${isActive ? "btn-active" : ""}`}
       >
         {label || page}
       </Link>
@@ -32,15 +32,18 @@ export default function PaginationControls({
       <div className="join">
         {/* Previous page button */}
         {currentPage > 1 && (
-          <Link href={`${baseUrl}?page=${currentPage - 1}`} className="join-item btn">
+          <Link
+            href={`${baseUrl}?page=${currentPage - 1}`}
+            className="join-item btn"
+          >
             <ChevronLeft size={16} />
           </Link>
         )}
-        
+
         {/* Page numbers */}
         {Array.from({ length: Math.min(5, lastPage) }, (_, i) => {
           let pageNum: number;
-          
+
           // Handle pagination display strategy
           if (lastPage <= 5) {
             // If 5 or fewer pages, show all
@@ -55,14 +58,19 @@ export default function PaginationControls({
             // Otherwise show current and 2 on each side
             pageNum = currentPage - 2 + i;
           }
-          
+
           // Only render if page number is valid
-          return pageNum > 0 && pageNum <= lastPage ? renderPageLink(pageNum) : null;
+          return pageNum > 0 && pageNum <= lastPage
+            ? renderPageLink(pageNum)
+            : null;
         })}
-        
+
         {/* Next page button */}
         {currentPage < lastPage && (
-          <Link href={`${baseUrl}?page=${currentPage + 1}`} className="join-item btn">
+          <Link
+            href={`${baseUrl}?page=${currentPage + 1}`}
+            className="join-item btn"
+          >
             <ChevronRight size={16} />
           </Link>
         )}
