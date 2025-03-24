@@ -8,13 +8,8 @@ interface AuthState {
   token: string | null;
   isLoading: boolean;
   error: string | null;
-  login: (email: string, password: string) => Promise<number | null>;
+  login: (email: string, password: string) => Promise<void | null>;
   resetPassword: (id: number) => Promise<boolean>;
-  signup: (
-    name: string,
-    email: string,
-    password: string,
-  ) => Promise<number | null>;
   logout: () => Promise<void>;
   clearError: () => void;
 }
@@ -32,17 +27,15 @@ export const useAuthStore = create<AuthState>()(
         try {
           const response = await authApi.login({ email, password });
           set({
-            // user: response.data.user,
+            user: response.data.data,
             token: response.data.token,
             isLoading: false,
           });
 
-          // return response.data.user;
-          return response.data.status;
         } catch (error: any) {
           const errorMessage = error.response?.data?.message || "Login failed";
-          set({ error: errorMessage, isLoading: false });
-          return null;
+          set({ user: null, error: errorMessage, isLoading: false });
+          throw error;
         }
       },
 
@@ -60,31 +53,13 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      signup: async (name, email, password) => {
-        set({ isLoading: true, error: null });
-        try {
-          const response = await authApi.signup({ name, email, password });
-          set({
-            // user: response.data.user,
-            token: response.data.token,
-            isLoading: false,
-          });
-          // return response.data.user;
-          return response.data.status;
-        } catch (error: any) {
-          const errorMessage =
-            error.response?.data?.message || "Registration failed";
-          set({ error: errorMessage, isLoading: false });
-          return null;
-        }
-      },
-
       logout: async () => {
         set({ isLoading: true });
         try {
           await authApi.logout();
         } catch (error) {
           console.log(error);
+          throw error;
         } finally {
           set({ user: null, token: null, isLoading: false });
         }
@@ -95,6 +70,6 @@ export const useAuthStore = create<AuthState>()(
     {
       name: "auth-storage",
       partialize: (state) => ({ user: state.user, token: state.token }),
-    },
-  ),
+    }
+  )
 );

@@ -6,6 +6,7 @@ import {
   Category,
   SystemSetting,
   Role,
+  Comment,
 } from "@/api/models";
 import * as api from "@/api/repository";
 import { PaginatedResponse } from "@/api/models";
@@ -13,12 +14,22 @@ import { PaginatedResponse } from "@/api/models";
 interface ApiState {
   departments: Department[];
   users: User[];
+  user: User | null;
   ideas: Idea[];
+  idea: Idea | null;
   categories: Category[];
   systemSettings: SystemSetting[];
+  comments: Comment[];
   isLoading: boolean;
   error: string | null;
   roles: Role[];
+  ideaPagination: {
+    data: Idea[];
+    currentPage: number;
+    lastPage: number;
+    total: number;
+    loading: boolean;
+  };
   userPagination: {
     data: User[];
     currentPage: number;
@@ -43,6 +54,10 @@ interface ApiState {
   fetchIdeas: (params?: Record<string, string>) => Promise<void>;
   createIdea: (data: FormData) => Promise<void>;
   submitIdea: (id: number) => Promise<void>;
+  getIdea: (id: number) => Promise<void | null>;
+
+  // Comments
+  getCommentsForIdea: (id: number) => Promise<void>;
 
   // Categories
   fetchCategories: () => Promise<void>;
@@ -52,7 +67,7 @@ interface ApiState {
   fetchSystemSettings: () => Promise<void>;
   updateSystemSetting: (
     id: number,
-    data: Partial<SystemSetting>,
+    data: Partial<SystemSetting>
   ) => Promise<void>;
 
   // Error handling
@@ -63,12 +78,22 @@ interface ApiState {
 export const useApiStore = create<ApiState>((set, get) => ({
   departments: [],
   users: [],
+  user: null,
   ideas: [],
+  idea: null,
   categories: [],
+  comments: [],
   systemSettings: [],
   isLoading: false,
   error: null,
   roles: [],
+  ideaPagination: {
+    data: [],
+    currentPage: 1,
+    lastPage: 1,
+    total: 0,
+    loading: false,
+  },
   userPagination: {
     data: [],
     currentPage: 1,
@@ -107,7 +132,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
 
       set((state) => ({
         ...state,
-        users: response.data.data, // Keep backward compatibility
+        users: response.data.data,
         userPagination: {
           data: response.data.data,
           currentPage: response.data.meta.current_page,
@@ -135,6 +160,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await api.userApi.getOne(id);
+      set({ user: response.data.data });
       return response.data.data;
     } catch (error) {
       const message = "Failed to get user details";
@@ -204,15 +230,38 @@ export const useApiStore = create<ApiState>((set, get) => ({
 
   fetchIdeas: async (params) => {
     try {
-      set({ isLoading: true });
+      set((state) => ({
+        ...state,
+        ideaPagination: {
+          ...state.ideaPagination,
+          loading: true,
+        },
+      }));
       const response = await api.ideaApi.getAll(params);
-      set({ ideas: response.data });
+
+      set((state) => ({
+        ...state,
+        ideas: response.data.data,
+        ideaPagination: {
+          data: response.data.data,
+          currentPage: response.data.meta.current_page,
+          lastPage: response.data.meta.last_page,
+          total: response.data.meta.total,
+          loading: false,
+        },
+      }));
     } catch (error) {
       const message = "Failed to fetch ideas";
       set({ error: message });
       throw error;
     } finally {
-      set({ isLoading: false });
+      set((state) => ({
+        ...state,
+        ideaPagination: {
+          ...state.ideaPagination,
+          loading: false,
+        },
+      }));
     }
   },
 
@@ -223,6 +272,20 @@ export const useApiStore = create<ApiState>((set, get) => ({
       get().fetchIdeas();
     } catch (error) {
       const message = "Failed to create idea";
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  getIdea: async (id) => {
+    try {
+      set({ isLoading: true });
+      const response = await api.ideaApi.getOne(id);
+      set({ idea: response.data.data });
+    } catch (error) {
+      const message = "Failed to get idea";
       set({ error: message });
       throw error;
     } finally {
@@ -243,6 +306,21 @@ export const useApiStore = create<ApiState>((set, get) => ({
       set({ isLoading: false });
     }
   },
+
+  getCommentsForIdea: async (id) => {
+    try {
+      set({ isLoading: true });
+      const response = await api.commentApi.getCommentsForIdea(id);
+      set({ comments: response.data.data });
+    } catch (error) {
+      const message = "Failed to get comments for idea";
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
   fetchCategories: async () => {
     try {
       set({ isLoading: true });
