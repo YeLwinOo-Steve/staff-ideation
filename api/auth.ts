@@ -4,6 +4,7 @@ import { User } from "@/api/models";
 export interface AuthResponse {
   status: number;
   token: string;
+  data: User;
 }
 
 export interface LoginRequest {
@@ -11,17 +12,8 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface SignupRequest {
-  name: string;
-  email: string;
-  password: string;
-}
-
 export const authApi = {
   login: (data: LoginRequest) => apiClient.post<AuthResponse>("/login", data),
-
-  signup: (data: SignupRequest) =>
-    apiClient.post<AuthResponse>("/register", data),
 
   resetPassword: (id: number) =>
     apiClient.post<{ message: string }>(`/reset-password/${id}`),

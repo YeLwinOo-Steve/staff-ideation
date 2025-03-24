@@ -30,9 +30,22 @@ export interface Idea {
   title: string;
   content: string;
   is_anonymous: boolean;
-  category: number;
-  document?: Document[];
+  category: string[];
+  document?: string[];
   is_enabled?: boolean;
+  user_name?: string;
+  user_email?: string;
+  user_photo?: string;
+  department?: string[] | null;
+  files?: string[];
+  comments?: number;
+  total_vote_value?: number;
+  user_vote_value?: number;
+  time?: string;
+  user_id: number;
+  system_setting_id: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Document {
@@ -59,6 +72,13 @@ export interface Comment {
   idea_id: number;
   comment: string;
   is_anonymous: boolean;
+  is_enabled: number;
+  system_setting_id: number;
+  created_at: string;
+  updated_at: string;
+  user_name: string;
+  user_photo: string;
+  department: string | null;
 }
 
 export interface Vote {

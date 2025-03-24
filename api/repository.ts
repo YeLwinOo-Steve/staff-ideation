@@ -12,7 +12,7 @@ import {
 } from "@/api/models";
 
 export const departmentApi = {
-  getAll: () => apiClient.get<Department[]>("/departments"),
+  getAll: () => apiClient.get<{ data: Department[] }>("/departments"),
   getOne: (id: number) => apiClient.get<Department>(`/departments/${id}`),
   create: (data: Partial<Department>) =>
     apiClient.post<Department>("/departments", data),
@@ -36,7 +36,8 @@ export const userApi = {
 
 export const ideaApi = {
   getAll: (params?: Record<string, string>) =>
-    apiClient.get<Idea[]>("/idea", { params }),
+    apiClient.get<PaginatedResponse<Idea>>("/idea", { params }),
+  getOne: (id: number) => apiClient.get<{ data: Idea }>(`/idea/${id}`),
   create: (data: FormData) => apiClient.post<Idea>("/idea", data),
   update: (id: number, data: FormData) =>
     apiClient.put<Idea>(`/idea/${id}`, data),
@@ -68,7 +69,8 @@ export const systemSettingApi = {
 };
 
 export const commentApi = {
-  getAll: () => apiClient.get<Comment[]>("/comments"),
+  getCommentsForIdea: (id: number) =>
+    apiClient.get<{ data: Comment[] }>(`/idea/get-comment/${id}`),
   create: (data: Partial<Comment>) =>
     apiClient.post<Comment>("/comments", data),
   update: (id: number, data: Partial<Comment>) =>
