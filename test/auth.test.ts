@@ -1,6 +1,7 @@
 import { useAuthStore } from "@/store/authStore";
 
 import { mockUser } from "./mockData";
+import { authApi } from "@/api/auth";
 
 jest.mock("@/api/repository", () => ({
   authApi: {
@@ -23,7 +24,12 @@ describe("Auth Store", () => {
   });
 
   test("Should show error when login fails", async () => {
-    await useAuthStore.getState().login("admin@idea.com", "admin");
+    const mockLoginError = new Error("Login failed");
+    jest.spyOn(authApi, "login").mockRejectedValueOnce(mockLoginError);
+
+    await expect(
+      useAuthStore.getState().login("admin@idea.com", "admin")
+    ).rejects.toThrow("Login failed");
 
     const error = useAuthStore.getState().error;
     expect(error).toBe("Login failed");
