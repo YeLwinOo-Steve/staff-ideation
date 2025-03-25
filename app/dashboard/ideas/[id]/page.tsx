@@ -238,7 +238,7 @@ const IdeaDetail = () => {
         <div className="my-4 max-w-4xl mx-auto">
           <div className="bg-base-200 p-4 rounded-lg mb-4">
             <h1 className="font-bold text-2xl">{idea?.title}</h1>
-            <div className="flex justify-between items-center gap-2 mt-4">
+            <div className="flex justify-between items-end gap-2 mt-4">
               <div className="flex items-center gap-2">
                 <div className="avatar placeholder">
                   <div className="bg-base-100 text-primary-content mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">

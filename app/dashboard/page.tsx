@@ -53,7 +53,7 @@ export default function Dashboard() {
             </h1>
             <Link
               href="/dashboard/ideas/create"
-              className="btn btn-primary btn-md"
+              className="btn btn-primary btn-sm"
             >
               Submit New Idea
             </Link>
