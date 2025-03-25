@@ -58,7 +58,7 @@ const UserPhotoUpload = ({
       <div className="form-control w-full">
         <input
           type="file"
-          className="file-input file-input-bordered w-full"
+          className="file-input file-input-bordered"
           accept="image/*"
           onChange={handleFileChange}
         />

@@ -6,11 +6,18 @@ import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { getInitials } from "@/util/getInitials";
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 interface IdeaCardProps {
   idea: Idea;
   showVoteButtons?: boolean;
 }
+
+const buttonVariants = {
+  initial: { scale: 1 },
+  tap: { scale: 0.9 },
+  hover: { scale: 1.1 },
+};
 
 export default function IdeaCard({ idea }: IdeaCardProps) {
   const formattedDate = idea.time
@@ -94,15 +101,61 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
         <div className="card-actions justify-between lg:justify-end items-center mt-auto pt-2">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 lg:mr-8">
-              <ThumbsUp
-                className={`btn btn-sm btn-square p-1 ${userVote === 1 ? "btn-primary" : "btn-ghost"}`}
+              <motion.button
+                variants={buttonVariants}
+                initial="initial"
+                whileTap="tap"
+                whileHover="hover"
+                className={`p-2 rounded-full transition-colors duration-200 ${
+                  userVote === 1 ? "bg-primary/10" : "hover:bg-primary/5"
+                }`}
                 onClick={(e) => handleVote(1, e)}
-              />
-              <span className="text-md font-bold">{voteCount || 0}</span>
-              <ThumbsDown
-                className={`btn btn-sm btn-square p-1 ${userVote === -1 ? "btn-error" : "btn-ghost"}`}
+              >
+                <motion.div
+                  animate={{
+                    scale: userVote === 1 ? [1, 1.2, 1] : 1,
+                    transition: { duration: 0.2 },
+                  }}
+                >
+                  <ThumbsUp
+                    className={`w-6 h-6 transition-colors duration-200 ${
+                      userVote === 1
+                        ? "stroke-primary fill-primary"
+                        : "stroke-gray-600 hover:stroke-primary"
+                    }`}
+                  />
+                </motion.div>
+              </motion.button>
+
+              <span className="text-md font-bold min-w-[2rem] text-center">
+                {voteCount || 0}
+              </span>
+
+              <motion.button
+                variants={buttonVariants}
+                initial="initial"
+                whileTap="tap"
+                whileHover="hover"
+                className={`p-2 rounded-full transition-colors duration-200 ${
+                  userVote === -1 ? "bg-error/10" : "hover:bg-error/5"
+                }`}
                 onClick={(e) => handleVote(-1, e)}
-              />
+              >
+                <motion.div
+                  animate={{
+                    scale: userVote === -1 ? [1, 1.2, 1] : 1,
+                    transition: { duration: 0.2 },
+                  }}
+                >
+                  <ThumbsDown
+                    className={`w-6 h-6 transition-colors duration-200 ${
+                      userVote === -1
+                        ? "stroke-error fill-error"
+                        : "stroke-gray-600 hover:stroke-error"
+                    }`}
+                  />
+                </motion.div>
+              </motion.button>
             </div>
           </div>
 

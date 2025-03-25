@@ -1,10 +1,13 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { FilePlus2 } from "lucide-react";
 import { useFileDropzone } from "@/components/useFileDropzone";
 import { handleUpload } from "@/util/uploadCloudinary";
 
-const FilePreview: React.FC = () => {
+const FilePreview: React.FC<{ setFiles: (files: File[]) => void }> = ({
+  setFiles,
+}) => {
   const { files, getRootProps, getInputProps } = useFileDropzone();
   const [uploadProgress, setUploadProgress] = useState<{
     [key: string]: number;
@@ -19,6 +22,7 @@ const FilePreview: React.FC = () => {
   };
 
   const onUploadClick = () => {
+    setFiles(files);
     handleUpload(files, handleProgressUpdate, setIsUploading);
   };
 
@@ -55,16 +59,16 @@ const FilePreview: React.FC = () => {
   }, [files]);
 
   return (
-    <section className="container">
+    <section className="container bg-base-100">
       <div
         {...getRootProps({
           className:
-            "dropzone border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-gray-400 transition-colors flex flex-col items-center justify-center",
+            "dropzone border-2 border-dashed border-base-200 rounded-lg p-6 cursor-pointer hover:border-base-300 transition-colors flex flex-col items-center justify-center",
         })}
       >
         <input {...getInputProps()} />
-        <FilePlus2 size={36} />
-        <p className="text-gray-600 mt-4">Click to select files</p>
+        <FilePlus2 size={36} className="text-base-content/60" />
+        <p className="text-base-content/60 mt-4">Click to select files</p>
       </div>
       <aside className="flex flex-row flex-wrap mt-4">{thumbs}</aside>
       {files.length > 0 && (
