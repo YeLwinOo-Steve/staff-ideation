@@ -43,6 +43,8 @@ interface ApiState {
   // Departments
   fetchDepartments: () => Promise<void>;
   createDepartment: (data: Partial<Department>) => Promise<void>;
+  updateDepartment: (id: number, data: Partial<Department>) => Promise<void>;
+  deleteDepartment: (id: number) => Promise<void>;
 
   // Users
   fetchUsers: (page?: number) => Promise<void>;
@@ -111,6 +113,33 @@ export const useApiStore = create<ApiState>((set, get) => ({
       set({ departments: response.data.data });
     } catch (error) {
       const message = "Failed to fetch departments";
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  updateDepartment: async (id, data) => {
+    try {
+      set({ isLoading: true });
+      await api.departmentApi.update(id, data);
+      get().fetchDepartments();
+    } catch (error) {
+      const message = "Failed to update department";
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  deleteDepartment: async (id) => {
+    try {
+      set({ isLoading: true });
+      await api.departmentApi.delete(id);
+      get().fetchDepartments();
+    } catch (error) {
+      const message = "Failed to delete department";
       set({ error: message });
       throw error;
     } finally {
