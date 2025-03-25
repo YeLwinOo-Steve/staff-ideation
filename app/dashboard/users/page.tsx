@@ -5,10 +5,13 @@ import NavBar from "../components/navBar";
 import { PencilIcon, PlusIcon } from "lucide-react";
 import { useApiStore } from "@/store/apiStore";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/authStore";
+import Image from "next/image";
 
 const Users = () => {
+  const { user: authUser } = useAuthStore();
   const {
-    userPagination: { data: users, currentPage, lastPage, loading },
+    userPagination: { data: users, currentPage, lastPage, loading, total },
     fetchUsers,
     fetchDepartments,
     fetchRoles,
@@ -22,14 +25,6 @@ const Users = () => {
     fetchRoles();
   }, [fetchUsers, fetchDepartments, fetchRoles]);
 
-  const getDepartmentName = (department: string[] | null) => {
-    if (!department) return "No Department";
-    if (Array.isArray(department) && department.length > 0) {
-      return department.join(", ");
-    }
-    return "No Department";
-  };
-
   const handlePageChange = (page: number) => {
     fetchUsers(page);
   };
@@ -39,13 +34,9 @@ const Users = () => {
       <NavBar />
       <div className="p-6">
         <div className="flex justify-between items-center mb-4">
-          <div>
-            <h1 className="text-2xl font-bold">
-              Users{" "}
-              <span className="badge badge-outline badge-lg">
-                {users.length}
-              </span>
-            </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold">Users </h1>
+            <span className="badge badge-outline badge-lg">{total}</span>
           </div>
           <button
             className="btn btn-primary"
@@ -89,7 +80,8 @@ const Users = () => {
                         <div className="flex items-center gap-3">
                           <div className="avatar">
                             <div className="mask mask-squircle h-12 w-12 bg-base-200 flex items-center justify-center relative">
-                              {/* {user.photo ? (
+                              {user.photo &&
+                              user.photo?.includes("cloudinary") ? (
                                 <Image
                                   src={user.photo}
                                   width={48}
@@ -97,11 +89,10 @@ const Users = () => {
                                   alt={`${user.name}'s Avatar`}
                                 />
                               ) : (
-                                
-                              )} */}
-                              <div className="bg-primary text-white mask mask-squircle h-full w-full flex items-center justify-center text-xl font-bold">
-                                {user.name.charAt(0)}
-                              </div>
+                                <div className="bg-primary text-white mask mask-squircle h-full w-full flex items-center justify-center text-xl font-bold">
+                                  {user.name.charAt(0)}
+                                </div>
+                              )}
                             </div>
                           </div>
                           <div>
@@ -128,9 +119,15 @@ const Users = () => {
                           </span>
                         )}
                       </td>
-                      <td>{getDepartmentName(user.department)}</td>
                       <td>
-                        <div className="flex gap-2">
+                        {user.department && user.department.length > 0
+                          ? user.department
+                          : "No Department"}
+                      </td>
+                      <td>
+                        <div
+                          className={`flex gap-2 ${authUser?.id === user.id || authUser?.roles.includes("admin") ? "hidden" : ""}`}
+                        >
                           <button
                             className="btn btn-sm btn-ghost"
                             onClick={() =>

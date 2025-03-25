@@ -211,7 +211,12 @@ const EditUser = () => {
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col md:flex-row gap-6">
                 <UserPhotoUpload
-                  initialPhoto={null}
+                  initialPhoto={
+                    fetchedUser?.photo &&
+                    fetchedUser?.photo?.includes("cloudinary")
+                      ? fetchedUser?.photo
+                      : null
+                  }
                   onPhotoChange={handlePhotoChange}
                 />
 
