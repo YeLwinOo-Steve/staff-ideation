@@ -108,7 +108,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await api.departmentApi.getAll();
-      set({ departments: Array.isArray(response.data) ? response.data : [] });
+      set({ departments: response.data.data });
     } catch (error) {
       const message = "Failed to fetch departments";
       set({ error: message });
@@ -325,7 +325,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await api.categoryApi.getAll();
-      set({ categories: response.data });
+      set({ categories: response.data.data });
     } catch (error) {
       const message = "Failed to fetch categories";
       set({ error: message });

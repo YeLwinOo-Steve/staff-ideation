@@ -2,6 +2,8 @@ export interface Department {
   id: number;
   department_name: string;
   QACoordinatorID: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Permission {
@@ -56,6 +58,8 @@ export interface Document {
 export interface Category {
   id: number;
   name: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface SystemSetting {

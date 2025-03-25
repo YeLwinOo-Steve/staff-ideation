@@ -50,7 +50,7 @@ export const ideaApi = {
 };
 
 export const categoryApi = {
-  getAll: () => apiClient.get<Category[]>("/categories"),
+  getAll: () => apiClient.get<{ data: Category[] }>("/categories"),
   getOne: (id: number) => apiClient.get<Category>(`/categories/${id}`),
   create: (data: { name: string }) =>
     apiClient.post<Category>("/categories", data),
