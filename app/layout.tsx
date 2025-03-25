@@ -2,7 +2,7 @@ import type React from "react";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { ToastProvider } from "@/components/toast";
-
+import { Analytics } from "@vercel/analytics/react";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -19,6 +19,7 @@ export default function RootLayout({
     <html data-theme="lemonade" lang="en">
       <body className={inter.className} suppressHydrationWarning>
         <ToastProvider>{children}</ToastProvider>
+        <Analytics />
       </body>
     </html>
   );
