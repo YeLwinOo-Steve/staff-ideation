@@ -11,8 +11,8 @@ import {
 // Mock the entire repository
 jest.mock("@/api/repository", () => ({
   departmentApi: {
-    getAll: () => Promise.resolve({ data: [mockDepartment] }),
-    create: () => Promise.resolve({ data: mockDepartment }),
+    getAll: () => Promise.resolve({ data: { data: [mockDepartment] } }),
+    create: () => Promise.resolve({ data: { data: mockDepartment } }),
   },
   ideaApi: {
     getAll: () =>
@@ -26,8 +26,8 @@ jest.mock("@/api/repository", () => ({
     submit: () => Promise.resolve({ data: { ...mockIdea, is_enabled: true } }),
   },
   categoryApi: {
-    getAll: () => Promise.resolve({ data: [mockCategory] }),
-    create: () => Promise.resolve({ data: mockCategory }),
+    getAll: () => Promise.resolve({ data: { data: [mockCategory] } }),
+    create: () => Promise.resolve({ data: { data: mockCategory } }),
   },
   systemSettingApi: {
     getAll: () => Promise.resolve({ data: [mockSystemSetting] }),
