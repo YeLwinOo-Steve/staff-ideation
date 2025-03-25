@@ -3,6 +3,8 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { ToastProvider } from "@/components/toast";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -20,6 +22,7 @@ export default function RootLayout({
       <body className={inter.className} suppressHydrationWarning>
         <ToastProvider>{children}</ToastProvider>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
