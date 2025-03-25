@@ -110,7 +110,7 @@ describe("API Store", () => {
       jest.spyOn(api.ideaApi, "getAll").mockRejectedValueOnce(mockIdeasError);
 
       await expect(useApiStore.getState().fetchIdeas()).rejects.toThrow(
-        "Failed to fetch ideas"
+        "Failed to fetch ideas",
       );
       expect(useApiStore.getState().error).toBe("Failed to fetch ideas");
     });
@@ -139,7 +139,9 @@ describe("API Store", () => {
     it("should update system setting and refresh list", async () => {
       const updateData = { academic_year: "2025" };
       await useApiStore.getState().updateSystemSetting(1, updateData);
-      expect(useApiStore.getState().systemSettings).toEqual([mockSystemSetting]);
+      expect(useApiStore.getState().systemSettings).toEqual([
+        mockSystemSetting,
+      ]);
     });
   });
 
