@@ -19,6 +19,8 @@ export const mockIdea = {
   title: "Improve Campus WiFi",
   content: "We should upgrade our WiFi infrastructure",
   is_anonymous: false,
+  is_enabled: true,
+  user_id: 1,
   category: 1,
   document: [
     {
@@ -26,6 +28,17 @@ export const mockIdea = {
       file_path: "/documents/proposal.pdf",
     },
   ],
+};
+
+export const mockPaginatedResponse = {
+  data: {
+    data: [mockIdea],
+    meta: {
+      current_page: 1,
+      last_page: 1,
+      total: 1,
+    },
+  },
 };
 
 export const mockCategory = {
