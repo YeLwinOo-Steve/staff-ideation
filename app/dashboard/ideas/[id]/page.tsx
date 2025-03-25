@@ -1,14 +1,61 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Download, Lightbulb, ThumbsDown, ThumbsUp } from "lucide-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { motion } from "framer-motion";
+import {
+  Download,
+  ThumbsDown,
+  ThumbsUp,
+  ChevronLeft,
+  Pencil,
+  Trash,
+} from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
 import { useApiStore } from "@/store/apiStore";
 import { getInitials } from "@/util/getInitials";
 import { formatDistanceToNow } from "date-fns";
 import saveAs from "file-saver";
 import JSZip from "jszip";
 import NavBar from "../../components/navBar";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: "easeOut",
+    },
+  },
+};
+
+const buttonVariants = {
+  initial: { scale: 1 },
+  tap: { scale: 0.9 },
+  hover: { scale: 1.1 },
+};
+
+const listContainerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.3,
+    },
+  },
+};
 
 const zip = new JSZip();
 
@@ -89,27 +136,25 @@ const ZipDownloadBtn = () => {
   };
 
   return (
-    <div>
+    <motion.div variants={itemVariants}>
       <button
         onClick={downloadZipFile}
-        className={`btn btn-sm btn-outline mb-2 ${
-          status === "error" ? "btn-error" : ""
-        }`}
+        className={`btn btn-sm btn-outline mb-2 ${status === "error" ? "btn-error" : ""}`}
         disabled={isLoading}
       >
         {getButtonText()}
       </button>
       {error && <div className="txt-error text-base">{error}</div>}
-    </div>
+    </motion.div>
   );
 };
 
 const IdeaDetail = () => {
   const { id } = useParams();
+  const router = useRouter();
   const [loadingStage, setLoadingStage] = useState<
     "initial" | "idea" | "comments" | "user" | "complete"
   >("initial");
-
   const {
     getIdea,
     getCommentsForIdea,
@@ -119,7 +164,6 @@ const IdeaDetail = () => {
     comments,
     isLoading,
   } = useApiStore();
-
   const [userVote, setUserVote] = useState<number>(0);
   const [voteCount, setVoteCount] = useState<number>(0);
 
@@ -127,18 +171,10 @@ const IdeaDetail = () => {
     e.preventDefault();
     e.stopPropagation();
 
-    let newVoteValue;
-    if (userVote === value) {
-      newVoteValue = 0;
-    } else {
-      newVoteValue = value;
-    }
-
+    const newVoteValue = userVote === value ? 0 : value;
     const voteDelta = newVoteValue - userVote;
     setVoteCount((prevCount) => prevCount + voteDelta);
     setUserVote(newVoteValue);
-
-    // TODO (Ye): API call to update vote
   };
 
   useEffect(() => {
@@ -149,7 +185,6 @@ const IdeaDetail = () => {
         setLoadingStage("comments");
       }
     };
-
     loadIdea();
   }, [id, getIdea, loadingStage]);
 
@@ -160,7 +195,6 @@ const IdeaDetail = () => {
         setLoadingStage("user");
       }
     };
-
     loadComments();
   }, [id, getCommentsForIdea, loadingStage]);
 
@@ -171,23 +205,24 @@ const IdeaDetail = () => {
         setLoadingStage("complete");
       }
     };
-
     loadUser();
   }, [idea, getUser, loadingStage]);
 
-  const showLoading = loadingStage !== "complete" || isLoading;
-
-  if (showLoading) {
+  if (loadingStage !== "complete" || isLoading) {
     return (
       <div className="bg-base-100 min-h-screen">
-        <div className="flex flex-col justify-center items-center h-64 gap-4">
+        <motion.div
+          className="flex flex-col justify-center items-center h-64 gap-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
           <span className="loading loading-spinner loading-lg"></span>
           <div className="text-base-content/60">
             {loadingStage === "idea" && "Loading idea details..."}
             {loadingStage === "comments" && "Loading comments..."}
             {loadingStage === "user" && "Loading user information..."}
           </div>
-        </div>
+        </motion.div>
       </div>
     );
   }
@@ -195,14 +230,18 @@ const IdeaDetail = () => {
   if (!idea) {
     return (
       <div className="bg-base-100 min-h-screen">
-        <div className="flex justify-center items-center h-64">
+        <motion.div
+          className="flex justify-center items-center h-64"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
           <div className="alert alert-error max-w-md">
             <span>
               Failed to load idea. The idea may not exist or you don&apos;t have
               permission to view it.
             </span>
           </div>
-        </div>
+        </motion.div>
       </div>
     );
   }
@@ -210,45 +249,55 @@ const IdeaDetail = () => {
   return (
     <div className="bg-base-100 min-h-screen">
       <NavBar />
-      <div className="px-6 py-4">
-        <div className="flex justify-between items-center">
-          <div className="breadcrumbs text-sm">
-            <ul>
-              <li>
-                <Link
-                  href="/dashboard"
-                  className="inline-flex items-center gap-2"
-                >
-                  <Lightbulb size={16} />
-                  Home
-                </Link>
-              </li>
-              <li>
-                <span className="inline-flex items-center gap-2">
-                  Idea Detail {id}
-                </span>
-              </li>
-            </ul>
-          </div>
-          <div className="flex gap-2">
-            <button className="btn btn-primary btn-sm">Edit</button>
-            <button className="btn btn-error btn-sm">Delete</button>
+      <motion.div
+        className="px-6 py-4"
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+      >
+        {/* Back button section */}
+        <div className="flex justify-between mx-4 my-2">
+          <motion.button
+            variants={itemVariants}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="btn btn-ghost btn-md mb-4"
+            onClick={() => router.back()}
+          >
+            <ChevronLeft size={24} />
+            <span className="font-bold">Back to ideas</span>
+          </motion.button>
+          <div className="flex gap-2 mb-4">
+            <button className="btn btn-sm">
+              <Pencil size={16} />
+              <span className="font-bold">Edit</span>
+            </button>
+            <button className="btn btn-sm btn-error">
+              <Trash size={16} />
+              <span className="font-bold">Delete</span>
+            </button>
           </div>
         </div>
-        <div className="my-4 max-w-4xl mx-auto">
-          <div className="bg-base-200 p-4 rounded-lg mb-4">
-            <h1 className="font-bold text-2xl">{idea?.title}</h1>
-            <div className="flex justify-between items-end gap-2 mt-4">
-              <div className="flex items-center gap-2">
+
+        <div className="max-w-4xl mx-auto p-6">
+          {/* Header section */}
+          <motion.div
+            variants={itemVariants}
+            className="bg-base-200 p-6 rounded-lg mb-6"
+          >
+            <h1 className="font-bold text-2xl mb-4">{idea.title}</h1>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-3">
                 <div className="avatar placeholder">
                   <div className="bg-base-100 text-primary-content mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
-                    {getInitials(user?.name || "")}
+                    {idea.is_anonymous ? "A" : getInitials(user?.name || "")}
                   </div>
                 </div>
-
                 <div className="flex flex-col">
-                  <span className="font-semibold text-md">{user?.name}</span>
-                  {idea?.updated_at && (
+                  <span className="font-semibold text-md">
+                    {idea.is_anonymous ? "Anonymous User" : user?.name}
+                  </span>
+                  {idea.updated_at && (
                     <span className="text-xs opacity-70">
                       {formatDistanceToNow(new Date(idea.updated_at), {
                         addSuffix: true,
@@ -259,60 +308,130 @@ const IdeaDetail = () => {
               </div>
               <ZipDownloadBtn />
             </div>
-          </div>
-          <p className="text-lg my-6">{idea?.content}</p>
-          <div className="card-actions justify-between lg:justify-end items-center mt-auto pt-4">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 lg:mr-8">
-                <ThumbsUp
-                  className={`btn btn-md btn-square p-1 ${userVote === 1 ? "btn-primary" : "btn-ghost"}`}
-                  onClick={(e) => handleVote(1, e)}
-                />
-                <span className="text-md font-bold min-w-6 text-center">
-                  {voteCount || 0}
-                </span>
-                <ThumbsDown
-                  className={`btn btn-md btn-square p-1 ${userVote === -1 ? "btn-error" : "btn-ghost"}`}
-                  onClick={(e) => handleVote(-1, e)}
-                />
-              </div>
+          </motion.div>
+
+          {/* Content section */}
+          <motion.div variants={itemVariants} className="prose max-w-none mb-8">
+            <p className="text-lg">{idea.content}</p>
+          </motion.div>
+
+          {/* Voting section */}
+          <motion.div
+            variants={itemVariants}
+            className="flex justify-end items-center gap-3 mb-8"
+          >
+            <div className="flex items-center gap-2 lg:mr-8">
+              <motion.button
+                variants={buttonVariants}
+                initial="initial"
+                whileTap="tap"
+                whileHover="hover"
+                className={`p-2 rounded-full transition-colors duration-200 ${
+                  userVote === 1 ? "bg-primary/10" : "hover:bg-primary/5"
+                }`}
+                onClick={(e) => handleVote(1, e)}
+              >
+                <motion.div
+                  animate={{
+                    scale: userVote === 1 ? [1, 1.2, 1] : 1,
+                    transition: { duration: 0.2 },
+                  }}
+                >
+                  <ThumbsUp
+                    className={`w-8 h-8 transition-colors duration-200 ${
+                      userVote === 1
+                        ? "stroke-primary fill-primary"
+                        : "stroke-gray-600 hover:stroke-primary"
+                    }`}
+                  />
+                </motion.div>
+              </motion.button>
+
+              <span className="text-md font-bold min-w-[2rem] text-center">
+                {voteCount || 0}
+              </span>
+
+              <motion.button
+                variants={buttonVariants}
+                initial="initial"
+                whileTap="tap"
+                whileHover="hover"
+                className={`p-2 rounded-full transition-colors duration-200 ${
+                  userVote === -1 ? "bg-error/10" : "hover:bg-error/5"
+                }`}
+                onClick={(e) => handleVote(-1, e)}
+              >
+                <motion.div
+                  animate={{
+                    scale: userVote === -1 ? [1, 1.2, 1] : 1,
+                    transition: { duration: 0.2 },
+                  }}
+                >
+                  <ThumbsDown
+                    className={`w-8 h-8 transition-colors duration-200 ${
+                      userVote === -1
+                        ? "stroke-error fill-error"
+                        : "stroke-gray-600 hover:stroke-error"
+                    }`}
+                  />
+                </motion.div>
+              </motion.button>
             </div>
-          </div>
-          <hr className="my-4" />
-          {comments.length === 0 ? (
-            <p className="text-center text-sm opacity-70">No comments yet</p>
-          ) : (
-            comments.map((comment) => (
-              <div key={comment.id}>
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="avatar placeholder">
-                    <div className="bg-base-200 text-primary-content mask mask-squircle w-8 h-8 flex items-center justify-center text-xs font-bold">
-                      {comment.is_anonymous
-                        ? "?"
-                        : getInitials(comment.user_name)}
+          </motion.div>
+
+          {/* Comments section */}
+          <motion.div variants={listContainerVariants} className="mt-8">
+            <motion.h2
+              variants={itemVariants}
+              className="text-xl font-bold mb-4 flex items-center gap-2"
+            >
+              Comments{" "}
+              <span className="badge badge-outline text-sm opacity-70">
+                {comments.length}
+              </span>
+            </motion.h2>
+            {comments.length === 0 ? (
+              <motion.p
+                variants={itemVariants}
+                className="text-center text-sm opacity-70"
+              >
+                No comments yet
+              </motion.p>
+            ) : (
+              comments.map((comment) => (
+                <motion.div
+                  key={comment.id}
+                  variants={itemVariants}
+                  className="bg-base-200 p-4 rounded-lg mb-4"
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="avatar placeholder">
+                      <div className="bg-base-100 text-primary-content mask mask-squircle w-8 h-8 flex items-center justify-center text-xs font-bold">
+                        {comment.is_anonymous
+                          ? "?"
+                          : getInitials(comment.user_name)}
+                      </div>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="font-semibold text-sm">
+                        {comment.user_name}
+                      </span>
+                      {comment.created_at && (
+                        <span className="text-xs opacity-70">
+                          {formatDistanceToNow(new Date(comment.created_at), {
+                            addSuffix: true,
+                          })}
+                        </span>
+                      )}
                     </div>
                   </div>
-
-                  <div className="flex flex-col">
-                    <span className="font-semibold text-sm">
-                      {comment.user_name}
-                    </span>
-                    {comment.created_at && (
-                      <span className="text-xs opacity-70">
-                        {formatDistanceToNow(new Date(comment.created_at), {
-                          addSuffix: true,
-                        })}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <p className="text-md my-4">{comment.comment}</p>
-                <hr className="my-2" />
-              </div>
-            ))
-          )}
+                  <p className="text-md ml-12">{comment.comment}</p>
+                </motion.div>
+              ))
+            )}
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

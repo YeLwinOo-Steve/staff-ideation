@@ -1,0 +1,244 @@
+"use client";
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { Calendar, ChevronLeft, Send } from "lucide-react";
+import NavBar from "../../components/navBar";
+import FilePreview from "../../components/filePreview";
+import { useApiStore } from "@/store/apiStore";
+import { useAuthStore } from "@/store/authStore";
+import { getInitials } from "@/util/getInitials";
+import { useToast } from "@/components/toast";
+import CategoryChip from "../../components/categoryChip";
+import Image from "next/image";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 },
+};
+
+const IdeaCreatePage = () => {
+  const router = useRouter();
+  const { showSuccessToast, showErrorToast } = useToast();
+  const { fetchCategories, createIdea, categories } = useApiStore();
+  const { user: authUser } = useAuthStore();
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+  const [formData, setFormData] = useState({
+    title: "",
+    content: "",
+    isAnonymous: false,
+    agreeToTerms: false,
+  });
+  const [files, setFiles] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
+  const handleCategoryToggle = (categoryId: number) => {
+    setSelectedCategories((prev) =>
+      prev.includes(categoryId)
+        ? prev.filter((id) => id !== categoryId)
+        : [...prev, categoryId],
+    );
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.agreeToTerms) {
+      showErrorToast("You must agree to the terms of use and privacy policy");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const ideaFormData = new FormData();
+      ideaFormData.append("title", formData.title);
+      ideaFormData.append("content", formData.content);
+      ideaFormData.append("is_anonymous", String(formData.isAnonymous));
+      selectedCategories.forEach((catId) => {
+        ideaFormData.append("categories[]", String(catId));
+      });
+      files.forEach((file) => {
+        ideaFormData.append("files[]", file);
+      });
+
+      await createIdea(ideaFormData);
+      router.push("/dashboard");
+      showSuccessToast("Idea created successfully");
+    } catch (error) {
+      showErrorToast(
+        error instanceof Error ? error.message : "Failed to create idea",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-base-100">
+      <NavBar />
+      <button className="btn btn-ghost btn-md" onClick={() => router.back()}>
+        <ChevronLeft size={24} />
+        <h1 className="font-bold">Back to ideas</h1>
+      </button>
+      <motion.div
+        className="max-w-4xl mx-auto p-6"
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+      >
+        <motion.div
+          variants={itemVariants}
+          className="flex justify-between items-center gap-4 mb-8"
+        >
+          <div className="flex items-center gap-4">
+            <div className="avatar placeholder">
+              <div className="bg-base-200 mask mask-squircle w-12">
+                {authUser?.photo ? (
+                  <Image
+                    src={authUser.photo}
+                    alt={authUser.name}
+                    className="rounded-full"
+                  />
+                ) : (
+                  <span className="text-lg">
+                    {getInitials(authUser?.name || "")}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold">
+                {formData.isAnonymous ? "Anonymous User" : authUser?.name}
+              </h1>
+              <p className="text-base-content/60">{authUser?.email}</p>
+            </div>
+          </div>
+          <span className="text-base-content/60 flex items-center gap-2">
+            <Calendar size={16} />
+            {new Date().toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </span>
+        </motion.div>
+
+        <form onSubmit={handleSubmit}>
+          <motion.div variants={itemVariants} className="form-control mb-6">
+            <input
+              type="text"
+              placeholder="Enter your idea title"
+              className="input input-bordered input-md w-full text-md"
+              value={formData.title}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, title: e.target.value }))
+              }
+            />
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="form-control mb-6">
+            <textarea
+              className="textarea textarea-bordered min-h-[200px]"
+              placeholder="Share your thoughts..."
+              value={formData.content}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, content: e.target.value }))
+              }
+            />
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="mb-6">
+            <label className="label">
+              <span className="label-text text-lg font-semibold">
+                Categories
+              </span>
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {categories.map((category) => (
+                <CategoryChip
+                  key={category.id}
+                  category={category}
+                  isSelected={selectedCategories.includes(category.id)}
+                  onClick={handleCategoryToggle}
+                />
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div variants={itemVariants}>
+            <FilePreview setFiles={setFiles} />
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="form-control mb-6">
+            <label className="label cursor-pointer justify-start gap-4">
+              <input
+                type="checkbox"
+                className="checkbox checkbox-primary"
+                checked={formData.isAnonymous}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    isAnonymous: e.target.checked,
+                  }))
+                }
+              />
+              <span className="label-text">Post anonymously</span>
+            </label>
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="form-control mb-8">
+            <label className="label cursor-pointer justify-start gap-4">
+              <input
+                type="checkbox"
+                className="checkbox checkbox-primary"
+                checked={formData.agreeToTerms}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    agreeToTerms: e.target.checked,
+                  }))
+                }
+              />
+              <span className="label-text">
+                I agree to the terms of use and privacy policy
+              </span>
+            </label>
+          </motion.div>
+
+          <motion.button
+            variants={itemVariants}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className={`btn btn-primary btn-lg gap-2 ${isSubmitting ? "loading" : ""}`}
+            type="submit"
+            disabled={isSubmitting || !formData.agreeToTerms}
+          >
+            {isSubmitting ? (
+              "Creating Idea..."
+            ) : (
+              <>
+                <Send size={18} />
+                Submit Idea
+              </>
+            )}
+          </motion.button>
+        </form>
+      </motion.div>
+    </div>
+  );
+};
+
+export default IdeaCreatePage;
