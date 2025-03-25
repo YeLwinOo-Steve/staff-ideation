@@ -3,7 +3,6 @@
 import { useAuthStore } from "@/store/authStore";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import FilePreview from "@/app/dashboard/components/filePreview";
 import NavBar from "./components/navBar";
 import IdeaList from "./components/ideaList";
 import { useApiStore } from "@/store/apiStore";
@@ -13,7 +12,9 @@ export default function Dashboard() {
   const user = useAuthStore((state) => state.user);
   const {
     fetchIdeas,
+    fetchCategories,
     fetchUsers,
+    categories,
     userPagination: { total: userTotal },
     ideaPagination: { total },
   } = useApiStore();
@@ -34,26 +35,37 @@ export default function Dashboard() {
       if (!total) {
         promises.push(fetchIdeas({ page: "1" }));
       }
-
+      if (categories === null) {
+        promises.push(fetchCategories());
+      }
       if (promises.length > 0) {
         await Promise.all(promises);
       }
     };
     loadData();
-  }, [fetchIdeas, fetchUsers, router, user, userTotal, total]);
+  }, [
+    fetchIdeas,
+    fetchUsers,
+    fetchCategories,
+    categories,
+    router,
+    user,
+    userTotal,
+    total,
+  ]);
 
   return (
     <div className="min-h-screen bg-base-100">
       <NavBar />
       <div className="p-6">
         <div className="mb-8">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-wrap justify-between items-center">
             <h1 className="text-2xl font-bold">
               Welcome, {user?.name.split(" ")[0]}!
             </h1>
             <Link
               href="/dashboard/ideas/create"
-              className="btn btn-primary btn-sm"
+              className="btn btn-primary btn-md"
             >
               Submit New Idea
             </Link>
@@ -82,7 +94,6 @@ export default function Dashboard() {
         <div className="mb-8 flex flex-col items-center">
           <IdeaList gridCols={3} />
         </div>
-        <FilePreview />
 
         {/* <div className="mt-8">
           <ZipDownloadBtn />
