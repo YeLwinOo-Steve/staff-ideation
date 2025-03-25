@@ -10,9 +10,7 @@ import {
   File,
   Settings,
   Users,
-  Menu,
   BriefcaseBusiness,
-  X,
 } from "lucide-react";
 
 const pathVariants = {
