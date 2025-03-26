@@ -7,6 +7,7 @@ import { formatDistanceToNow } from "date-fns";
 import { getInitials } from "@/util/getInitials";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { AnimatedNumber } from "./animatedNumber";
 
 interface IdeaCardProps {
   idea: Idea;
@@ -68,7 +69,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
               ) : (
                 getInitials(userName)
               )} */}
-              {isAnonymous ? "?" : getInitials(userName)}
+              {isAnonymous ? "A" : getInitials(userName)}
             </div>
           </div>
 
@@ -127,9 +128,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
                 </motion.div>
               </motion.button>
 
-              <span className="text-md font-bold min-w-[2rem] text-center">
-                {voteCount || 0}
-              </span>
+              <AnimatedNumber value={voteCount} />
 
               <motion.button
                 variants={buttonVariants}

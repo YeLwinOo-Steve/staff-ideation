@@ -16,6 +16,7 @@ import { formatDistanceToNow } from "date-fns";
 import saveAs from "file-saver";
 import JSZip from "jszip";
 import NavBar from "../../components/navBar";
+import { AnimatedNumber } from "../../components/animatedNumber";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -347,9 +348,7 @@ const IdeaDetail = () => {
                 </motion.div>
               </motion.button>
 
-              <span className="text-md font-bold min-w-[2rem] text-center">
-                {voteCount || 0}
-              </span>
+              <AnimatedNumber value={voteCount} />
 
               <motion.button
                 variants={buttonVariants}
