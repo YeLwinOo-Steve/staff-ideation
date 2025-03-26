@@ -48,11 +48,17 @@ const dropdownVariants = {
 const NavBar = () => {
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [activeMenu, setActiveMenu] = useState<string>("/dashboard");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const navigateTo = (path: string) => {
     router.push(path);
     setIsDropdownOpen(false);
+  };
+
+  const handleMenuClick = (menu: string) => {
+    setActiveMenu(menu);
+    router.push(menu);
   };
 
   useEffect(() => {
@@ -78,39 +84,59 @@ const NavBar = () => {
 
         {/* Desktop menu */}
         <div className="hidden md:flex gap-2">
-          <ul className="menu bg-base-200 menu-horizontal rounded-box">
+          <ul className="menu bg-base-200 menu-horizontal gap-1 rounded-xl">
             <li>
-              <a onClick={() => navigateTo("/dashboard")}>
+              <a
+                onClick={() => handleMenuClick("/dashboard")}
+                className={activeMenu === "/dashboard" ? "active" : ""}
+              >
                 <Lightbulb size={16} />
                 Home
               </a>
             </li>
             <li>
-              <a onClick={() => navigateTo("/dashboard/users")}>
+              <a
+                onClick={() => handleMenuClick("/dashboard/users")}
+                className={activeMenu === "/dashboard/users" ? "active" : ""}
+              >
                 <Users size={16} />
                 Users
               </a>
             </li>
             <li>
-              <a onClick={() => navigateTo("/dashboard/departments")}>
+              <a
+                onClick={() => handleMenuClick("/dashboard/departments")}
+                className={
+                  activeMenu === "/dashboard/departments" ? "active" : ""
+                }
+              >
                 <BriefcaseBusiness size={16} />
                 Departments
               </a>
             </li>
             <li>
-              <a onClick={() => navigateTo("/dashboard/category")}>
+              <a
+                onClick={() => handleMenuClick("/dashboard/category")}
+                className={activeMenu === "/dashboard/category" ? "active" : ""}
+              >
                 <Tags size={16} />
                 Category
               </a>
             </li>
             <li>
-              <a onClick={() => navigateTo("/dashboard/reports")}>
+              <a
+                onClick={() => handleMenuClick("/dashboard/reports")}
+                className={activeMenu === "/dashboard/reports" ? "active" : ""}
+              >
                 <File size={16} />
                 Reports
               </a>
             </li>
             <li>
-              <a onClick={() => navigateTo("/dashboard/settings")}>
+              <a
+                onClick={() => handleMenuClick("/dashboard/settings")}
+                className={activeMenu === "/dashboard/settings" ? "active" : ""}
+              >
                 <Settings size={16} />
                 Settings
               </a>
