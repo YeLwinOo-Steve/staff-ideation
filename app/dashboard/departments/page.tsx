@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
-import NavBar from "../components/navBar";
 import { useApiStore } from "@/store/apiStore";
 import { PencilIcon, Trash2Icon, PlusIcon } from "lucide-react";
 import { useToast } from "@/components/toast";
@@ -163,112 +162,108 @@ const DepartmentsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-base-100">
-      <NavBar />
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-        className="p-6"
-      >
-        <div className="flex justify-between items-center mb-6">
-          <motion.h1 variants={itemVariants} className="text-2xl font-bold">
-            Departments
-          </motion.h1>
-          <motion.button
-            variants={itemVariants}
-            className="btn btn-primary"
-            onClick={() => setIsEditModalOpen(true)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <PlusIcon className="w-4 h-4" />
-            Add Department
-          </motion.button>
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="p-6"
+    >
+      <div className="flex justify-between items-center mb-6">
+        <motion.h1 variants={itemVariants} className="text-2xl font-bold">
+          Departments
+        </motion.h1>
+        <motion.button
+          variants={itemVariants}
+          className="btn btn-primary"
+          onClick={() => setIsEditModalOpen(true)}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <PlusIcon className="w-4 h-4" />
+          Add Department
+        </motion.button>
+      </div>
+
+      {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <span className="loading loading-spinner loading-lg"></span>
         </div>
+      ) : (
+        <motion.div
+          variants={containerVariants}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          {departments.map((department) => (
+            <DepartmentCard
+              key={department.id}
+              department={department}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              qaCoordinator={qaCoordinators[department.QACoordinatorID]}
+            />
+          ))}
+        </motion.div>
+      )}
 
-        {isLoading ? (
-          <div className="flex justify-center items-center h-64">
-            <span className="loading loading-spinner loading-lg"></span>
+      {/* Edit Modal */}
+      <dialog className={`modal ${isEditModalOpen ? "modal-open" : ""}`}>
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">
+            {selectedDepartment ? "Edit" : "Add"} Department
+          </h3>
+          <div className="form-control w-full">
+            <label className="label">
+              <span className="label-text">Department Name</span>
+            </label>
+            <input
+              type="text"
+              className="input input-bordered w-full"
+              value={departmentName}
+              onChange={(e) => setDepartmentName(e.target.value)}
+            />
           </div>
-        ) : (
-          <motion.div
-            variants={containerVariants}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            {departments.map((department) => (
-              <DepartmentCard
-                key={department.id}
-                department={department}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                qaCoordinator={qaCoordinators[department.QACoordinatorID]}
-              />
-            ))}
-          </motion.div>
-        )}
+          <div className="modal-action">
+            <button
+              className="btn btn-ghost"
+              onClick={() => setIsEditModalOpen(false)}
+            >
+              Cancel
+            </button>
+            <button className="btn btn-primary" onClick={handleEditSubmit}>
+              Save
+            </button>
+          </div>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button onClick={() => setIsEditModalOpen(false)}>close</button>
+        </form>
+      </dialog>
 
-        {/* Edit Modal */}
-        <dialog className={`modal ${isEditModalOpen ? "modal-open" : ""}`}>
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">
-              {selectedDepartment ? "Edit" : "Add"} Department
-            </h3>
-            <div className="form-control w-full">
-              <label className="label">
-                <span className="label-text">Department Name</span>
-              </label>
-              <input
-                type="text"
-                className="input input-bordered w-full"
-                value={departmentName}
-                onChange={(e) => setDepartmentName(e.target.value)}
-              />
-            </div>
-            <div className="modal-action">
-              <button
-                className="btn btn-ghost"
-                onClick={() => setIsEditModalOpen(false)}
-              >
-                Cancel
-              </button>
-              <button className="btn btn-primary" onClick={handleEditSubmit}>
-                Save
-              </button>
-            </div>
+      {/* Delete Confirmation Modal */}
+      <dialog className={`modal ${isDeleteModalOpen ? "modal-open" : ""}`}>
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Confirm Delete</h3>
+          <p className="py-4">
+            Are you sure you want to delete{" "}
+            {selectedDepartment?.department_name}? This action cannot be undone.
+          </p>
+          <div className="modal-action">
+            <button
+              className="btn btn-ghost"
+              onClick={() => setIsDeleteModalOpen(false)}
+            >
+              Cancel
+            </button>
+            <button className="btn btn-error" onClick={handleDeleteConfirm}>
+              Delete
+            </button>
           </div>
-          <form method="dialog" className="modal-backdrop">
-            <button onClick={() => setIsEditModalOpen(false)}>close</button>
-          </form>
-        </dialog>
-
-        {/* Delete Confirmation Modal */}
-        <dialog className={`modal ${isDeleteModalOpen ? "modal-open" : ""}`}>
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">Confirm Delete</h3>
-            <p className="py-4">
-              Are you sure you want to delete{" "}
-              {selectedDepartment?.department_name}? This action cannot be
-              undone.
-            </p>
-            <div className="modal-action">
-              <button
-                className="btn btn-ghost"
-                onClick={() => setIsDeleteModalOpen(false)}
-              >
-                Cancel
-              </button>
-              <button className="btn btn-error" onClick={handleDeleteConfirm}>
-                Delete
-              </button>
-            </div>
-          </div>
-          <form method="dialog" className="modal-backdrop">
-            <button onClick={() => setIsDeleteModalOpen(false)}>close</button>
-          </form>
-        </dialog>
-      </motion.div>
-    </div>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button onClick={() => setIsDeleteModalOpen(false)}>close</button>
+        </form>
+      </dialog>
+    </motion.div>
   );
 };
 

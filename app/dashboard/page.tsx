@@ -3,7 +3,6 @@
 import { useAuthStore } from "@/store/authStore";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import NavBar from "./components/navBar";
 import IdeaList from "./components/ideaList";
 import { useApiStore } from "@/store/apiStore";
 import Link from "next/link";
@@ -55,50 +54,47 @@ export default function Dashboard() {
   ]);
 
   return (
-    <div className="min-h-screen bg-base-100">
-      <NavBar />
-      <div className="p-6">
-        <div className="mb-8">
-          <div className="flex flex-wrap justify-between items-center">
-            <h1 className="text-2xl font-bold">
-              Welcome, {user?.name.split(" ")[0]}!
-            </h1>
-            <Link
-              href="/dashboard/ideas/create"
-              className="btn btn-primary btn-md"
-            >
-              Submit New Idea
-            </Link>
+    <div className="p-6">
+      <div className="mb-8">
+        <div className="flex flex-wrap justify-between items-center">
+          <h1 className="text-2xl font-bold">
+            Welcome, {user?.name.split(" ")[0]}!
+          </h1>
+          <Link
+            href="/dashboard/ideas/create"
+            className="btn btn-primary btn-md"
+          >
+            Submit New Idea
+          </Link>
+        </div>
+
+        <div className="flex flex-wrap gap-4 my-4">
+          <div className="stats shadow">
+            <div className="stat">
+              <div className="stat-title">Total Ideas</div>
+              <div className="stat-value">{total}</div>
+              <div className="stat-desc">Number of ideas</div>
+            </div>
           </div>
 
-          <div className="flex flex-wrap gap-4 my-4">
-            <div className="stats shadow">
-              <div className="stat">
-                <div className="stat-title">Total Ideas</div>
-                <div className="stat-value">{total}</div>
-                <div className="stat-desc">Number of ideas</div>
-              </div>
-            </div>
-
-            <div className="stats shadow">
-              <div className="stat">
-                <div className="stat-title">Total Users</div>
-                <div className="stat-value">{userTotal}</div>
-                <div className="stat-desc">Users in EWSD</div>
-              </div>
+          <div className="stats shadow">
+            <div className="stat">
+              <div className="stat-title">Total Users</div>
+              <div className="stat-value">{userTotal}</div>
+              <div className="stat-desc">Users in EWSD</div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Ideas Section */}
-        <div className="mb-8 flex flex-col items-center">
-          <IdeaList gridCols={3} />
-        </div>
+      {/* Ideas Section */}
+      <div className="mb-8 flex flex-col items-center">
+        <IdeaList gridCols={3} />
+      </div>
 
-        {/* <div className="mt-8">
+      {/* <div className="mt-8">
           <ZipDownloadBtn />
         </div> */}
-      </div>
     </div>
   );
 }

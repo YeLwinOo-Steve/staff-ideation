@@ -208,10 +208,7 @@ const CreateUser = () => {
         <motion.div variants={containerVariants} className="max-w-3xl mx-auto">
           <FormProvider {...methods}>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <motion.div
-                variants={containerVariants}
-                className="flex flex-col md:flex-row gap-6"
-              >
+              <div className="flex flex-col md:flex-row gap-6">
                 <motion.div variants={itemVariants}>
                   <UserPhotoUpload
                     initialPhoto={null}
@@ -257,7 +254,7 @@ const CreateUser = () => {
                     />
                   </motion.div>
                 </motion.div>
-              </motion.div>
+              </div>
 
               <motion.div
                 variants={itemVariants}

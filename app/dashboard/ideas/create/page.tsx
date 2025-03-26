@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Calendar, ChevronLeft, Send } from "lucide-react";
-import NavBar from "../../components/navBar";
 import FilePreview from "../../components/filePreview";
 import { useApiStore } from "@/store/apiStore";
 import { useAuthStore } from "@/store/authStore";
@@ -87,8 +86,7 @@ const IdeaCreatePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-base-100">
-      <NavBar />
+    <div className="p-6">
       <button className="btn btn-ghost btn-md" onClick={() => router.back()}>
         <ChevronLeft size={24} />
         <h1 className="font-bold">Back to ideas</h1>
@@ -110,6 +108,8 @@ const IdeaCreatePage = () => {
                   <Image
                     src={authUser.photo}
                     alt={authUser.name}
+                    width={48}
+                    height={48}
                     className="rounded-full"
                   />
                 ) : (

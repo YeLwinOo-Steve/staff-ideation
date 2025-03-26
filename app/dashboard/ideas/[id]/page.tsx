@@ -15,7 +15,6 @@ import { getInitials } from "@/util/getInitials";
 import { formatDistanceToNow } from "date-fns";
 import saveAs from "file-saver";
 import JSZip from "jszip";
-import NavBar from "../../components/navBar";
 import { AnimatedNumber } from "../../components/animatedNumber";
 
 const containerVariants = {
@@ -248,8 +247,7 @@ const IdeaDetail = () => {
   }
 
   return (
-    <div className="bg-base-100 min-h-screen">
-      <NavBar />
+    <>
       <motion.div
         className="px-6 py-4"
         variants={containerVariants}
@@ -431,7 +429,7 @@ const IdeaDetail = () => {
           </motion.div>
         </div>
       </motion.div>
-    </div>
+    </>
   );
 };
 

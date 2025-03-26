@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
-import NavBar from "../components/navBar";
 import { useApiStore } from "@/store/apiStore";
 import { PencilIcon, Trash2Icon, PlusIcon } from "lucide-react";
 import { useToast } from "@/components/toast";
@@ -149,129 +148,126 @@ const CategoryPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-base-100">
-      <NavBar />
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-        className="p-6"
-      >
-        <div className="flex justify-between items-center mb-6">
-          <motion.h1 variants={itemVariants} className="text-2xl font-bold">
-            Categories
-          </motion.h1>
-          <motion.button
-            variants={itemVariants}
-            className="btn btn-primary"
-            onClick={() => {
-              setSelectedCategory(null);
-              setCategoryName("");
-              setIsEditModalOpen(true);
-            }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <PlusIcon className="w-4 h-4" />
-            Add Category
-          </motion.button>
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="p-6"
+    >
+      <div className="flex justify-between items-center mb-6">
+        <motion.h1 variants={itemVariants} className="text-2xl font-bold">
+          Categories
+        </motion.h1>
+        <motion.button
+          variants={itemVariants}
+          className="btn btn-primary"
+          onClick={() => {
+            setSelectedCategory(null);
+            setCategoryName("");
+            setIsEditModalOpen(true);
+          }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <PlusIcon className="w-4 h-4" />
+          Add Category
+        </motion.button>
+      </div>
+
+      {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <span className="loading loading-spinner loading-lg"></span>
         </div>
+      ) : (
+        <motion.div
+          variants={containerVariants}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          {categories.map((category) => (
+            <CategoryCard
+              key={category.id}
+              category={category}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          ))}
+        </motion.div>
+      )}
 
-        {isLoading ? (
-          <div className="flex justify-center items-center h-64">
-            <span className="loading loading-spinner loading-lg"></span>
+      {/* Edit/Create Modal */}
+      <dialog className={`modal ${isEditModalOpen ? "modal-open" : ""}`}>
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">
+            {selectedCategory ? "Edit" : "Add"} Category
+          </h3>
+          <div className="form-control w-full">
+            <label className="label">
+              <span className="label-text">Category Name</span>
+            </label>
+            <input
+              type="text"
+              className="input input-bordered w-full"
+              value={categoryName}
+              onChange={(e) => setCategoryName(e.target.value)}
+              placeholder="Enter category name"
+            />
           </div>
-        ) : (
-          <motion.div
-            variants={containerVariants}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            {categories.map((category) => (
-              <CategoryCard
-                key={category.id}
-                category={category}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            ))}
-          </motion.div>
-        )}
+          <div className="modal-action">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="btn btn-ghost"
+              onClick={() => setIsEditModalOpen(false)}
+            >
+              Cancel
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="btn btn-primary"
+              onClick={handleEditSubmit}
+            >
+              {selectedCategory ? "Update" : "Create"}
+            </motion.button>
+          </div>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button onClick={() => setIsEditModalOpen(false)}>close</button>
+        </form>
+      </dialog>
 
-        {/* Edit/Create Modal */}
-        <dialog className={`modal ${isEditModalOpen ? "modal-open" : ""}`}>
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">
-              {selectedCategory ? "Edit" : "Add"} Category
-            </h3>
-            <div className="form-control w-full">
-              <label className="label">
-                <span className="label-text">Category Name</span>
-              </label>
-              <input
-                type="text"
-                className="input input-bordered w-full"
-                value={categoryName}
-                onChange={(e) => setCategoryName(e.target.value)}
-                placeholder="Enter category name"
-              />
-            </div>
-            <div className="modal-action">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn btn-ghost"
-                onClick={() => setIsEditModalOpen(false)}
-              >
-                Cancel
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn btn-primary"
-                onClick={handleEditSubmit}
-              >
-                {selectedCategory ? "Update" : "Create"}
-              </motion.button>
-            </div>
+      {/* Delete Confirmation Modal */}
+      <dialog className={`modal ${isDeleteModalOpen ? "modal-open" : ""}`}>
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Confirm Delete</h3>
+          <p className="py-4">
+            Are you sure you want to delete {selectedCategory?.name}? This
+            action cannot be undone.
+          </p>
+          <div className="modal-action">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="btn btn-ghost"
+              onClick={() => setIsDeleteModalOpen(false)}
+            >
+              Cancel
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="btn btn-error"
+              onClick={handleDeleteConfirm}
+            >
+              Delete
+            </motion.button>
           </div>
-          <form method="dialog" className="modal-backdrop">
-            <button onClick={() => setIsEditModalOpen(false)}>close</button>
-          </form>
-        </dialog>
-
-        {/* Delete Confirmation Modal */}
-        <dialog className={`modal ${isDeleteModalOpen ? "modal-open" : ""}`}>
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">Confirm Delete</h3>
-            <p className="py-4">
-              Are you sure you want to delete {selectedCategory?.name}? This
-              action cannot be undone.
-            </p>
-            <div className="modal-action">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn btn-ghost"
-                onClick={() => setIsDeleteModalOpen(false)}
-              >
-                Cancel
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn btn-error"
-                onClick={handleDeleteConfirm}
-              >
-                Delete
-              </motion.button>
-            </div>
-          </div>
-          <form method="dialog" className="modal-backdrop">
-            <button onClick={() => setIsDeleteModalOpen(false)}>close</button>
-          </form>
-        </dialog>
-      </motion.div>
-    </div>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button onClick={() => setIsDeleteModalOpen(false)}>close</button>
+        </form>
+      </dialog>
+    </motion.div>
   );
 };
 
