@@ -59,7 +59,9 @@ const NavBar = () => {
 
   const handleMenuClick = (menu: string) => {
     setActiveMenu(menu);
-    router.push(menu);
+    if (!menu.includes("settings")) {
+      router.push(menu);
+    }
   };
 
   useEffect(() => {
@@ -134,13 +136,29 @@ const NavBar = () => {
               </a>
             </li>
             <li>
-              <a
-                onClick={() => handleMenuClick("/dashboard/settings")}
-                className={activeMenu === "/dashboard/settings" ? "active" : ""}
-              >
-                <Settings size={16} />
-                Settings
-              </a>
+              <details open={activeMenu === "/dashboard/settings"}>
+                <summary
+                  className={
+                    activeMenu === "/dashboard/settings" ? "active" : ""
+                  }
+                >
+                  <a
+                    onClick={() => handleMenuClick("/dashboard/settings")}
+                    className={`flex items-center gap-2`}
+                  >
+                    <Settings size={16} />
+                    Settings
+                  </a>
+                </summary>
+                <ul>
+                  <li>
+                    <a>Submenu 1</a>
+                  </li>
+                  <li>
+                    <a>Submenu 2</a>
+                  </li>
+                </ul>
+              </details>
             </li>
           </ul>
         </div>
