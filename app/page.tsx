@@ -7,7 +7,7 @@ export default function Home() {
       <div className="hero-content">
         <div className="max-w-lg text-center">
           <Image
-            src="/uog-logo.svg"
+            src="/logo.png"
             width="250"
             height="52"
             alt="University of Greenwich Logo"

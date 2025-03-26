@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 import {
   Lightbulb,
@@ -79,7 +80,7 @@ const NavBar = () => {
     <>
       <div className="navbar bg-base-100">
         <div className="flex-1">
-          <a className="btn btn-ghost text-xl">EWSD</a>
+          <Image src="/logo.png" alt="EWSD" width={82} height={82} />
         </div>
 
         {/* Desktop menu */}
