@@ -190,8 +190,7 @@ const EditUser = () => {
   }
 
   return (
-    <div className="bg-base-100 min-h-screen">
-      <NavBar />
+    <>
       <div className="p-6">
         <div className="flex items-center mb-6">
           <button
@@ -274,7 +273,7 @@ const EditUser = () => {
           </FormProvider>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

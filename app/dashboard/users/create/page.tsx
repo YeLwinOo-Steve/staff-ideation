@@ -160,7 +160,7 @@ const CreateUser = () => {
     } catch (error) {
       console.error("Failed to create user:", error);
       showErrorToast(
-        error instanceof Error ? error.message : "Failed to create user",
+        error instanceof Error ? error.message : "Failed to create user"
       );
     } finally {
       setIsUploading(false);
@@ -184,8 +184,7 @@ const CreateUser = () => {
   }
 
   return (
-    <div className="bg-base-100 min-h-screen">
-      <NavBar />
+    <>
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -295,7 +294,7 @@ const CreateUser = () => {
           </FormProvider>
         </motion.div>
       </motion.div>
-    </div>
+    </>
   );
 };
 
