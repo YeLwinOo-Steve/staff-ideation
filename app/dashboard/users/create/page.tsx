@@ -160,7 +160,7 @@ const CreateUser = () => {
     } catch (error) {
       console.error("Failed to create user:", error);
       showErrorToast(
-        error instanceof Error ? error.message : "Failed to create user"
+        error instanceof Error ? error.message : "Failed to create user",
       );
     } finally {
       setIsUploading(false);
