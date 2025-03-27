@@ -89,7 +89,7 @@ const ZipDownloadBtn = () => {
           const errorMessage =
             err instanceof Error ? err.message : "An unknown error occurred";
           throw new Error(
-            `Error downloading file ${index + 1}: ${errorMessage}`,
+            `Error downloading file ${index + 1}: ${errorMessage}`
           );
         }
       }
@@ -288,7 +288,7 @@ const IdeaDetail = () => {
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-3">
                 <div className="avatar placeholder">
-                  <div className="bg-base-100 text-primary-content mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
+                  <div className="bg-primary text-white mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
                     {idea.is_anonymous ? "A" : getInitials(user?.name || "")}
                   </div>
                 </div>

@@ -27,7 +27,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
 
   const [userVote, setUserVote] = useState<number>(idea.user_vote_value || 0);
   const [voteCount, setVoteCount] = useState<number>(
-    idea.total_vote_value || 0,
+    idea.total_vote_value || 0
   );
   // If anonymous, don't show user details
   const isAnonymous = idea.is_anonymous;
@@ -59,7 +59,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
       <div className="card-body p-4">
         <div className="flex items-center gap-2 mb-2">
           <div className="avatar placeholder">
-            <div className="bg-base-100 text-primary-content mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
+            <div className="bg-primary text-white mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
               {/* {idea.user_photo && !isAnonymous ? (
                 <img
                   src={idea.user_photo}
