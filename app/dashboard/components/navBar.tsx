@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 
 import {
   Lightbulb,
@@ -12,6 +13,11 @@ import {
   Settings,
   Users,
   BriefcaseBusiness,
+  Moon,
+  Sun,
+  LogOut,
+  Sliders,
+  UserCircle,
 } from "lucide-react";
 
 const pathVariants = {
@@ -51,6 +57,8 @@ const NavBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string>("/dashboard");
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   const navigateTo = (path: string) => {
     router.push(path);
@@ -63,6 +71,14 @@ const NavBar = () => {
       router.push(menu);
     }
   };
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  useEffect(() => {
+    if (mounted && resolvedTheme) {
+      document.documentElement.setAttribute("data-theme", resolvedTheme);
+    }
+  }, [mounted, resolvedTheme]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -78,20 +94,33 @@ const NavBar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleThemeSwitch = () => {
+    const newTheme = resolvedTheme === "abyss" ? "lemonade" : "abyss";
+    console.log("Switching theme from:", resolvedTheme, "to:", newTheme); // Debug log
+    setTheme(newTheme);
+  };
+
+  const ThemeIcon = mounted ? (resolvedTheme === "abyss" ? Moon : Sun) : Sun;
+  const themeLabel = mounted
+    ? resolvedTheme === "abyss"
+      ? "Dark"
+      : "Light"
+    : "Light";
+
   return (
     <>
-      <div className="navbar bg-base-100">
+      <div className="navbar bg-base-100 z-50">
         <div className="flex-1">
           <Image src="/logo.png" alt="EWSD" width={82} height={82} />
         </div>
 
         {/* Desktop menu */}
         <div className="hidden md:flex gap-2">
-          <ul className="menu bg-base-200 menu-horizontal gap-1 rounded-xl">
+          <ul className="menu bg-base-200 menu-horizontal gap-1 rounded-xl text-base-content">
             <li>
               <a
                 onClick={() => handleMenuClick("/dashboard")}
-                className={activeMenu === "/dashboard" ? "active" : ""}
+                className={`${activeMenu === "/dashboard" ? "active" : ""} text-base-content`}
               >
                 <Lightbulb size={16} />
                 Home
@@ -150,12 +179,44 @@ const NavBar = () => {
                     Settings
                   </a>
                 </summary>
-                <ul>
+                <ul className="shadow-sm rounded-md p-2 bg-base-200 w-full z-50">
                   <li>
-                    <a>Submenu 1</a>
+                    <a
+                      onClick={() => navigateTo("/dashboard/settings/account")}
+                      className="flex items-center gap-2 py-2"
+                    >
+                      <UserCircle size={16} />
+                      Account
+                    </a>
                   </li>
                   <li>
-                    <a>Submenu 2</a>
+                    <a
+                      onClick={handleThemeSwitch}
+                      className="flex items-center gap-2 py-2 w-full"
+                    >
+                      <ThemeIcon size={16} />
+                      {themeLabel}
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      onClick={() => navigateTo("/dashboard/settings/system")}
+                      className="flex items-center gap-2 py-2"
+                    >
+                      <Sliders size={16} />
+                      System
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      onClick={() => {
+                        /* handle logout */
+                      }}
+                      className="flex items-center gap-2 py-2 text-error hover:bg-error/10"
+                    >
+                      <LogOut size={16} />
+                      Logout
+                    </a>
                   </li>
                 </ul>
               </details>
