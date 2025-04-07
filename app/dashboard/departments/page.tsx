@@ -19,6 +19,7 @@ import { useToast } from "@/components/toast";
 import { format } from "date-fns";
 import { Department, User } from "@/api/models";
 import { Avatar } from "@/app/components/Avatar";
+import { SearchableUserDropdown } from "@/app/components/SearchableUserDropdown";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -56,6 +57,10 @@ const DepartmentCard = ({
   onDelete,
   qaCoordinator,
 }: DepartmentCardProps) => {
+  const { users } = useApiStore();
+
+  const qaCoordinatorUser = users.find(u => u.id === department.QACoordinatorID);
+
   return (
     <motion.div
       variants={itemVariants}
@@ -110,7 +115,7 @@ const DepartmentCard = ({
               <div className="flex flex-col">
                 <span className="text-xs opacity-70">QA Coordinator</span>
                 <span className="text-sm font-medium">
-                  {qaCoordinator?.name || "Not assigned"}
+                  {qaCoordinatorUser?.name || "Not assigned"}
                 </span>
               </div>
             </div>
@@ -139,10 +144,14 @@ const DepartmentsPage = () => {
     departmentUsers,
     fetchDepartments,
     getDepartmentUsers,
+    createDepartment,
     updateDepartment,
     deleteDepartment,
     isLoading,
     getUser,
+    users,
+    fetchUsers,
+    userPagination,
   } = useApiStore();
 
   const { showSuccessToast, showErrorToast } = useToast();
@@ -151,9 +160,9 @@ const DepartmentsPage = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [departmentName, setDepartmentName] = useState("");
-  const [qaCoordinators, setQaCoordinators] = useState<Record<number, User>>(
-    {}
-  );
+  const [selectedQACoordinator, setSelectedQACoordinator] = useState<User | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [qaCoordinators, setQaCoordinators] = useState<User[]>([]);
 
   useEffect(() => {
     fetchDepartments().catch((error) => {
@@ -163,28 +172,50 @@ const DepartmentsPage = () => {
   }, [fetchDepartments, showErrorToast]);
 
   useEffect(() => {
-    const fetchQACoordinators = async () => {
-      const coordinators: Record<number, User> = {};
-      for (const dept of departments) {
-        if (dept.QACoordinatorID) {
-          try {
-            const user = await getUser(dept.QACoordinatorID);
-            if (user) {
-              coordinators[dept.QACoordinatorID] = user;
-            }
-          } catch (error) {
-            console.error(
-              `Failed to fetch QA Coordinator for department ${dept.id}`,
-              error
-            );
-          }
-        }
+    const loadInitialUsers = async () => {
+      if (users.length === 0) {
+        await fetchUsers(1);
       }
-      setQaCoordinators(coordinators);
+      filterQACoordinators();
     };
 
-    fetchQACoordinators();
-  }, [departments]);
+    if (isEditModalOpen) {
+      loadInitialUsers();
+    }
+  }, [users, fetchUsers, isEditModalOpen]);
+
+  const filterQACoordinators = () => {
+    const coordinators = users.filter(user => 
+      user.roles.includes("QA Coordinator") &&
+      (!searchQuery || user.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+    setQaCoordinators(coordinators);
+  };
+
+  useEffect(() => {
+    filterQACoordinators();
+  }, [searchQuery, users]);
+
+  const handleLoadMore = async () => {
+    if (userPagination.currentPage < userPagination.lastPage) {
+      await fetchUsers(userPagination.currentPage + 1);
+    }
+  };
+
+  const handleCreateDepartment = async () => {
+    try {
+      await createDepartment({
+        department_name: departmentName,
+        QACoordinatorID: selectedQACoordinator?.id,
+      });
+      showSuccessToast("Department created successfully");
+      setIsEditModalOpen(false);
+      setDepartmentName("");
+      setSelectedQACoordinator(null);
+    } catch (error) {
+      showErrorToast("Failed to create department");
+    }
+  };
 
   useEffect(() => {
     if (selectedDepartment) {
@@ -195,6 +226,12 @@ const DepartmentsPage = () => {
   const handleEdit = (department: Department) => {
     setSelectedDepartment(department);
     setDepartmentName(department.department_name);
+    if (department.QACoordinatorID) {
+      const coordinator = users.find(u => u.id === department.QACoordinatorID);
+      setSelectedQACoordinator(coordinator || null);
+    } else {
+      setSelectedQACoordinator(null);
+    }
     setIsEditModalOpen(true);
   };
 
@@ -209,13 +246,12 @@ const DepartmentsPage = () => {
     try {
       await updateDepartment(selectedDepartment.id, {
         department_name: departmentName,
-        QACoordinatorID: selectedDepartment.QACoordinatorID,
+        QACoordinatorID: selectedQACoordinator?.id,
       });
       await fetchDepartments();
       showSuccessToast("Department updated successfully");
       setIsEditModalOpen(false);
     } catch (error) {
-      console.error("Failed to update department", error);
       showErrorToast("Failed to update department");
     }
   };
@@ -252,6 +288,8 @@ const DepartmentsPage = () => {
           onClick={() => {
             setSelectedDepartment(null);
             setDepartmentName("");
+            setSelectedQACoordinator(null);
+            setSearchQuery("");
             setIsEditModalOpen(true);
           }}
           whileHover={{ scale: 1.05 }}
@@ -277,7 +315,7 @@ const DepartmentsPage = () => {
               department={department}
               onEdit={handleEdit}
               onDelete={handleDelete}
-              qaCoordinator={qaCoordinators[department.QACoordinatorID]}
+              qaCoordinator={users.find(u => u.id === department.QACoordinatorID)}
             />
           ))}
         </motion.div>
@@ -321,6 +359,24 @@ const DepartmentsPage = () => {
                 />
               </div>
 
+              <div className="form-control w-full">
+                <label className="label">
+                  <span className="label-text text-base font-medium">
+                    QA Coordinator
+                  </span>
+                </label>
+                <SearchableUserDropdown
+                  users={qaCoordinators}
+                  selectedUser={selectedQACoordinator}
+                  onSelect={setSelectedQACoordinator}
+                  onLoadMore={handleLoadMore}
+                  isLoading={userPagination.loading}
+                  hasMore={userPagination.currentPage < userPagination.lastPage}
+                  searchQuery={searchQuery}
+                  onSearchChange={setSearchQuery}
+                />
+              </div>
+
               {selectedDepartment && departmentUsers && (
                 <div className="bg-base-200/50 rounded-xl p-4 space-y-3">
                   <div className="flex items-center gap-2">
@@ -357,7 +413,12 @@ const DepartmentsPage = () => {
           <div className="bg-base-200/30 p-4 flex justify-end gap-2">
             <motion.button
               className="btn btn-ghost"
-              onClick={() => setIsEditModalOpen(false)}
+              onClick={() => {
+                setIsEditModalOpen(false);
+                setDepartmentName("");
+                setSelectedQACoordinator(null);
+                setSearchQuery("");
+              }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -365,13 +426,13 @@ const DepartmentsPage = () => {
             </motion.button>
             <motion.button
               className="btn btn-primary"
-              onClick={handleEditSubmit}
+              onClick={selectedDepartment ? handleEditSubmit : handleCreateDepartment}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               disabled={!departmentName.trim()}
             >
               <CheckCircle2 className="w-5 h-5" />
-              Save Changes
+              {selectedDepartment ? "Save Changes" : "Create Department"}
             </motion.button>
           </div>
         </motion.div>
