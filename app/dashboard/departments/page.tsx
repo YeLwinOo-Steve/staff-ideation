@@ -18,7 +18,6 @@ import {
 import { useToast } from "@/components/toast";
 import { format } from "date-fns";
 import { Department, User } from "@/api/models";
-import * as api from "@/api/repository";
 import { Avatar } from "@/app/components/Avatar";
 
 const containerVariants = {
@@ -140,8 +139,12 @@ const DepartmentsPage = () => {
     departmentUsers,
     fetchDepartments,
     getDepartmentUsers,
+    updateDepartment,
+    deleteDepartment,
     isLoading,
+    getUser,
   } = useApiStore();
+
   const { showSuccessToast, showErrorToast } = useToast();
   const [selectedDepartment, setSelectedDepartment] =
     useState<Department | null>(null);
@@ -165,8 +168,10 @@ const DepartmentsPage = () => {
       for (const dept of departments) {
         if (dept.QACoordinatorID) {
           try {
-            const user = await api.userApi.getOne(dept.QACoordinatorID);
-            coordinators[dept.QACoordinatorID] = user.data.data;
+            const user = await getUser(dept.QACoordinatorID);
+            if (user) {
+              coordinators[dept.QACoordinatorID] = user;
+            }
           } catch (error) {
             console.error(
               `Failed to fetch QA Coordinator for department ${dept.id}`,
@@ -202,7 +207,7 @@ const DepartmentsPage = () => {
     if (!selectedDepartment) return;
 
     try {
-      await api.departmentApi.update(selectedDepartment.id, {
+      await updateDepartment(selectedDepartment.id, {
         department_name: departmentName,
         QACoordinatorID: selectedDepartment.QACoordinatorID,
       });
@@ -219,7 +224,7 @@ const DepartmentsPage = () => {
     if (!selectedDepartment) return;
 
     try {
-      await api.departmentApi.delete(selectedDepartment.id);
+      await deleteDepartment(selectedDepartment.id);
       await fetchDepartments();
       showSuccessToast("Department deleted successfully");
       setIsDeleteModalOpen(false);
@@ -431,10 +436,13 @@ const DepartmentsPage = () => {
                   <div className="bg-warning/10 p-4 rounded-lg flex gap-3 items-start">
                     <OctagonX className="w-14 h-14 text-error mt-0.5" />
                     <div className="space-y-1">
-                      <p className="font-medium text-error">Cannot Delete Department</p>
+                      <p className="font-medium text-error">
+                        Cannot Delete Department
+                      </p>
                       <p className="text-sm opacity-90">
-                        This department cannot be deleted because it has active members. 
-                        Please reassign or remove all members before deleting the department.
+                        This department cannot be deleted because it has active
+                        members. Please reassign or remove all members before
+                        deleting the department.
                       </p>
                     </div>
                   </div>

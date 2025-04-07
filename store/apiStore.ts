@@ -122,6 +122,19 @@ export const useApiStore = create<ApiState>((set, get) => ({
       set({ isLoading: false });
     }
   },
+  createDepartment: async (data) => {
+    try {
+      set({ isLoading: true });
+      await api.departmentApi.create(data);
+      get().fetchDepartments();
+    } catch (error) {
+      const message = "Failed to create department";
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
   getDepartmentUsers: async (id: number) => {
     try {
       set({ isLoading: true });
@@ -252,20 +265,6 @@ export const useApiStore = create<ApiState>((set, get) => ({
       set({ roles: response.data });
     } catch (error) {
       const message = "Failed to fetch roles";
-      set({ error: message });
-      throw error;
-    } finally {
-      set({ isLoading: false });
-    }
-  },
-
-  createDepartment: async (data) => {
-    try {
-      set({ isLoading: true });
-      await api.departmentApi.create(data);
-      get().fetchDepartments();
-    } catch (error) {
-      const message = "Failed to create department";
       set({ error: message });
       throw error;
     } finally {
