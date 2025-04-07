@@ -24,6 +24,8 @@ interface ApiState {
   isLoading: boolean;
   error: string | null;
   roles: Role[];
+  allUsers: User[];
+  isLoadingAllUsers: boolean;
   ideaPagination: {
     data: Idea[];
     currentPage: number;
@@ -38,13 +40,10 @@ interface ApiState {
     total: number;
     loading: boolean;
   };
-  allUsers: User[];
-  isLoadingAllUsers: boolean;
 
-  // Roles
   fetchRoles: () => Promise<void>;
   // Departments
-  fetchDepartments: (isCache?: boolean) => Promise<void>;
+  fetchDepartments: (options?: { isCache?: boolean }) => Promise<void>;
   getDepartmentUsers: (id: number) => Promise<void>;
   createDepartment: (data: Partial<Department>) => Promise<void>;
   updateDepartment: (id: number, data: Partial<Department>) => Promise<void>;
@@ -96,6 +95,8 @@ export const useApiStore = create<ApiState>((set, get) => ({
   isLoading: false,
   error: null,
   roles: [],
+  allUsers: [],
+  isLoadingAllUsers: false,
   ideaPagination: {
     data: [],
     currentPage: 1,
@@ -110,10 +111,9 @@ export const useApiStore = create<ApiState>((set, get) => ({
     total: 0,
     loading: false,
   },
-  allUsers: [],
-  isLoadingAllUsers: false,
 
-  fetchDepartments: async ({ isCache = true }: { isCache?: boolean } = {}) => {
+  fetchDepartments: async (options?: { isCache?: boolean }) => {
+    const isCache = options?.isCache ?? true;
     if (get().departments.length > 0 && isCache) return;
 
     try {
@@ -132,7 +132,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
     try {
       set({ isLoading: true });
       await api.departmentApi.create(data);
-      await get().fetchDepartments(false);
+      await get().fetchDepartments({ isCache: false });
     } catch (error) {
       const message = "Failed to create department";
       set({ error: message });
@@ -158,7 +158,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
     try {
       set({ isLoading: true });
       await api.departmentApi.update(id, data);
-      get().fetchDepartments();
+      await get().fetchDepartments({ isCache: false });
     } catch (error) {
       const message = "Failed to update department";
       set({ error: message });
@@ -172,7 +172,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
     try {
       set({ isLoading: true });
       await api.departmentApi.delete(id);
-      get().fetchDepartments();
+      await get().fetchDepartments({ isCache: false });
     } catch (error) {
       const message = "Failed to delete department";
       set({ error: message });

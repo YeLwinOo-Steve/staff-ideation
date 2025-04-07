@@ -184,7 +184,8 @@ const DepartmentsPage = () => {
   useEffect(() => {
     const coordinators = allUsers.filter(
       (user) =>
-        user.roles.includes("QA Coordinators") &&
+        (user.roles.includes("QA Coordinators") ||
+          user.roles.includes("Administrator")) &&
         (!searchQuery ||
           user.name.toLowerCase().includes(searchQuery.toLowerCase()))
     );
@@ -197,6 +198,7 @@ const DepartmentsPage = () => {
         department_name: departmentName,
         QACoordinatorID: selectedQACoordinator?.id,
       });
+      await fetchDepartments({ isCache: false });
       showSuccessToast("Department created successfully");
       setIsEditModalOpen(false);
       setDepartmentName("");
@@ -239,7 +241,7 @@ const DepartmentsPage = () => {
         department_name: departmentName,
         QACoordinatorID: selectedQACoordinator?.id,
       });
-      await fetchDepartments();
+      await fetchDepartments({ isCache: false });
       showSuccessToast("Department updated successfully");
       setIsEditModalOpen(false);
     } catch (error) {
@@ -252,7 +254,7 @@ const DepartmentsPage = () => {
 
     try {
       await deleteDepartment(selectedDepartment.id);
-      await fetchDepartments();
+      await fetchDepartments({ isCache: false });
       showSuccessToast("Department deleted successfully");
       setIsDeleteModalOpen(false);
     } catch (error) {
