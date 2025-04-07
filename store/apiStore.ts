@@ -38,11 +38,13 @@ interface ApiState {
     total: number;
     loading: boolean;
   };
+  allUsers: User[];
+  isLoadingAllUsers: boolean;
 
   // Roles
   fetchRoles: () => Promise<void>;
   // Departments
-  fetchDepartments: () => Promise<void>;
+  fetchDepartments: (isCache?: boolean) => Promise<void>;
   getDepartmentUsers: (id: number) => Promise<void>;
   createDepartment: (data: Partial<Department>) => Promise<void>;
   updateDepartment: (id: number, data: Partial<Department>) => Promise<void>;
@@ -77,6 +79,8 @@ interface ApiState {
   // Error handling
   setError: (error: string | null) => void;
   clearError: () => void;
+
+  fetchAllUsers: () => Promise<void>;
 }
 
 export const useApiStore = create<ApiState>((set, get) => ({
@@ -106,9 +110,11 @@ export const useApiStore = create<ApiState>((set, get) => ({
     total: 0,
     loading: false,
   },
+  allUsers: [],
+  isLoadingAllUsers: false,
 
-  fetchDepartments: async () => {
-    if (get().departments.length > 0) return;
+  fetchDepartments: async ({ isCache = true }: { isCache?: boolean } = {}) => {
+    if (get().departments.length > 0 && isCache) return;
 
     try {
       set({ isLoading: true });
@@ -126,7 +132,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
     try {
       set({ isLoading: true });
       await api.departmentApi.create(data);
-      get().fetchDepartments();
+      await get().fetchDepartments(false);
     } catch (error) {
       const message = "Failed to create department";
       set({ error: message });
@@ -422,4 +428,34 @@ export const useApiStore = create<ApiState>((set, get) => ({
     set({ error });
   },
   clearError: () => set({ error: null }),
+
+  fetchAllUsers: async () => {
+    if (get().allUsers.length > 0) return;
+
+    try {
+      set({ isLoadingAllUsers: true });
+      let allUsers: User[] = [];
+      let currentPage = 1;
+      
+      const response = await api.userApi.getAll(currentPage);
+      allUsers = [...response.data.data];
+      
+      const lastPage = response.data.meta.last_page;
+      
+      const remainingPages = Array.from({ length: lastPage - 1 }, (_, i) => i + 2);
+      await Promise.all(
+        remainingPages.map(async (page) => {
+          const pageResponse = await api.userApi.getAll(page);
+          allUsers = [...allUsers, ...pageResponse.data.data];
+        })
+      );
+
+      set({ allUsers });
+    } catch (error) {
+      console.error('Failed to fetch all users:', error);
+      throw error;
+    } finally {
+      set({ isLoadingAllUsers: false });
+    }
+  },
 }));

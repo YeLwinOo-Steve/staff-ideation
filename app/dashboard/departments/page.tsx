@@ -57,10 +57,6 @@ const DepartmentCard = ({
   onDelete,
   qaCoordinator,
 }: DepartmentCardProps) => {
-  const { users } = useApiStore();
-
-  const qaCoordinatorUser = users.find(u => u.id === department.QACoordinatorID);
-
   return (
     <motion.div
       variants={itemVariants}
@@ -110,19 +106,23 @@ const DepartmentCard = ({
           <div className="grid gap-3">
             <div className="flex items-center gap-3 bg-info/5 p-3 rounded-xl">
               <div className="bg-info/10 p-2 rounded-lg">
-                <UserCircle className="w-4 h-4 text-info" />
+                <Avatar
+                  src={qaCoordinator?.photo}
+                  alt={qaCoordinator?.name}
+                  className="w-6 h-6 text-info"
+                />
               </div>
               <div className="flex flex-col">
                 <span className="text-xs opacity-70">QA Coordinator</span>
                 <span className="text-sm font-medium">
-                  {qaCoordinatorUser?.name || "Not assigned"}
+                  {qaCoordinator?.name || "Not assigned"}
                 </span>
               </div>
             </div>
 
             <div className="flex items-center gap-3 bg-info/5 p-3 rounded-xl">
               <div className="bg-info/10 p-2 rounded-lg">
-                <Clock className="w-4 h-4 text-info" />
+                <Clock className="w-6 h-6 text-primary" />
               </div>
               <div className="flex flex-col">
                 <span className="text-xs opacity-70">Last Updated</span>
@@ -151,7 +151,9 @@ const DepartmentsPage = () => {
     getUser,
     users,
     fetchUsers,
-    userPagination,
+    fetchAllUsers,
+    allUsers,
+    isLoadingAllUsers,
   } = useApiStore();
 
   const { showSuccessToast, showErrorToast } = useToast();
@@ -160,7 +162,8 @@ const DepartmentsPage = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [departmentName, setDepartmentName] = useState("");
-  const [selectedQACoordinator, setSelectedQACoordinator] = useState<User | null>(null);
+  const [selectedQACoordinator, setSelectedQACoordinator] =
+    useState<User | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [qaCoordinators, setQaCoordinators] = useState<User[]>([]);
 
@@ -172,35 +175,21 @@ const DepartmentsPage = () => {
   }, [fetchDepartments, showErrorToast]);
 
   useEffect(() => {
-    const loadInitialUsers = async () => {
-      if (users.length === 0) {
-        await fetchUsers(1);
-      }
-      filterQACoordinators();
-    };
-
-    if (isEditModalOpen) {
-      loadInitialUsers();
-    }
-  }, [users, fetchUsers, isEditModalOpen]);
-
-  const filterQACoordinators = () => {
-    const coordinators = users.filter(user => 
-      user.roles.includes("QA Coordinator") &&
-      (!searchQuery || user.name.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
-    setQaCoordinators(coordinators);
-  };
+    fetchAllUsers().catch((error) => {
+      console.error("Failed to fetch all users:", error);
+      showErrorToast("Failed to load QA coordinators");
+    });
+  }, [fetchAllUsers, showErrorToast]);
 
   useEffect(() => {
-    filterQACoordinators();
-  }, [searchQuery, users]);
-
-  const handleLoadMore = async () => {
-    if (userPagination.currentPage < userPagination.lastPage) {
-      await fetchUsers(userPagination.currentPage + 1);
-    }
-  };
+    const coordinators = allUsers.filter(
+      (user) =>
+        user.roles.includes("QA Coordinators") &&
+        (!searchQuery ||
+          user.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+    setQaCoordinators(coordinators);
+  }, [searchQuery, allUsers]);
 
   const handleCreateDepartment = async () => {
     try {
@@ -227,7 +216,9 @@ const DepartmentsPage = () => {
     setSelectedDepartment(department);
     setDepartmentName(department.department_name);
     if (department.QACoordinatorID) {
-      const coordinator = users.find(u => u.id === department.QACoordinatorID);
+      const coordinator = users.find(
+        (u) => u.id === department.QACoordinatorID
+      );
       setSelectedQACoordinator(coordinator || null);
     } else {
       setSelectedQACoordinator(null);
@@ -315,7 +306,9 @@ const DepartmentsPage = () => {
               department={department}
               onEdit={handleEdit}
               onDelete={handleDelete}
-              qaCoordinator={users.find(u => u.id === department.QACoordinatorID)}
+              qaCoordinator={allUsers.find(
+                (u) => u.id === department.QACoordinatorID
+              )}
             />
           ))}
         </motion.div>
@@ -369,9 +362,9 @@ const DepartmentsPage = () => {
                   users={qaCoordinators}
                   selectedUser={selectedQACoordinator}
                   onSelect={setSelectedQACoordinator}
-                  onLoadMore={handleLoadMore}
-                  isLoading={userPagination.loading}
-                  hasMore={userPagination.currentPage < userPagination.lastPage}
+                  onLoadMore={() => {}}
+                  isLoading={isLoadingAllUsers}
+                  hasMore={false}
                   searchQuery={searchQuery}
                   onSearchChange={setSearchQuery}
                 />
@@ -426,7 +419,9 @@ const DepartmentsPage = () => {
             </motion.button>
             <motion.button
               className="btn btn-primary"
-              onClick={selectedDepartment ? handleEditSubmit : handleCreateDepartment}
+              onClick={
+                selectedDepartment ? handleEditSubmit : handleCreateDepartment
+              }
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               disabled={!departmentName.trim()}
