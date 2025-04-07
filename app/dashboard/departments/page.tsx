@@ -218,12 +218,16 @@ const DepartmentsPage = () => {
     setSelectedDepartment(department);
     setDepartmentName(department.department_name);
     if (department.QACoordinatorID) {
-      const coordinator = users.find(
+      const coordinator = allUsers.find(
         (u) => u.id === department.QACoordinatorID
       );
       setSelectedQACoordinator(coordinator || null);
+      if (coordinator) {
+        setSearchQuery(coordinator.name);
+      }
     } else {
       setSelectedQACoordinator(null);
+      setSearchQuery("");
     }
     setIsEditModalOpen(true);
   };

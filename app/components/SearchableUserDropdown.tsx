@@ -39,6 +39,13 @@ export function SearchableUserDropdown({
     setMounted(true);
   }, []);
 
+  // Set initial search query when selected user changes
+  useEffect(() => {
+    if (selectedUser) {
+      onSearchChange(selectedUser.name);
+    }
+  }, [selectedUser, onSearchChange]);
+
   // Open dropdown when typing
   useEffect(() => {
     if (searchQuery && !isOpen) {
