@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useTheme } from "next-themes";
@@ -54,11 +54,19 @@ const dropdownVariants = {
 
 const NavBar = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [activeMenu, setActiveMenu] = useState<string>("/dashboard");
+  const [activeMenu, setActiveMenu] = useState<string>("");
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+
+  // Set active menu based on current pathname
+  useEffect(() => {
+    setActiveMenu(pathname || "/dashboard");
+    setIsSettingsOpen(pathname?.startsWith("/dashboard/settings") || false);
+  }, [pathname]);
 
   const navigateTo = (path: string) => {
     router.push(path);
@@ -67,13 +75,16 @@ const NavBar = () => {
 
   const handleMenuClick = (menu: string) => {
     setActiveMenu(menu);
-    if (!menu.includes("settings")) {
-      router.push(menu);
+    if (menu.startsWith("/dashboard/settings")) {
+      setIsSettingsOpen(true);
     }
+    router.push(menu);
   };
+
   useEffect(() => {
     setMounted(true);
   }, []);
+
   useEffect(() => {
     if (mounted && resolvedTheme) {
       document.documentElement.setAttribute("data-theme", resolvedTheme);
@@ -96,7 +107,6 @@ const NavBar = () => {
 
   const handleThemeSwitch = () => {
     const newTheme = resolvedTheme === "abyss" ? "lemonade" : "abyss";
-    console.log("Switching theme from:", resolvedTheme, "to:", newTheme); // Debug log
     setTheme(newTheme);
   };
 
@@ -138,9 +148,7 @@ const NavBar = () => {
             <li>
               <a
                 onClick={() => handleMenuClick("/dashboard/departments")}
-                className={
-                  activeMenu === "/dashboard/departments" ? "active" : ""
-                }
+                className={activeMenu === "/dashboard/departments" ? "active" : ""}
               >
                 <BriefcaseBusiness size={16} />
                 Departments
@@ -165,16 +173,16 @@ const NavBar = () => {
               </a>
             </li>
             <li>
-              <details open={activeMenu === "/dashboard/settings"}>
+              <details open={isSettingsOpen}>
                 <summary
-                  className={
-                    activeMenu === "/dashboard/settings" ? "active" : ""
-                  }
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsSettingsOpen(!isSettingsOpen);
+                    handleMenuClick("/dashboard/settings");
+                  }}
+                  className={activeMenu.startsWith("/dashboard/settings") ? "active" : ""}
                 >
-                  <a
-                    onClick={() => handleMenuClick("/dashboard/settings")}
-                    className={`flex items-center gap-2`}
-                  >
+                  <a className="flex items-center gap-2">
                     <Settings size={16} />
                     Settings
                   </a>
@@ -182,8 +190,13 @@ const NavBar = () => {
                 <ul className="shadow-sm rounded-md p-2 bg-base-200 w-full z-50">
                   <li>
                     <a
-                      onClick={() => navigateTo("/dashboard/settings/account")}
-                      className="flex items-center gap-2 py-2"
+                      onClick={() => {
+                        navigateTo("/dashboard/settings/account");
+                        setIsSettingsOpen(true);
+                      }}
+                      className={`flex items-center gap-2 py-2 ${
+                        activeMenu === "/dashboard/settings/account" ? "active" : ""
+                      }`}
                     >
                       <UserCircle size={16} />
                       Account
@@ -200,8 +213,13 @@ const NavBar = () => {
                   </li>
                   <li>
                     <a
-                      onClick={() => navigateTo("/dashboard/settings/system")}
-                      className="flex items-center gap-2 py-2"
+                      onClick={() => {
+                        navigateTo("/dashboard/settings/system");
+                        setIsSettingsOpen(true);
+                      }}
+                      className={`flex items-center gap-2 py-2 ${
+                        activeMenu === "/dashboard/settings/system" ? "active" : ""
+                      }`}
                     >
                       <Sliders size={16} />
                       System
