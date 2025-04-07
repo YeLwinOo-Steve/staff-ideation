@@ -11,12 +11,14 @@ import {
   UserCircle,
   Clock,
   AlertCircle,
+  Users,
   CheckCircle2,
 } from "lucide-react";
 import { useToast } from "@/components/toast";
 import { format } from "date-fns";
 import { Department, User } from "@/api/models";
 import * as api from "@/api/repository";
+import { Avatar } from "@/app/components/Avatar";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -68,13 +70,15 @@ const DepartmentCard = ({
               <div className="bg-primary/10 p-3 rounded-xl">
                 <Building2 className="w-5 h-5 text-primary" />
               </div>
-              <h3 className="card-title text-lg">{department.department_name}</h3>
+              <h3 className="card-title text-lg">
+                {department.department_name}
+              </h3>
             </div>
             <div className="flex gap-2">
               <motion.button
                 className="btn btn-circle btn-sm bg-primary/10 hover:bg-primary border-0"
                 onClick={() => onEdit(department)}
-                whileHover={{ 
+                whileHover={{
                   scale: 1.1,
                   backgroundColor: "hsl(var(--p))",
                 }}
@@ -85,7 +89,7 @@ const DepartmentCard = ({
               <motion.button
                 className="btn btn-circle btn-sm bg-error/10 hover:bg-error border-0"
                 onClick={() => onDelete(department)}
-                whileHover={{ 
+                whileHover={{
                   scale: 1.1,
                   backgroundColor: "hsl(var(--er))",
                 }}
@@ -105,7 +109,9 @@ const DepartmentCard = ({
               </div>
               <div className="flex flex-col">
                 <span className="text-xs opacity-70">QA Coordinator</span>
-                <span className="text-sm font-medium">{qaCoordinator?.name || "Not assigned"}</span>
+                <span className="text-sm font-medium">
+                  {qaCoordinator?.name || "Not assigned"}
+                </span>
               </div>
             </div>
 
@@ -128,7 +134,13 @@ const DepartmentCard = ({
 };
 
 const DepartmentsPage = () => {
-  const { departments, fetchDepartments, isLoading } = useApiStore();
+  const {
+    departments,
+    departmentUsers,
+    fetchDepartments,
+    getDepartmentUsers,
+    isLoading,
+  } = useApiStore();
   const { showSuccessToast, showErrorToast } = useToast();
   const [selectedDepartment, setSelectedDepartment] =
     useState<Department | null>(null);
@@ -167,6 +179,12 @@ const DepartmentsPage = () => {
 
     fetchQACoordinators();
   }, [departments]);
+
+  useEffect(() => {
+    if (selectedDepartment) {
+      getDepartmentUsers(selectedDepartment.id);
+    }
+  }, [selectedDepartment, getDepartmentUsers]);
 
   const handleEdit = (department: Department) => {
     setSelectedDepartment(department);
@@ -264,49 +282,85 @@ const DepartmentsPage = () => {
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
-          className="modal-box"
+          className="modal-box bg-base-100 p-0 max-w-xl"
         >
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 rounded-full bg-primary">
-              {selectedDepartment ? (
-                <PencilIcon className="w-6 h-6 text-primary-content" />
-              ) : (
-                <PlusIcon className="w-6 h-6 text-primary-content" />
+          <div className="p-6 space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="bg-primary/10 p-3 rounded-xl">
+                {selectedDepartment ? (
+                  <PencilIcon className="w-6 h-6 text-primary" />
+                ) : (
+                  <PlusIcon className="w-6 h-6 text-primary" />
+                )}
+              </div>
+              <h3 className="font-bold text-xl">
+                {selectedDepartment ? "Edit" : "Add"} Department
+              </h3>
+            </div>
+
+            <div className="space-y-4">
+              <div className="form-control w-full">
+                <label className="label">
+                  <span className="label-text text-base font-medium">Department Name</span>
+                </label>
+                <input
+                  type="text"
+                  className="input input-bordered w-full focus:input-primary bg-base-200/50"
+                  placeholder="Enter department name"
+                  value={departmentName}
+                  onChange={(e) => setDepartmentName(e.target.value)}
+                />
+              </div>
+
+              {selectedDepartment && departmentUsers && (
+                <div className="bg-base-200/50 rounded-xl p-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Users className="w-5 h-5 text-primary" />
+                    <h4 className="font-medium">Department Members</h4>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-2">
+                    {departmentUsers.length > 0 ? (
+                      departmentUsers.map((user) => (
+                        <div
+                          key={user.id}
+                          className="flex items-center gap-2 bg-base-100 p-2 rounded-lg"
+                        >
+                          <Avatar
+                            src={user.photo}
+                            alt={user.name}
+                            className="w-8 h-8"
+                          />
+                          <span className="text-sm">{user.name}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-sm opacity-70">No members in this department</p>
+                    )}
+                  </div>
+                </div>
               )}
             </div>
-            <h3 className="font-bold text-xl">
-              {selectedDepartment ? "Edit" : "Add"} Department
-            </h3>
           </div>
-          <div className="form-control w-full">
-            <label className="label">
-              <span className="label-text text-base">Department Name</span>
-            </label>
-            <input
-              type="text"
-              className="input input-bordered w-full focus:input-primary"
-              placeholder="Enter department name"
-              value={departmentName}
-              onChange={(e) => setDepartmentName(e.target.value)}
-            />
-          </div>
-          <div className="modal-action mt-8">
+
+          <div className="bg-base-200/30 p-4 flex justify-end gap-2">
             <motion.button
               className="btn btn-ghost"
               onClick={() => setIsEditModalOpen(false)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
               Cancel
             </motion.button>
             <motion.button
               className="btn btn-primary"
               onClick={handleEditSubmit}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              disabled={!departmentName.trim()}
             >
               <CheckCircle2 className="w-5 h-5" />
-              Save
+              Save Changes
             </motion.button>
           </div>
         </motion.div>
@@ -321,38 +375,70 @@ const DepartmentsPage = () => {
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
-          className="modal-box"
+          className="modal-box bg-base-100 p-0"
         >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 rounded-full bg-error">
-              <AlertCircle className="w-6 h-6 text-error-content" />
+          <div className="p-6 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-error/10 p-3 rounded-xl">
+                <AlertCircle className="w-6 h-6 text-error" />
+              </div>
+              <h3 className="font-bold text-xl">Confirm Delete</h3>
             </div>
-            <h3 className="font-bold text-xl">Confirm Delete</h3>
+
+            {selectedDepartment && departmentUsers && (
+              <div className="bg-base-200/50 rounded-xl p-4 space-y-3">
+                <p className="text-base">
+                  Are you sure you want to delete{" "}
+                  <span className="font-semibold">{selectedDepartment.department_name}</span>?
+                </p>
+                
+                <div className="flex items-center gap-2 text-sm text-error">
+                  <Users className="w-4 h-4" />
+                  <span>
+                    {departmentUsers.length} member{departmentUsers.length !== 1 ? "s" : ""} will be affected
+                  </span>
+                </div>
+
+                <div className="flex -space-x-2">
+                  {departmentUsers.slice(0, 5).map((user) => (
+                    <Avatar
+                      key={user.id}
+                      src={user.photo}
+                      alt={user.name}
+                      className="w-8 h-8 border-2 border-base-100"
+                    />
+                  ))}
+                  {departmentUsers.length > 5 && (
+                    <div className="w-8 h-8 rounded-full bg-base-200 border-2 border-base-100 flex items-center justify-center">
+                      <span className="text-xs">+{departmentUsers.length - 5}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <p className="text-sm bg-error/5 text-error p-3 rounded-lg">
+              This action cannot be undone.
+            </p>
           </div>
-          <p className="py-4 text-base">
-            Are you sure you want to delete{" "}
-            <span className="font-semibold">
-              {selectedDepartment?.department_name}
-            </span>
-            ? This action cannot be undone.
-          </p>
-          <div className="modal-action">
+
+          <div className="bg-base-200/30 p-4 flex justify-end gap-2">
             <motion.button
               className="btn btn-ghost"
               onClick={() => setIsDeleteModalOpen(false)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
               Cancel
             </motion.button>
             <motion.button
               className="btn btn-error"
               onClick={handleDeleteConfirm}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
               <Trash2Icon className="w-5 h-5" />
-              Delete
+              Delete Department
             </motion.button>
           </div>
         </motion.div>

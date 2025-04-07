@@ -43,6 +43,7 @@ interface ApiState {
   fetchRoles: () => Promise<void>;
   // Departments
   fetchDepartments: () => Promise<void>;
+  getDepartmentUsers: (id: number) => Promise<void>;
   createDepartment: (data: Partial<Department>) => Promise<void>;
   updateDepartment: (id: number, data: Partial<Department>) => Promise<void>;
   deleteDepartment: (id: number) => Promise<void>;
