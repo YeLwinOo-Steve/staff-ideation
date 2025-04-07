@@ -57,50 +57,69 @@ const DepartmentCard = ({
   return (
     <motion.div
       variants={itemVariants}
-      className="card bg-base-200 shadow-none hover:shadow-md transition-all duration-300"
+      className="card bg-base-100 shadow-sm hover:shadow-md transition-all duration-300 border border-base-200"
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
     >
-      <div className="card-body">
-        <div className="flex justify-between items-start">
-          <div className="flex items-center gap-2">
-            <Building2 className="w-5 h-5 text-primary-content" />
-            <h3 className="card-title">{department.department_name}</h3>
-          </div>
-          <div className="flex gap-2">
-            <motion.button
-              className="btn btn-circle btn-sm bg-primary hover:bg-primary"
-              onClick={() => onEdit(department)}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <PencilIcon className="w-4 h-4 text-white" />
-            </motion.button>
-            <motion.button
-              className="btn btn-circle btn-sm bg-error hover:bg-error"
-              onClick={() => onDelete(department)}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <Trash2Icon className="w-4 h-4 text-white" />
-            </motion.button>
-          </div>
-        </div>
-        <div className="divider divider-primary before:h-0.1 after:h-0.5 my-2"></div>
-        <div className="space-y-2 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-full bg-info">
-              <UserCircle className="w-4 h-4 text-info-content" />
+      <div className="card-body p-5">
+        <div className="flex flex-col gap-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <div className="bg-primary/10 p-3 rounded-xl">
+                <Building2 className="w-5 h-5 text-primary" />
+              </div>
+              <h3 className="card-title text-lg">{department.department_name}</h3>
             </div>
-            <span>QA Coordinator: {qaCoordinator?.name || "Not assigned"}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-full bg-info">
-              <Clock className="w-4 h-4 text-info-content" />
+            <div className="flex gap-2">
+              <motion.button
+                className="btn btn-circle btn-sm bg-primary/10 hover:bg-primary border-0"
+                onClick={() => onEdit(department)}
+                whileHover={{ 
+                  scale: 1.1,
+                  backgroundColor: "hsl(var(--p))",
+                }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <PencilIcon className="w-4 h-4 text-primary group-hover:text-white" />
+              </motion.button>
+              <motion.button
+                className="btn btn-circle btn-sm bg-error/10 hover:bg-error border-0"
+                onClick={() => onDelete(department)}
+                whileHover={{ 
+                  scale: 1.1,
+                  backgroundColor: "hsl(var(--er))",
+                }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <Trash2Icon className="w-4 h-4 text-error group-hover:text-white" />
+              </motion.button>
             </div>
-            <span>
-              Last Updated: {format(new Date(department.updated_at), "PPpp")}
-            </span>
+          </div>
+
+          <div className="divider divider-primary before:h-[1px] after:h-[1px] my-0"></div>
+
+          <div className="grid gap-3">
+            <div className="flex items-center gap-3 bg-info/5 p-3 rounded-xl">
+              <div className="bg-info/10 p-2 rounded-lg">
+                <UserCircle className="w-4 h-4 text-info" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs opacity-70">QA Coordinator</span>
+                <span className="text-sm font-medium">{qaCoordinator?.name || "Not assigned"}</span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 bg-info/5 p-3 rounded-xl">
+              <div className="bg-info/10 p-2 rounded-lg">
+                <Clock className="w-4 h-4 text-info" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs opacity-70">Last Updated</span>
+                <span className="text-sm font-medium">
+                  {format(new Date(department.updated_at), "PPpp")}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
