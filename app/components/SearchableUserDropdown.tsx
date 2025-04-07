@@ -34,9 +34,17 @@ export function SearchableUserDropdown({
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(loadMoreRef);
 
+  // Handle initial mount
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Open dropdown when typing
+  useEffect(() => {
+    if (searchQuery && !isOpen) {
+      setIsOpen(true);
+    }
+  }, [searchQuery]);
 
   useEffect(() => {
     if (isInView && hasMore && !isLoading) {
