@@ -13,6 +13,7 @@ import { PaginatedResponse } from "@/api/models";
 
 interface ApiState {
   departments: Department[];
+  departmentUsers: User[];
   users: User[];
   user: User | null;
   ideas: Idea[];
@@ -69,7 +70,7 @@ interface ApiState {
   fetchSystemSettings: () => Promise<void>;
   updateSystemSetting: (
     id: number,
-    data: Partial<SystemSetting>,
+    data: Partial<SystemSetting>
   ) => Promise<void>;
 
   // Error handling
@@ -79,6 +80,7 @@ interface ApiState {
 
 export const useApiStore = create<ApiState>((set, get) => ({
   departments: [],
+  departmentUsers: [],
   users: [],
   user: null,
   ideas: [],
@@ -113,6 +115,19 @@ export const useApiStore = create<ApiState>((set, get) => ({
       set({ departments: response.data.data });
     } catch (error) {
       const message = "Failed to fetch departments";
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  getDepartmentUsers: async (id: number) => {
+    try {
+      set({ isLoading: true });
+      const response = await api.departmentApi.getDepartmentUsers(id);
+      set({ departmentUsers: response.data.data });
+    } catch (error) {
+      const message = "Failed to get department users";
       set({ error: message });
       throw error;
     } finally {

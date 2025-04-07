@@ -14,6 +14,8 @@ import {
 export const departmentApi = {
   getAll: () => apiClient.get<{ data: Department[] }>("/departments"),
   getOne: (id: number) => apiClient.get<Department>(`/departments/${id}`),
+  getDepartmentUsers: (id: number) =>
+    apiClient.get<{ data: User[] }>(`/departments/users/${id}`),
   create: (data: Partial<Department>) =>
     apiClient.post<Department>("/departments", data),
   update: (id: number, data: Partial<Department>) =>
