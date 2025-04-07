@@ -134,52 +134,54 @@ export function SearchableUserDropdown({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute z-50 w-full mt-2 bg-base-100 rounded-lg shadow-lg border border-base-200 max-h-64 overflow-auto"
+            className="absolute z-[100] w-full mt-2 bg-base-100 rounded-lg shadow-lg border border-base-200 max-h-64 overflow-y-auto"
           >
-            {users.length > 0 ? (
-              <>
-                {users.map((user) => (
-                  <motion.div
-                    key={user.id}
-                    className="p-2 hover:bg-base-200 cursor-pointer flex items-center gap-3"
-                    onClick={() => {
-                      onSelect(user);
-                      setIsOpen(false);
-                    }}
-                    whileHover={{ backgroundColor: "hsl(var(--b2))" }}
-                  >
-                    <Avatar
-                      src={user.photo}
-                      alt={user.name}
-                      className="w-8 h-8"
-                    />
-                    <div className="flex flex-col">
-                      <span suppressHydrationWarning className="font-medium">{user.name}</span>
-                      <span suppressHydrationWarning className="text-sm opacity-70">{user.email}</span>
+            <div className="relative">
+              {users.length > 0 ? (
+                <>
+                  {users.map((user) => (
+                    <motion.div
+                      key={user.id}
+                      className="p-2 hover:bg-base-200 cursor-pointer flex items-center gap-3"
+                      onClick={() => {
+                        onSelect(user);
+                        setIsOpen(false);
+                      }}
+                      whileHover={{ backgroundColor: "hsl(var(--b2))" }}
+                    >
+                      <Avatar
+                        src={user.photo}
+                        alt={user.name}
+                        className="w-8 h-8"
+                      />
+                      <div className="flex flex-col">
+                        <span suppressHydrationWarning className="font-medium">{user.name}</span>
+                        <span suppressHydrationWarning className="text-sm opacity-70">{user.email}</span>
+                      </div>
+                    </motion.div>
+                  ))}
+                  {hasMore && (
+                    <div ref={loadMoreRef} className="p-2 text-center">
+                      {isLoading ? (
+                        <span className="loading loading-spinner loading-sm text-primary"></span>
+                      ) : (
+                        <span className="text-sm opacity-70">Scroll for more...</span>
+                      )}
                     </div>
-                  </motion.div>
-                ))}
-                {hasMore && (
-                  <div ref={loadMoreRef} className="p-2 text-center">
-                    {isLoading ? (
-                      <span className="loading loading-spinner loading-sm text-primary"></span>
-                    ) : (
-                      <span className="text-sm opacity-70">Scroll for more...</span>
-                    )}
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="p-4 text-center text-base-content/70">
-                {isLoading ? (
-                  <span className="loading loading-spinner loading-sm text-primary"></span>
-                ) : (
-                  <span suppressHydrationWarning>
-                    {searchQuery ? "No users found" : "No QA coordinators available"}
-                  </span>
-                )}
-              </div>
-            )}
+                  )}
+                </>
+              ) : (
+                <div className="p-4 text-center text-base-content/70">
+                  {isLoading ? (
+                    <span className="loading loading-spinner loading-sm text-primary"></span>
+                  ) : (
+                    <span suppressHydrationWarning>
+                      {searchQuery ? "No users found" : "No QA coordinators available"}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

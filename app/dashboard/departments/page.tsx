@@ -326,7 +326,7 @@ const DepartmentsPage = () => {
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
-          className="modal-box bg-base-100 p-0 max-w-xl"
+          className="modal-box bg-base-100 p-0 max-w-xl overflow-visible"
         >
           <div className="p-6 space-y-6">
             <div className="flex items-center gap-3">
