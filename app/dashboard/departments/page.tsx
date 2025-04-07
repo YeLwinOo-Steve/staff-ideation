@@ -11,6 +11,7 @@ import {
   UserCircle,
   Clock,
   AlertCircle,
+  OctagonX,
   Users,
   CheckCircle2,
 } from "lucide-react";
@@ -203,6 +204,7 @@ const DepartmentsPage = () => {
     try {
       await api.departmentApi.update(selectedDepartment.id, {
         department_name: departmentName,
+        QACoordinatorID: selectedDepartment.QACoordinatorID,
       });
       await fetchDepartments();
       showSuccessToast("Department updated successfully");
@@ -301,7 +303,9 @@ const DepartmentsPage = () => {
             <div className="space-y-4">
               <div className="form-control w-full">
                 <label className="label">
-                  <span className="label-text text-base font-medium">Department Name</span>
+                  <span className="label-text text-base font-medium">
+                    Department Name
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -318,7 +322,7 @@ const DepartmentsPage = () => {
                     <Users className="w-5 h-5 text-primary" />
                     <h4 className="font-medium">Department Members</h4>
                   </div>
-                  
+
                   <div className="flex flex-wrap gap-2">
                     {departmentUsers.length > 0 ? (
                       departmentUsers.map((user) => (
@@ -335,7 +339,9 @@ const DepartmentsPage = () => {
                         </div>
                       ))
                     ) : (
-                      <p className="text-sm opacity-70">No members in this department</p>
+                      <p className="text-sm opacity-70">
+                        No members in this department
+                      </p>
                     )}
                   </div>
                 </div>
@@ -389,13 +395,17 @@ const DepartmentsPage = () => {
               <div className="bg-base-200/50 rounded-xl p-4 space-y-3">
                 <p className="text-base">
                   Are you sure you want to delete{" "}
-                  <span className="font-semibold">{selectedDepartment.department_name}</span>?
+                  <span className="font-semibold">
+                    {selectedDepartment.department_name}
+                  </span>
+                  ?
                 </p>
-                
+
                 <div className="flex items-center gap-2 text-sm text-error">
                   <Users className="w-4 h-4" />
                   <span>
-                    {departmentUsers.length} member{departmentUsers.length !== 1 ? "s" : ""} will be affected
+                    {departmentUsers.length} member
+                    {departmentUsers.length !== 1 ? "s" : ""} in this department
                   </span>
                 </div>
 
@@ -405,21 +415,38 @@ const DepartmentsPage = () => {
                       key={user.id}
                       src={user.photo}
                       alt={user.name}
-                      className="w-8 h-8 border-2 border-base-100"
+                      className="w-8 h-8 border-2 border-base-200"
                     />
                   ))}
                   {departmentUsers.length > 5 && (
                     <div className="w-8 h-8 rounded-full bg-base-200 border-2 border-base-100 flex items-center justify-center">
-                      <span className="text-xs">+{departmentUsers.length - 5}</span>
+                      <span className="text-xs">
+                        +{departmentUsers.length - 5}
+                      </span>
                     </div>
                   )}
                 </div>
+
+                {departmentUsers.length > 0 && (
+                  <div className="bg-warning/10 p-4 rounded-lg flex gap-3 items-start">
+                    <OctagonX className="w-14 h-14 text-error mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="font-medium text-error">Cannot Delete Department</p>
+                      <p className="text-sm opacity-90">
+                        This department cannot be deleted because it has active members. 
+                        Please reassign or remove all members before deleting the department.
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
-            <p className="text-sm bg-error/5 text-error p-3 rounded-lg">
-              This action cannot be undone.
-            </p>
+            {departmentUsers?.length === 0 && (
+              <p className="text-sm bg-error/5 text-error p-3 rounded-lg">
+                This action cannot be undone.
+              </p>
+            )}
           </div>
 
           <div className="bg-base-200/30 p-4 flex justify-end gap-2">
@@ -436,6 +463,7 @@ const DepartmentsPage = () => {
               onClick={handleDeleteConfirm}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
+              disabled={departmentUsers && departmentUsers.length > 0}
             >
               <Trash2Icon className="w-5 h-5" />
               Delete Department
