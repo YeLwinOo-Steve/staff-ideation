@@ -48,8 +48,10 @@ export const ideaApi = {
     apiClient.put<Idea>(`/idea/submit/${id}`, { is_enabled: 1 }),
   updateCategory: (id: number, categories: string) =>
     apiClient.put(`/update-idea-category/${id}`, { category: categories }),
-  getToSubmit: (page = 1) => 
-    apiClient.get<PaginatedResponse<Idea>>("/idea/to-submit", { params: { page } }),
+  getToSubmit: (page = 1) =>
+    apiClient.get<PaginatedResponse<Idea>>("/idea/to-submit", {
+      params: { page },
+    }),
 };
 
 export const categoryApi = {

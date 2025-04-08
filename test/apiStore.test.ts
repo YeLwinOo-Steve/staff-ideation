@@ -116,7 +116,7 @@ describe("API Store", () => {
       jest.spyOn(api.ideaApi, "getAll").mockRejectedValueOnce(mockIdeasError);
 
       await expect(useApiStore.getState().fetchIdeas()).rejects.toThrow(
-        "Failed to fetch ideas"
+        "Failed to fetch ideas",
       );
       expect(useApiStore.getState().error).toBe("Failed to fetch ideas");
     });

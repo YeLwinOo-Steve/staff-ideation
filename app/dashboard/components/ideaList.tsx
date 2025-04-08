@@ -219,7 +219,7 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
                     setPage(index + 1);
                   }}
                 />
-              )
+              ),
             )}
           </div>
         </motion.div>

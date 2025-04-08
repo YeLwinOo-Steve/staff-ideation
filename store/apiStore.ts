@@ -347,11 +347,11 @@ export const useApiStore = create<ApiState>((set, get) => ({
         },
       }));
       const response = await api.ideaApi.getToSubmit(page);
-      const pendingIdeas = response.data.data.map(idea => ({
+      const pendingIdeas = response.data.data.map((idea) => ({
         ...idea,
-        isPending: true
+        isPending: true,
       }));
-      
+
       set((state) => ({
         ...state,
         pendingIdeas,
