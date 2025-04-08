@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
@@ -21,7 +21,6 @@ import {
   UserCircle,
   Menu,
   X,
-  ChevronDown,
 } from "lucide-react";
 
 const menuVariants = {
@@ -83,6 +82,7 @@ const NavBar = () => {
   };
 
   const handleNavigation = (path: string) => {
+    console.log("navigating to", path);
     setIsMenuOpen(false);
     setIsSettingsOpen(false);
   };
