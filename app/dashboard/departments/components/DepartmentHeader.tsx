@@ -24,22 +24,24 @@ const itemVariants = {
 
 export function DepartmentHeader({ onAddClick }: DepartmentHeaderProps) {
   return (
-    <div className="flex justify-between items-center mb-8">
-      <motion.div variants={itemVariants} className="flex items-center gap-3" layout>
+    <div className="flex justify-between flex-wrap items-center gap-4 mb-8">
+      <motion.div
+        variants={itemVariants}
+        className="flex items-center gap-3"
+      >
         <Building2 className="w-8 h-8 text-primary" />
-        <h1 className="text-3xl font-bold">Departments</h1>
+        <h2 className="text-3xl font-bold">Departments</h2>
       </motion.div>
       <motion.button
         variants={itemVariants}
-        className="btn btn-primary"
+        className="btn btn-primary ml-auto"
         onClick={onAddClick}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        layout
       >
         <PlusIcon className="w-5 h-5" />
         Add Department
       </motion.button>
     </div>
   );
-} 
+}
