@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import Link from "next/link";
 
 import {
   Lightbulb,
@@ -53,41 +54,16 @@ const dropdownVariants = {
 };
 
 const NavBar = () => {
-  const router = useRouter();
   const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [activeMenu, setActiveMenu] = useState<string>("");
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
     setMounted(true);
-    setActiveMenu(pathname || "/dashboard");
-  }, [pathname]);
-
-  const navigateTo = (path: string) => {
-    if (mounted) {
-      if (path.startsWith("/dashboard/settings")) {
-        router.push(path);
-        return;
-      }
-      router.push(path);
-      setActiveMenu(path);
-    }
-  };
-
-  const handleMenuClick = (menu: string) => {
-    if (mounted) {
-      if (menu === "/dashboard/settings") {
-        setIsSettingsOpen(!isSettingsOpen);
-        return;
-      }
-
-      router.push(menu);
-      setActiveMenu(menu);
-    }
-  };
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -139,54 +115,54 @@ const NavBar = () => {
       <div className="hidden md:flex gap-2">
         <ul className="menu bg-base-200 menu-horizontal gap-1 rounded-xl text-base-content">
           <li>
-            <a
-              onClick={() => handleMenuClick("/dashboard")}
-              className={`${activeMenu === "/dashboard" ? "active" : ""} text-base-content flex items-center gap-2`}
+            <Link
+              href="/dashboard"
+              className={`${pathname === "/dashboard" ? "active" : ""} text-base-content flex items-center gap-2`}
               suppressHydrationWarning
             >
               <Lightbulb size={16} />
               Home
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              onClick={() => handleMenuClick("/dashboard/users")}
-              className={`${activeMenu === "/dashboard/users" ? "active" : ""} flex items-center gap-2`}
+            <Link
+              href="/dashboard/users"
+              className={`${pathname === "/dashboard/users" ? "active" : ""} flex items-center gap-2`}
               suppressHydrationWarning
             >
               <Users size={16} />
               Users
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              onClick={() => handleMenuClick("/dashboard/departments")}
-              className={`${activeMenu === "/dashboard/departments" ? "active" : ""} flex items-center gap-2`}
+            <Link
+              href="/dashboard/departments"
+              className={`${pathname === "/dashboard/departments" ? "active" : ""} flex items-center gap-2`}
               suppressHydrationWarning
             >
               <Building2 size={16} />
               Departments
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              onClick={() => handleMenuClick("/dashboard/category")}
-              className={`${activeMenu === "/dashboard/category" ? "active" : ""} flex items-center gap-2`}
+            <Link
+              href="/dashboard/category"
+              className={`${pathname === "/dashboard/category" ? "active" : ""} flex items-center gap-2`}
               suppressHydrationWarning
             >
               <Blocks size={16} />
               Category
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              onClick={() => handleMenuClick("/dashboard/reports")}
-              className={`${activeMenu === "/dashboard/reports" ? "active" : ""} flex items-center gap-2`}
+            <Link
+              href="/dashboard/reports"
+              className={`${pathname === "/dashboard/reports" ? "active" : ""} flex items-center gap-2`}
               suppressHydrationWarning
             >
               <FileArchive size={16} />
               Reports
-            </a>
+            </Link>
           </li>
           <li>
             <details open={isSettingsOpen} suppressHydrationWarning>
@@ -207,22 +183,14 @@ const NavBar = () => {
               </summary>
               <ul className="menu menu-vertical shadow-sm rounded-md p-2 bg-base-200 full-width z-50">
                 <li>
-                  <a
-                    onClick={() => {
-                      if (mounted) {
-                        navigateTo("/dashboard/settings/account");
-                      }
-                    }}
-                    className={`flex items-center gap-2 ${
-                      activeMenu === "/dashboard/settings/account"
-                        ? "active"
-                        : ""
-                    }`}
+                  <Link
+                    href="/dashboard/settings/account"
+                    className={`flex items-center gap-2 ${pathname === "/dashboard/settings/account" ? "active" : ""}`}
                     suppressHydrationWarning
                   >
                     <UserCircle size={16} />
                     Account
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <a
@@ -235,22 +203,14 @@ const NavBar = () => {
                   </a>
                 </li>
                 <li>
-                  <a
-                    onClick={() => {
-                      if (mounted) {
-                        navigateTo("/dashboard/settings/system");
-                      }
-                    }}
-                    className={`flex items-center gap-2 ${
-                      activeMenu === "/dashboard/settings/system"
-                        ? "active"
-                        : ""
-                    }`}
+                  <Link
+                    href="/dashboard/settings/system"
+                    className={`flex items-center gap-2 ${pathname === "/dashboard/settings/system" ? "active" : ""}`}
                     suppressHydrationWarning
                   >
                     <Sliders size={16} />
                     System
-                  </a>
+                  </Link>
                 </li>
                 <div className="divider my-1"></div>
                 <li>
@@ -302,40 +262,40 @@ const NavBar = () => {
               className="dropdown-content z-[1] menu p-4 shadow bg-base-200 rounded-box w-52 mt-2"
             >
               <li>
-                <a onClick={() => navigateTo("/dashboard")}>
+                <Link href="/dashboard">
                   <Lightbulb size={16} />
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a onClick={() => navigateTo("/dashboard/users")}>
+                <Link href="/dashboard/users">
                   <Users size={16} />
                   Users
-                </a>
+                </Link>
               </li>
               <li>
-                <a onClick={() => navigateTo("/dashboard/departments")}>
+                <Link href="/dashboard/departments">
                   <Building2 size={16} />
                   Departments
-                </a>
+                </Link>
               </li>
               <li>
-                <a onClick={() => navigateTo("/dashboard/category")}>
+                <Link href="/dashboard/category">
                   <Blocks size={16} />
                   Category
-                </a>
+                </Link>
               </li>
               <li>
-                <a onClick={() => navigateTo("/dashboard/reports")}>
+                <Link href="/dashboard/reports">
                   <FileArchive size={16} />
                   Reports
-                </a>
+                </Link>
               </li>
               <li>
-                <a onClick={() => handleMenuClick("/dashboard/settings")}>
+                <Link href="/dashboard/settings">
                   <Settings size={16} />
                   Settings
-                </a>
+                </Link>
               </li>
             </motion.ul>
           )}

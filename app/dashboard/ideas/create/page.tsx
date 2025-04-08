@@ -11,7 +11,6 @@ import { useToast } from "@/components/toast";
 import CategoryChip from "../../components/categoryChip";
 import Image from "next/image";
 import Link from "next/link";
-import { AxiosError } from "axios";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -77,10 +76,7 @@ const IdeaCreatePage = () => {
       router.push("/dashboard");
       showSuccessToast("Idea created successfully");
     } catch (e) {
-      const error = e as AxiosError<{ message: string }>;
-      const errorMessage =
-        error.response?.data?.message || "Failed to create idea";
-      showErrorToast(errorMessage);
+      showErrorToast(e as string);
       console.error("Failed to create idea:", e);
     } finally {
       setIsSubmitting(false);

@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { User } from "@/api/models";
 import { authApi } from "@/api/auth";
+import { AxiosError } from "axios";
 
 interface AuthState {
   user: User | null;
@@ -31,9 +32,10 @@ export const useAuthStore = create<AuthState>()(
             token: response.data.token,
             isLoading: false,
           });
-        } catch (error: any) {
-          const errorMessage = error.response?.data?.message || "Login failed";
-          set({ user: null, error: errorMessage, isLoading: false });
+        } catch (error) {
+          const e = error as AxiosError<{ message: string }>;
+          const message = e.response?.data?.message || "Login failed";
+          set({ user: null, error: message, isLoading: false });
           throw error;
         }
       },
@@ -44,10 +46,10 @@ export const useAuthStore = create<AuthState>()(
           await authApi.resetPassword(id);
           set({ isLoading: false });
           return true;
-        } catch (error: any) {
-          const errorMessage =
-            error.response?.data?.message || "Password reset failed";
-          set({ error: errorMessage, isLoading: false });
+        } catch (error) {
+          const e = error as AxiosError<{ message: string }>;
+          const message = e.response?.data?.message || "Password reset failed";
+          set({ error: message, isLoading: false });
           return false;
         }
       },
@@ -57,7 +59,9 @@ export const useAuthStore = create<AuthState>()(
         try {
           await authApi.logout();
         } catch (error) {
-          console.log(error);
+          const e = error as AxiosError<{ message: string }>;
+          const message = e.response?.data?.message || "Logout failed";
+          set({ error: message });
           throw error;
         } finally {
           set({ user: null, token: null, isLoading: false });

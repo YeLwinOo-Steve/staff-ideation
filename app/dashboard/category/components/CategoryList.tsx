@@ -1,3 +1,5 @@
+"use client";
+
 import { motion } from "framer-motion";
 import { Category } from "@/api/models";
 import { CategoryCard } from "./CategoryCard";

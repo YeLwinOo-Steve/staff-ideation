@@ -19,7 +19,6 @@ import saveAs from "file-saver";
 import JSZip from "jszip";
 import { AnimatedNumber } from "../../components/animatedNumber";
 import { useToast } from "@/components/toast";
-import { AxiosError } from "axios";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -209,10 +208,7 @@ const IdeaDetail = () => {
       showSuccessToast("Comment submitted successfully");
     } catch (e) {
       console.error("Error submitting comment:", e);
-      const error = e as AxiosError<{ message: string }>;
-      const errorMessage =
-        error.response?.data?.message || "Failed to submit comment";
-      showErrorToast(errorMessage);
+      showErrorToast(e as string);
       setIsSubmittingComment(false);
     }
   };

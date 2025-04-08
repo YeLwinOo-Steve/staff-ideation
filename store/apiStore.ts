@@ -144,7 +144,9 @@ export const useApiStore = create<ApiState>((set, get) => ({
       const response = await api.departmentApi.getAll();
       set({ departments: response.data.data });
     } catch (error) {
-      const message = "Failed to fetch departments";
+      const e = error as AxiosError<{ message: string }>;
+      const message =
+        e.response?.data?.message || "Failed to fetch departments";
       set({ error: message });
       throw error;
     } finally {
@@ -157,7 +159,9 @@ export const useApiStore = create<ApiState>((set, get) => ({
       await api.departmentApi.create(data);
       await get().fetchDepartments({ isCache: false });
     } catch (error) {
-      const message = "Failed to create department";
+      const e = error as AxiosError<{ message: string }>;
+      const message =
+        e.response?.data?.message || "Failed to create department";
       set({ error: message });
       throw error;
     } finally {
@@ -170,7 +174,9 @@ export const useApiStore = create<ApiState>((set, get) => ({
       const response = await api.departmentApi.getDepartmentUsers(id);
       set({ departmentUsers: response.data.data });
     } catch (error) {
-      const message = "Failed to get department users";
+      const e = error as AxiosError<{ message: string }>;
+      const message =
+        e.response?.data?.message || "Failed to get department users";
       set({ error: message });
       throw error;
     } finally {
@@ -183,21 +189,24 @@ export const useApiStore = create<ApiState>((set, get) => ({
       await api.departmentApi.update(id, data);
       await get().fetchDepartments({ isCache: false });
     } catch (error) {
-      const message = "Failed to update department";
+      const e = error as AxiosError<{ message: string }>;
+      const message =
+        e.response?.data?.message || "Failed to update department";
       set({ error: message });
       throw error;
     } finally {
       set({ isLoading: false });
     }
   },
-
   deleteDepartment: async (id) => {
     try {
       set({ isLoading: true });
       await api.departmentApi.delete(id);
       await get().fetchDepartments({ isCache: false });
     } catch (error) {
-      const message = "Failed to delete department";
+      const e = error as AxiosError<{ message: string }>;
+      const message =
+        e.response?.data?.message || "Failed to delete department";
       set({ error: message });
       throw error;
     } finally {
@@ -229,7 +238,8 @@ export const useApiStore = create<ApiState>((set, get) => ({
         },
       }));
     } catch (error) {
-      const message = "Failed to fetch users";
+      const e = error as AxiosError<{ message: string }>;
+      const message = e.response?.data?.message || "Failed to fetch users";
       set({ error: message });
       throw error;
     } finally {
@@ -250,7 +260,8 @@ export const useApiStore = create<ApiState>((set, get) => ({
       set({ user: response.data.data });
       return response.data.data;
     } catch (error) {
-      const message = "Failed to get user details";
+      const e = error as AxiosError<{ message: string }>;
+      const message = e.response?.data?.message || "Failed to get user details";
       set({ error: message });
       throw error;
     } finally {
@@ -264,7 +275,8 @@ export const useApiStore = create<ApiState>((set, get) => ({
       await api.userApi.create(data);
       await get().fetchUsers();
     } catch (error) {
-      const message = "Failed to create user";
+      const e = error as AxiosError<{ message: string }>;
+      const message = e.response?.data?.message || "Failed to create user";
       set({ error: message });
       throw error;
     } finally {
@@ -278,7 +290,8 @@ export const useApiStore = create<ApiState>((set, get) => ({
       await api.userApi.update(id, data);
       await get().fetchUsers();
     } catch (error) {
-      const message = "Failed to update user";
+      const e = error as AxiosError<{ message: string }>;
+      const message = e.response?.data?.message || "Failed to update user";
       set({ error: message });
       throw error;
     } finally {
@@ -293,7 +306,8 @@ export const useApiStore = create<ApiState>((set, get) => ({
       const response = await api.roleApi.getAll();
       set({ roles: response.data });
     } catch (error) {
-      const message = "Failed to fetch roles";
+      const e = error as AxiosError<{ message: string }>;
+      const message = e.response?.data?.message || "Failed to fetch roles";
       set({ error: message });
       throw error;
     } finally {
@@ -324,7 +338,8 @@ export const useApiStore = create<ApiState>((set, get) => ({
         },
       }));
     } catch (error) {
-      const message = "Failed to fetch ideas";
+      const e = error as AxiosError<{ message: string }>;
+      const message = e.response?.data?.message || "Failed to fetch ideas";
       set({ error: message });
       throw error;
     } finally {
@@ -386,7 +401,8 @@ export const useApiStore = create<ApiState>((set, get) => ({
       await api.ideaApi.create(data);
       get().fetchIdeas();
     } catch (error) {
-      const message = "Failed to create idea";
+      const e = error as AxiosError<{ message: string }>;
+      const message = e.response?.data?.message || "Failed to create idea";
       set({ error: message });
       throw error;
     } finally {
@@ -417,7 +433,8 @@ export const useApiStore = create<ApiState>((set, get) => ({
       await api.categoryApi.update(id, data);
       get().fetchCategories();
     } catch (error) {
-      const message = "Failed to update category";
+      const e = error as AxiosError<{ message: string }>;
+      const message = e.response?.data?.message || "Failed to update category";
       set({ error: message });
       throw error;
     } finally {
@@ -431,7 +448,8 @@ export const useApiStore = create<ApiState>((set, get) => ({
       await api.categoryApi.delete(id);
       get().fetchCategories();
     } catch (error) {
-      const message = "Failed to delete category";
+      const e = error as AxiosError<{ message: string }>;
+      const message = e.response?.data?.message || "Failed to delete category";
       set({ error: message });
       throw error;
     } finally {
@@ -445,7 +463,8 @@ export const useApiStore = create<ApiState>((set, get) => ({
       const response = await api.ideaApi.getOne(id);
       set({ idea: response.data.data });
     } catch (error) {
-      const message = "Failed to get idea";
+      const e = error as AxiosError<{ message: string }>;
+      const message = e.response?.data?.message || "Failed to get idea";
       set({ error: message });
       throw error;
     } finally {
@@ -459,7 +478,8 @@ export const useApiStore = create<ApiState>((set, get) => ({
       await api.ideaApi.delete(id);
       get().fetchIdeas();
     } catch (error) {
-      const message = "Failed to delete idea";
+      const e = error as AxiosError<{ message: string }>;
+      const message = e.response?.data?.message || "Failed to delete idea";
       set({ error: message });
       throw error;
     } finally {
@@ -471,7 +491,9 @@ export const useApiStore = create<ApiState>((set, get) => ({
       const response = await api.commentApi.getCommentsForIdea(id);
       set({ comments: response.data.data });
     } catch (error) {
-      const message = "Failed to get comments for idea";
+      const e = error as AxiosError<{ message: string }>;
+      const message =
+        e.response?.data?.message || "Failed to get comments for idea";
       set({ error: message });
       throw error;
     }
@@ -483,8 +505,8 @@ export const useApiStore = create<ApiState>((set, get) => ({
       const ideaId = data.get("idea_id");
       get().getCommentsForIdea(Number(ideaId));
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Failed to create comment";
+      const e = error as AxiosError<{ message: string }>;
+      const message = e.response?.data?.message || "Failed to create comment";
       set({ error: message });
       throw error;
     }
@@ -496,7 +518,8 @@ export const useApiStore = create<ApiState>((set, get) => ({
       const response = await api.categoryApi.getAll();
       set({ categories: response.data.data });
     } catch (error) {
-      const message = "Failed to fetch categories";
+      const e = error as AxiosError<{ message: string }>;
+      const message = e.response?.data?.message || "Failed to fetch categories";
       set({ error: message });
       throw error;
     } finally {
@@ -510,8 +533,10 @@ export const useApiStore = create<ApiState>((set, get) => ({
       await api.categoryApi.create({ name });
       get().fetchCategories();
     } catch (error) {
-      const message = "Failed to create category";
+      const e = error as AxiosError<{ message: string }>;
+      const message = e.response?.data?.message || "Failed to create category";
       set({ error: message });
+      throw error;
     } finally {
       set({ isLoading: false });
     }
@@ -523,8 +548,11 @@ export const useApiStore = create<ApiState>((set, get) => ({
       const response = await api.systemSettingApi.getAll();
       set({ systemSettings: response.data });
     } catch (error) {
-      const message = "Failed to fetch system settings";
+      const e = error as AxiosError<{ message: string }>;
+      const message =
+        e.response?.data?.message || "Failed to fetch system settings";
       set({ error: message });
+      throw error;
     } finally {
       set({ isLoading: false });
     }
@@ -536,8 +564,11 @@ export const useApiStore = create<ApiState>((set, get) => ({
       await api.systemSettingApi.update(id, data);
       get().fetchSystemSettings();
     } catch (error) {
-      const message = "Failed to update system setting";
+      const e = error as AxiosError<{ message: string }>;
+      const message =
+        e.response?.data?.message || "Failed to update system setting";
       set({ error: message });
+      throw error;
     } finally {
       set({ isLoading: false });
     }
@@ -548,7 +579,8 @@ export const useApiStore = create<ApiState>((set, get) => ({
       await api.voteApi.create({ idea_id: ideaId, vote_value: vote });
       get().getIdea(ideaId);
     } catch (error) {
-      const message = "Failed to create vote";
+      const e = error as AxiosError<{ message: string }>;
+      const message = e.response?.data?.message || "Failed to create vote";
       set({ error: message });
       throw error;
     }
@@ -585,7 +617,9 @@ export const useApiStore = create<ApiState>((set, get) => ({
 
       set({ allUsers });
     } catch (error) {
-      console.error("Failed to fetch all users:", error);
+      const e = error as AxiosError<{ message: string }>;
+      const message = e.response?.data?.message || "Failed to fetch all users";
+      set({ error: message });
       throw error;
     } finally {
       set({ isLoadingAllUsers: false });

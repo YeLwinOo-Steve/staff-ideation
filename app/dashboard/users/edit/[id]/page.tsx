@@ -18,7 +18,6 @@ import { useRolePermissions } from "../../hooks/userRolePermissions";
 import { Permission, Role, User } from "@/api/models";
 import { useToast } from "@/components/toast";
 import { uploadToCloudinary } from "@/util/uploadCloudinary";
-import { AxiosError } from "axios";
 
 type UserFormValues = z.infer<typeof userFormSchema>;
 
@@ -191,10 +190,7 @@ const EditUser = () => {
       router.back();
       showSuccessToast("User updated successfully");
     } catch (e) {
-      const error = e as AxiosError<{ message: string }>;
-      const errorMessage =
-        error.response?.data?.message || "Failed to update user";
-      showErrorToast(errorMessage);
+      showErrorToast(e as string);
       console.error("Failed to update user:", e);
     } finally {
       setIsUploading(false);

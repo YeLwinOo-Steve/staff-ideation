@@ -31,15 +31,10 @@ export default function CategoryPage() {
 
   useEffect(() => {
     const loadCategories = async () => {
-      try {
-        await fetchCategories();
-      } catch (error) {
-        console.error("Failed to fetch categories", error);
-        showErrorToast("Failed to fetch categories");
-      }
+      await fetchCategories();
     };
     loadCategories();
-  }, [fetchCategories, showErrorToast]);
+  }, [fetchCategories]);
 
   useEffect(() => {
     if (error) {
