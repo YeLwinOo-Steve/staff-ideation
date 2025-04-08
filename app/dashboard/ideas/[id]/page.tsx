@@ -302,7 +302,7 @@ const IdeaDetail = () => {
               variants={itemVariants}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="btn btn-ghost btn-sm"
+              className="btn btn-outline btn-md"
               onClick={() => router.back()}
             >
               <ChevronLeft size={20} />
@@ -313,7 +313,7 @@ const IdeaDetail = () => {
                 variants={buttonVariants}
                 whileHover="hover"
                 whileTap="tap"
-                className="btn btn-sm btn-primary"
+                className="btn btn-md btn-primary"
               >
                 <Pencil size={16} />
                 <span className="font-bold">Edit</span>
@@ -322,7 +322,7 @@ const IdeaDetail = () => {
                 variants={buttonVariants}
                 whileHover="hover"
                 whileTap="tap"
-                className="btn btn-sm btn-error"
+                className="btn btn-md btn-error"
                 onClick={() => setShowDeleteDialog(true)}
               >
                 <Trash size={16} />
