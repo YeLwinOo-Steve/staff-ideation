@@ -1,4 +1,4 @@
-import { Layers, PlusIcon } from "lucide-react";
+import { Blocks, PlusIcon } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface CategoryHeaderProps {
@@ -29,8 +29,8 @@ export function CategoryHeader({ onAddClick }: CategoryHeaderProps) {
         variants={itemVariants}
         className="flex items-center gap-3"
       >
-        <Layers className="w-8 h-8 text-primary" />
-        <h2 className="text-3xl font-bold">Categories</h2>
+        <Blocks className="w-8 h-8 text-primary" />
+        <h1 className="text-2xl font-bold">Categories</h1>
       </motion.div>
       <motion.button
         variants={itemVariants}

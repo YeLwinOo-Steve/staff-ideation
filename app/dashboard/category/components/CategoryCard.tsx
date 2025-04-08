@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Category } from "@/api/models";
-import { PencilIcon, Trash2Icon, Layers, Clock } from "lucide-react";
+import { PencilIcon, Trash2Icon, Blocks, Clock } from "lucide-react";
 import { format } from "date-fns";
 
 interface CategoryCardProps {
@@ -40,7 +40,7 @@ export function CategoryCard({ category, onEdit, onDelete }: CategoryCardProps) 
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
               <div className="bg-primary/10 p-3 rounded-xl">
-                <Layers className="w-5 h-5 text-primary" />
+                <Blocks className="w-5 h-5 text-primary" />
               </div>
               <h3 className="card-title text-lg">
                 {category.name}

@@ -25,12 +25,9 @@ const itemVariants = {
 export function DepartmentHeader({ onAddClick }: DepartmentHeaderProps) {
   return (
     <div className="flex justify-between flex-wrap items-center gap-4 mb-8">
-      <motion.div
-        variants={itemVariants}
-        className="flex items-center gap-3"
-      >
+      <motion.div variants={itemVariants} className="flex items-center gap-3">
         <Building2 className="w-8 h-8 text-primary" />
-        <h2 className="text-3xl font-bold">Departments</h2>
+        <h1 className="text-2xl font-bold">Departments</h1>
       </motion.div>
       <motion.button
         variants={itemVariants}

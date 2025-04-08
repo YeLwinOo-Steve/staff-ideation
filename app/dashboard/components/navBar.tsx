@@ -8,11 +8,11 @@ import { useTheme } from "next-themes";
 
 import {
   Lightbulb,
-  Tags,
+  Blocks,
   FileArchive,
   Settings,
   Users,
-  BriefcaseBusiness,
+  Building2,
   Moon,
   Sun,
   LogOut,
@@ -127,7 +127,10 @@ const NavBar = () => {
   const themeLabel = resolvedTheme === "abyss" ? "Dark" : "Light";
 
   return (
-    <div className="navbar sticky top-0 bg-base-100 z-50" suppressHydrationWarning>
+    <div
+      className="navbar sticky top-0 bg-base-100 z-50"
+      suppressHydrationWarning
+    >
       <div className="flex-1">
         <Image src="/logo.png" alt="EWSD" width={82} height={82} />
       </div>
@@ -163,7 +166,7 @@ const NavBar = () => {
               }
               suppressHydrationWarning
             >
-              <BriefcaseBusiness size={16} />
+              <Building2 size={16} />
               Departments
             </a>
           </li>
@@ -173,7 +176,7 @@ const NavBar = () => {
               className={activeMenu === "/dashboard/category" ? "active" : ""}
               suppressHydrationWarning
             >
-              <Tags size={16} />
+              <Blocks size={16} />
               Category
             </a>
           </li>
@@ -236,10 +239,7 @@ const NavBar = () => {
                     {themeLabel}
                   </a>
                 </li>
-                <li
-                  className="tooltip tooltip-left"
-                  data-tip="System Settings"
-                >
+                <li className="tooltip tooltip-left" data-tip="System Settings">
                   <a
                     onClick={() => {
                       if (mounted) {
@@ -320,13 +320,13 @@ const NavBar = () => {
               </li>
               <li>
                 <a onClick={() => navigateTo("/dashboard/departments")}>
-                  <BriefcaseBusiness size={16} />
+                  <Building2 size={16} />
                   Departments
                 </a>
               </li>
               <li>
                 <a onClick={() => navigateTo("/dashboard/category")}>
-                  <Tags size={16} />
+                  <Blocks size={16} />
                   Category
                 </a>
               </li>
