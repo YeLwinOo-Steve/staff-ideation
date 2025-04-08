@@ -10,6 +10,8 @@ import { getInitials } from "@/util/getInitials";
 import { useToast } from "@/components/toast";
 import CategoryChip from "../../components/categoryChip";
 import Image from "next/image";
+import Link from "next/link";
+import { AxiosError } from "axios";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -49,7 +51,7 @@ const IdeaCreatePage = () => {
     setSelectedCategories((prev) =>
       prev.includes(categoryId)
         ? prev.filter((id) => id !== categoryId)
-        : [...prev, categoryId],
+        : [...prev, categoryId]
     );
   };
 
@@ -65,10 +67,8 @@ const IdeaCreatePage = () => {
       const ideaFormData = new FormData();
       ideaFormData.append("title", formData.title);
       ideaFormData.append("content", formData.content);
-      ideaFormData.append("is_anonymous", String(formData.isAnonymous));
-      selectedCategories.forEach((catId) => {
-        ideaFormData.append("categories[]", String(catId));
-      });
+      ideaFormData.append("is_anonymous", formData.isAnonymous ? "1" : "0");
+      ideaFormData.append("category", selectedCategories.join(","));
       files.forEach((file) => {
         ideaFormData.append("files[]", file);
       });
@@ -76,18 +76,23 @@ const IdeaCreatePage = () => {
       await createIdea(ideaFormData);
       router.push("/dashboard");
       showSuccessToast("Idea created successfully");
-    } catch (error) {
-      showErrorToast(
-        error instanceof Error ? error.message : "Failed to create idea",
-      );
+    } catch (e) {
+      const error = e as AxiosError<{ message: string }>;
+      const errorMessage =
+        error.response?.data?.message || "Failed to create idea";
+      showErrorToast(errorMessage);
+      console.error("Failed to create idea:", e);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="p-6">
-      <button className="btn btn-ghost btn-md" onClick={() => router.back()}>
+    <div className="p-6 max-w-6xl mx-auto">
+      <button
+        className="btn btn-outline btn-md mb-6"
+        onClick={() => router.back()}
+      >
         <ChevronLeft size={24} />
         <h1 className="font-bold">Back to ideas</h1>
       </button>
@@ -101,39 +106,41 @@ const IdeaCreatePage = () => {
           variants={itemVariants}
           className="flex justify-between items-center gap-4 mb-8"
         >
-          <div className="flex items-center gap-4">
-            <div className="avatar placeholder">
-              <div className="bg-base-200 mask mask-squircle w-12">
-                {authUser?.photo ? (
-                  <Image
-                    src={authUser.photo}
-                    alt={authUser.name}
-                    width={48}
-                    height={48}
-                    className="rounded-full"
-                  />
-                ) : (
-                  <span className="text-lg">
-                    {getInitials(authUser?.name || "")}
-                  </span>
-                )}
+          <div className="flex flex-wrap items-center gap-4 justify-between w-full">
+            <div className="flex items-center gap-4">
+              <div className="avatar placeholder">
+                <div className="bg-base-200 mask mask-squircle w-12">
+                  {authUser?.photo ? (
+                    <Image
+                      src={authUser.photo}
+                      alt={authUser.name}
+                      width={48}
+                      height={48}
+                      className="rounded-full"
+                    />
+                  ) : (
+                    <span className="text-lg">
+                      {getInitials(authUser?.name || "")}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold">
+                  {formData.isAnonymous ? "Anonymous User" : authUser?.name}
+                </h1>
+                <p className="text-base-content/60">{authUser?.email}</p>
               </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold">
-                {formData.isAnonymous ? "Anonymous User" : authUser?.name}
-              </h1>
-              <p className="text-base-content/60">{authUser?.email}</p>
-            </div>
+            <span className="text-base-content/60 flex items-center gap-2">
+              <Calendar size={16} />
+              {new Date().toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </span>
           </div>
-          <span className="text-base-content/60 flex items-center gap-2">
-            <Calendar size={16} />
-            {new Date().toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </span>
         </motion.div>
 
         <form onSubmit={handleSubmit}>
@@ -213,7 +220,14 @@ const IdeaCreatePage = () => {
                 }
               />
               <span className="label-text">
-                I agree to the terms of use and privacy policy
+                I agree to the{" "}
+                <Link href="/terms-of-use" className="link link-primary">
+                  Terms of Use
+                </Link>{" "}
+                and{" "}
+                <Link href="/privacy-policy" className="link link-primary">
+                  Privacy Policy
+                </Link>
               </span>
             </label>
           </motion.div>
@@ -222,7 +236,7 @@ const IdeaCreatePage = () => {
             variants={itemVariants}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className={`btn btn-primary btn-lg gap-2 ${isSubmitting ? "loading" : ""}`}
+            className={`btn btn-primary btn-wide gap-2`}
             type="submit"
             disabled={isSubmitting || !formData.agreeToTerms}
           >

@@ -17,6 +17,8 @@ import PermissionsSection from "../../components/permissionsSection";
 import { useRolePermissions } from "../../hooks/userRolePermissions";
 import { Department, Permission, Role, User } from "@/api/models";
 import { useToast } from "@/components/toast";
+import { uploadToCloudinary } from "@/util/uploadCloudinary";
+import { AxiosError } from "axios";
 
 type UserFormValues = z.infer<typeof userFormSchema>;
 
@@ -109,7 +111,7 @@ const EditUser = () => {
             if (user.department && Array.isArray(user.department)) {
               const deptIds = user.department.map(
                 (dept: string | Department) =>
-                  typeof dept === "string" ? dept : dept.id.toString(),
+                  typeof dept === "string" ? dept : dept.id.toString()
               );
               setValue("department_ids", deptIds);
             }
@@ -119,7 +121,7 @@ const EditUser = () => {
                 .map((perm: string | Permission) => {
                   if (typeof perm === "string") {
                     const foundPerm = allPermissions.find(
-                      (p) => p.permission === perm,
+                      (p) => p.permission === perm
                     );
                     return foundPerm ? foundPerm.id.toString() : null;
                   }
@@ -151,30 +153,49 @@ const EditUser = () => {
     showErrorToast,
   ]);
 
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
   const handlePhotoChange = (file: File | null) => {
     setPhotoFile(file);
   };
 
   const onSubmit = async (data: UserFormValues) => {
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("email", data.email);
-
-    formData.append("role_id", data.role_ids.join(","));
-    formData.append("department_id", data.department_ids.join(","));
-    formData.append("permissions_id", data.permission_ids.join(","));
-
-    if (photoFile) {
-      formData.append("photo", photoFile);
-    }
-
+    let photoUrl = fetchedUser?.photo;
+    setIsUploading(true);
     try {
+      if (photoFile) {
+        photoUrl = await uploadToCloudinary(photoFile, (fileName, progress) => {
+          setUploadProgress(progress);
+        });
+      }
+
+      console.log("Photo URL", photoUrl);
+
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("email", data.email);
+
+      formData.append("role_id", data.role_ids.join(","));
+      formData.append("department_id", data.department_ids.join(","));
+      formData.append("permissions_id", data.permission_ids.join(","));
+
+      if (photoUrl) {
+        formData.append("photo", photoUrl);
+      }
+
       await updateUser(userId, formData);
       router.back();
       showSuccessToast("User updated successfully");
     } catch (e) {
-      showErrorToast(error || "Failed to update user");
+      const error = e as AxiosError<{ message: string }>;
+      const errorMessage =
+        error.response?.data?.message || "Failed to update user";
+      showErrorToast(errorMessage);
       console.error("Failed to update user:", e);
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -191,18 +212,16 @@ const EditUser = () => {
 
   return (
     <>
-      <div className="p-6">
-        <div className="flex items-center mb-6">
+      <div className="p-6 max-w-6xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
           <button
-            className="btn btn-ghost btn-md mr-2"
+            className="btn btn-outline btn-md"
             onClick={() => router.back()}
           >
             <ChevronLeft size={24} />
             <h1 className="font-bold">Edit User</h1>
           </button>
-          <div className="flex justify-end w-full">
-            <button className="btn btn-error btn-md">Reset Password</button>
-          </div>
+          <button className="btn btn-error btn-md">Reset Password</button>
         </div>
 
         <div className="max-w-3xl mx-auto">
@@ -249,7 +268,7 @@ const EditUser = () => {
                 </div>
               </div>
 
-              <div className="card-actions justify-end mt-6">
+              <div className="flex flex-row gap-4 justify-end mt-6">
                 <button
                   type="button"
                   className="btn btn-ghost"
@@ -260,9 +279,9 @@ const EditUser = () => {
                 <button
                   type="submit"
                   className="btn btn-primary btn-wide"
-                  disabled={isLoading}
+                  disabled={isLoading || isUploading}
                 >
-                  {isLoading ? (
+                  {isLoading || isUploading ? (
                     <span className="loading loading-spinner loading-sm"></span>
                   ) : (
                     "Update User"

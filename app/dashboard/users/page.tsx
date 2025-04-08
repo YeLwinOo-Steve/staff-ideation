@@ -78,7 +78,7 @@ const UsersPage = () => {
         </div>
       ) : (
         <div className="overflow-x-auto bg-base-100 rounded-xl">
-          <table className="table table-zebra">
+          <table className="table">
             <thead>
               <tr>
                 <th>No.</th>
