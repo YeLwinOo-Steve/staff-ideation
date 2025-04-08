@@ -61,19 +61,16 @@ const NavBar = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-
-  // Handle initial mount and theme
   useEffect(() => {
     setMounted(true);
     setActiveMenu(pathname || "/dashboard");
-    setIsSettingsOpen(pathname?.startsWith("/dashboard/settings") || false);
   }, [pathname]);
 
   const navigateTo = (path: string) => {
     if (mounted) {
-      // Close settings dropdown when navigating to non-settings pages
-      if (!path.startsWith("/dashboard/settings")) {
-        setIsSettingsOpen(false);
+      if (path.startsWith("/dashboard/settings")) {
+        router.push(path);
+        return;
       }
       router.push(path);
       setActiveMenu(path);
@@ -82,15 +79,11 @@ const NavBar = () => {
 
   const handleMenuClick = (menu: string) => {
     if (mounted) {
-      // If clicking settings, just toggle the dropdown
       if (menu === "/dashboard/settings") {
         setIsSettingsOpen(!isSettingsOpen);
-        setActiveMenu(menu);
         return;
       }
-      
-      // For other menus, navigate and close settings
-      setIsSettingsOpen(false);
+
       router.push(menu);
       setActiveMenu(menu);
     }
@@ -117,7 +110,6 @@ const NavBar = () => {
     setTheme(newTheme);
   };
 
-  // Only show theme-dependent content after mounting
   if (!mounted) {
     return (
       <div className="navbar bg-base-100 z-50">
@@ -126,7 +118,7 @@ const NavBar = () => {
         </div>
         <div className="hidden md:flex gap-2">
           <ul className="menu bg-base-200 menu-horizontal gap-1 rounded-xl text-base-content">
-            {/* Loading state */}
+
           </ul>
         </div>
       </div>
@@ -205,10 +197,9 @@ const NavBar = () => {
                   e.preventDefault();
                   if (mounted) {
                     setIsSettingsOpen(!isSettingsOpen);
-                    setActiveMenu("/dashboard/settings");
                   }
                 }}
-                className={activeMenu.startsWith("/dashboard/settings") ? "active" : ""}
+                className={isSettingsOpen ? "active" : ""}
                 suppressHydrationWarning
               >
                 <span className="flex items-center gap-2">
