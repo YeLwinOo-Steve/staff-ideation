@@ -27,6 +27,13 @@ interface ApiState {
   allUsers: User[];
   isLoadingAllUsers: boolean;
   pendingIdeas: Idea[];
+  pendingIdeaPagination: {
+    data: Idea[];
+    currentPage: number;
+    lastPage: number;
+    total: number;
+    loading: boolean;
+  };
   ideaPagination: {
     data: Idea[];
     currentPage: number;
@@ -62,7 +69,7 @@ interface ApiState {
   submitIdea: (id: number) => Promise<void>;
   getIdea: (id: number) => Promise<void | null>;
   deleteIdea: (id: number) => Promise<void>;
-  getToSubmit: () => Promise<void>;
+  getToSubmit: (page?: number) => Promise<void>;
 
   // Comments
   getCommentsForIdea: (id: number) => Promise<void>;
@@ -106,6 +113,13 @@ export const useApiStore = create<ApiState>((set, get) => ({
   allUsers: [],
   isLoadingAllUsers: false,
   pendingIdeas: [],
+  pendingIdeaPagination: {
+    data: [],
+    currentPage: 1,
+    lastPage: 1,
+    total: 0,
+    loading: false,
+  },
   ideaPagination: {
     data: [],
     currentPage: 1,
@@ -323,15 +337,32 @@ export const useApiStore = create<ApiState>((set, get) => ({
       }));
     }
   },
-  getToSubmit: async () => {
+  getToSubmit: async (page = 1) => {
     try {
-      set({ isLoading: true });
-      const response = await api.ideaApi.getToSubmit();
+      set((state) => ({
+        ...state,
+        pendingIdeaPagination: {
+          ...state.pendingIdeaPagination,
+          loading: true,
+        },
+      }));
+      const response = await api.ideaApi.getToSubmit(page);
       const pendingIdeas = response.data.data.map(idea => ({
         ...idea,
         isPending: true
       }));
-      set({ pendingIdeas });
+      
+      set((state) => ({
+        ...state,
+        pendingIdeas,
+        pendingIdeaPagination: {
+          data: pendingIdeas,
+          currentPage: response.data.meta.current_page,
+          lastPage: response.data.meta.last_page,
+          total: response.data.meta.total,
+          loading: false,
+        },
+      }));
     } catch (error) {
       const e = error as AxiosError<{ message: string }>;
       const message =
@@ -339,7 +370,13 @@ export const useApiStore = create<ApiState>((set, get) => ({
       set({ error: message });
       throw error;
     } finally {
-      set({ isLoading: false });
+      set((state) => ({
+        ...state,
+        pendingIdeaPagination: {
+          ...state.pendingIdeaPagination,
+          loading: false,
+        },
+      }));
     }
   },
 
@@ -361,7 +398,9 @@ export const useApiStore = create<ApiState>((set, get) => ({
     try {
       set({ isLoading: true });
       await api.ideaApi.submit(id);
+      // Refresh both lists
       get().fetchIdeas();
+      get().getToSubmit();
     } catch (error) {
       const e = error as AxiosError<{ message: string }>;
       const message = e.response?.data?.message || "Failed to submit idea";

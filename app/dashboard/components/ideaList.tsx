@@ -44,13 +44,22 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
   const [activeTab, setActiveTab] = useState<"all" | "pending">("all");
   const {
     ideaPagination: { data: ideas, currentPage, lastPage, loading },
-    pendingIdeas,
+    pendingIdeaPagination: {
+      data: pendingIdeas,
+      currentPage: pendingCurrentPage,
+      lastPage: pendingLastPage,
+      loading: pendingLoading,
+    },
     fetchIdeas,
     fetchUsers,
     getToSubmit,
   } = useApiStore();
 
   const displayedIdeas = activeTab === "pending" ? pendingIdeas : ideas;
+  const currentPageToShow =
+    activeTab === "pending" ? pendingCurrentPage : currentPage;
+  const lastPageToShow = activeTab === "pending" ? pendingLastPage : lastPage;
+  const isLoading = activeTab === "pending" ? pendingLoading : loading;
   const gridClass = `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Math.min(gridCols, 4)} gap-6`;
 
   useEffect(() => {
@@ -59,7 +68,7 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
 
   useEffect(() => {
     if (activeTab === "pending") {
-      getToSubmit();
+      getToSubmit(page);
     } else if (popular !== null && popular === true) {
       fetchIdeas({
         page: page.toString(),
@@ -79,7 +88,7 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
     setLatest(null);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -98,7 +107,7 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="flex flex-col sm:flex-row justify-between items-center sm:items-center gap-4"
+        className="flex flex-col sm:flex-row justify-between items-center gap-4 w-full"
       >
         <div className="tabs tabs-boxed">
           <button
@@ -116,7 +125,7 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
         </div>
 
         {activeTab === "all" && (
-          <div className="flex flex-wrap gap-4 w-full sm:w-auto">
+          <div className="flex gap-4 justify-center sm:justify-end">
             <motion.label
               variants={itemVariants}
               className="flex items-center gap-2"
@@ -188,28 +197,30 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
         </motion.div>
       )}
 
-      {/* Only show pagination for all ideas */}
-      {activeTab === "all" && lastPage > 1 && (
+      {/* Pagination */}
+      {lastPageToShow > 1 && (
         <motion.div
           variants={itemVariants}
           className="fixed bottom-6 left-0 right-0 flex justify-center z-10"
         >
           <div className="join bg-base-100">
-            {Array.from({ length: Math.min(lastPage, 10) }).map((_, index) => (
-              <motion.input
-                key={index}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="join-item btn btn-square"
-                type="radio"
-                name="options"
-                aria-label={`${index + 1}`}
-                checked={currentPage === index + 1}
-                onChange={() => {
-                  setPage(index + 1);
-                }}
-              />
-            ))}
+            {Array.from({ length: Math.min(lastPageToShow, 10) }).map(
+              (_, index) => (
+                <motion.input
+                  key={index}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="join-item btn btn-square"
+                  type="radio"
+                  name="options"
+                  aria-label={`${index + 1}`}
+                  checked={currentPageToShow === index + 1}
+                  onChange={() => {
+                    setPage(index + 1);
+                  }}
+                />
+              )
+            )}
           </div>
         </motion.div>
       )}

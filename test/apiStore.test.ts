@@ -24,6 +24,13 @@ jest.mock("@/api/repository", () => ({
       }),
     create: () => Promise.resolve({ data: mockIdea }),
     submit: () => Promise.resolve({ data: { ...mockIdea, is_enabled: true } }),
+    getToSubmit: () =>
+      Promise.resolve({
+        data: {
+          data: [mockIdea],
+          meta: { current_page: 1, last_page: 1, total: 1 },
+        },
+      }),
   },
   categoryApi: {
     getAll: () => Promise.resolve({ data: { data: [mockCategory] } }),
@@ -97,7 +104,6 @@ describe("API Store", () => {
       await useApiStore.getState().createIdea(formData);
       expect(useApiStore.getState().ideas).toEqual([mockIdea]);
     });
-
     it("should submit idea and refresh list", async () => {
       await useApiStore.getState().submitIdea(1);
       expect(useApiStore.getState().ideas).toEqual([
@@ -110,7 +116,7 @@ describe("API Store", () => {
       jest.spyOn(api.ideaApi, "getAll").mockRejectedValueOnce(mockIdeasError);
 
       await expect(useApiStore.getState().fetchIdeas()).rejects.toThrow(
-        "Failed to fetch ideas",
+        "Failed to fetch ideas"
       );
       expect(useApiStore.getState().error).toBe("Failed to fetch ideas");
     });
