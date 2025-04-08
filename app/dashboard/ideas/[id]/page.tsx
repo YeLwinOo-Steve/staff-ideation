@@ -18,6 +18,8 @@ import { formatDistanceToNow } from "date-fns";
 import saveAs from "file-saver";
 import JSZip from "jszip";
 import { AnimatedNumber } from "../../components/animatedNumber";
+import { useToast } from "@/components/toast";
+import { AxiosError } from "axios";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -157,13 +159,22 @@ const IdeaDetail = () => {
   const [loadingStage, setLoadingStage] = useState<
     "initial" | "idea" | "comments" | "complete"
   >("initial");
-  const { getIdea, getCommentsForIdea, idea, comments, isLoading, createVote } =
-    useApiStore();
+  const {
+    getIdea,
+    getCommentsForIdea,
+    idea,
+    comments,
+    isLoading,
+    createVote,
+    createComment,
+  } = useApiStore();
   const [userVote, setUserVote] = useState<number>(0);
   const [voteCount, setVoteCount] = useState<number>(0);
   const [newComment, setNewComment] = useState("");
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [isAnonymousComment, setIsAnonymousComment] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const { showSuccessToast, showErrorToast } = useToast();
 
   const handleVote = (value: number, e: React.MouseEvent) => {
     e.preventDefault();
@@ -186,10 +197,22 @@ const IdeaDetail = () => {
     if (!newComment.trim()) return;
 
     setIsSubmittingComment(true);
-    // TODO: Implement comment submission
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setNewComment("");
-    setIsSubmittingComment(false);
+    const formData = new FormData();
+    formData.append("idea_id", id as string);
+    formData.append("comment", newComment);
+    formData.append("is_anonymous", isAnonymousComment ? "1" : "0");
+    try {
+      await createComment(formData);
+      setNewComment("");
+      setIsSubmittingComment(false);
+      showSuccessToast("Comment submitted successfully");
+    } catch (e) {
+      console.error("Error submitting comment:", e);
+      const error = e as AxiosError<{ message: string }>;
+      const errorMessage = error.response?.data?.message || "Failed to submit comment";
+      showErrorToast(errorMessage);
+      setIsSubmittingComment(false);
+    }
   };
 
   const handleDelete = async () => {
@@ -406,28 +429,45 @@ const IdeaDetail = () => {
                 onChange={(e) => setNewComment(e.target.value)}
                 rows={3}
               />
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  className="btn btn-ghost btn-sm"
-                  onClick={() => setNewComment("")}
-                  disabled={isSubmittingComment || !newComment.trim()}
-                >
-                  <X size={16} />
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="btn btn-primary btn-sm"
-                  disabled={isSubmittingComment || !newComment.trim()}
-                >
-                  {isSubmittingComment ? (
-                    <span className="loading loading-spinner loading-sm" />
-                  ) : (
-                    <Send size={16} />
-                  )}
-                  Comment
-                </button>
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-sm checkbox-primary"
+                    checked={isAnonymousComment}
+                    onChange={(e) => setIsAnonymousComment(e.target.checked)}
+                  />
+                  <span className="text-sm opacity-75">
+                    Comment anonymously
+                  </span>
+                </label>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => {
+                      setNewComment("");
+                      setIsAnonymousComment(false);
+                    }}
+                    disabled={isSubmittingComment || !newComment.trim()}
+                  >
+                    <X size={16} />
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn btn-primary btn-sm"
+                    disabled={isSubmittingComment || !newComment.trim()}
+                    onClick={handleCommentSubmit}
+                  >
+                    {isSubmittingComment ? (
+                      <span className="loading loading-spinner loading-sm" />
+                    ) : (
+                      <Send size={16} />
+                    )}
+                    Comment
+                  </button>
+                </div>
               </div>
             </motion.form>
 

@@ -73,8 +73,7 @@ export const systemSettingApi = {
 export const commentApi = {
   getCommentsForIdea: (id: number) =>
     apiClient.get<{ data: Comment[] }>(`/idea/get-comment/${id}`),
-  create: (data: Partial<Comment>) =>
-    apiClient.post<Comment>("/comments", data),
+  create: (data: FormData) => apiClient.post<Comment>("/comments", data),
   update: (id: number, data: Partial<Comment>) =>
     apiClient.put<Comment>(`/comments/${id}`, data),
   delete: (id: number) => apiClient.delete(`/comments/${id}`),

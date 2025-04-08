@@ -9,7 +9,6 @@ import {
   Comment,
 } from "@/api/models";
 import * as api from "@/api/repository";
-import { PaginatedResponse } from "@/api/models";
 
 interface ApiState {
   departments: Department[];
@@ -63,7 +62,7 @@ interface ApiState {
 
   // Comments
   getCommentsForIdea: (id: number) => Promise<void>;
-
+  createComment: (data: FormData) => Promise<void>;
   // Categories
   fetchCategories: () => Promise<void>;
   createCategory: (name: string) => Promise<void>;
@@ -392,15 +391,25 @@ export const useApiStore = create<ApiState>((set, get) => ({
 
   getCommentsForIdea: async (id) => {
     try {
-      set({ isLoading: true });
       const response = await api.commentApi.getCommentsForIdea(id);
       set({ comments: response.data.data });
     } catch (error) {
       const message = "Failed to get comments for idea";
       set({ error: message });
       throw error;
-    } finally {
-      set({ isLoading: false });
+    }
+  },
+
+  createComment: async (data) => {
+    try {
+      await api.commentApi.create(data);
+      const ideaId = data.get("idea_id");
+      get().getCommentsForIdea(Number(ideaId));
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to create comment";
+      set({ error: message });
+      throw error;
     }
   },
 
