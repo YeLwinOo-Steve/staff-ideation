@@ -1,70 +1,116 @@
 "use client";
 
+import { useCallback, useState } from "react";
 import Image from "next/image";
-import { Upload } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Camera, Upload, X } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface UserPhotoUploadProps {
-  initialPhoto?: string | null;
+  initialPhoto: string | null;
   onPhotoChange: (file: File | null) => void;
 }
 
-const UserPhotoUpload = ({
+export default function UserPhotoUpload({
   initialPhoto,
   onPhotoChange,
-}: UserPhotoUploadProps) => {
-  const [photoPreview, setPhotoPreview] = useState<string | null>(
-    initialPhoto || null,
+}: UserPhotoUploadProps) {
+  const [preview, setPreview] = useState<string | null>(initialPhoto);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleFileChange = useCallback(
+    (file: File | null) => {
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+        onPhotoChange(file);
+      }
+    },
+    [onPhotoChange]
   );
 
-  useEffect(() => {
-    if (initialPhoto) {
-      setPhotoPreview(initialPhoto);
-    }
-  }, [initialPhoto]);
+  const handleDrop = useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      setIsDragging(false);
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith("image/")) {
+        handleFileChange(file);
+      }
+    },
+    [handleFileChange]
+  );
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      onPhotoChange(file);
+  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
 
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setPhotoPreview(event.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  const handleDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+  }, []);
+
+  const removePhoto = useCallback(() => {
+    setPreview(null);
+    onPhotoChange(null);
+  }, [onPhotoChange]);
 
   return (
-    <div className="w-full md:w-1/3 flex flex-col items-center">
-      <div className="avatar mb-4">
-        <div className="w-32 h-32 mask mask-squircle bg-base-300 flex items-center justify-center relative overflow-hidden">
-          {photoPreview ? (
+    <div className="space-y-4 max-w-32 max-h-32">
+      {/* Photo Preview */}
+      {preview ? (
+        <div className="relative group">
+          <div className="aspect-square w-full overflow-hidden rounded-2xl bg-base-200">
             <Image
-              src={photoPreview}
-              alt="user avatar preview"
-              width={128}
-              height={128}
+              src={preview}
+              alt="Profile preview"
+              width={400}
+              height={400}
+              className="w-full h-full object-cover"
             />
-          ) : (
-            <Upload
-              size={32}
-              className="text-base-content opacity-40 absolute inset-0 m-auto"
-            />
-          )}
+          </div>
+          <motion.button
+            className="absolute top-2 right-2 btn btn-circle btn-sm bg-base-100/80 backdrop-blur-sm border-0 opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={removePhoto}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <X className="w-4 h-4" />
+          </motion.button>
         </div>
-      </div>
-      <div className="form-control w-full">
-        <input
-          type="file"
-          className="file-input file-input-bordered"
-          accept="image/*"
-          onChange={handleFileChange}
-        />
-      </div>
+      ) : (
+        <motion.div
+          className={`aspect-square w-full rounded-2xl border-2 border-dashed transition-colors relative flex flex-col items-center justify-center gap-3 cursor-pointer
+            ${isDragging ? "border-primary bg-primary/5" : "border-base-300 hover:border-primary/50 hover:bg-base-200/50"}`}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          whileHover={{ scale: 1.01 }}
+          onClick={() => document.getElementById("photo-input")?.click()}
+        >
+          <div
+            className={`p-3 absolute top-5 rounded-xl transition-colors ${isDragging ? "bg-primary/10" : "bg-base-200"}`}
+          >
+            <Upload
+              className={`w-6 h-6 ${isDragging ? "text-primary" : "opacity-70"}`}
+            />
+          </div>
+          <p className="text-xs text-base-content/50 absolute bottom-3 text-center">
+            PNG, JPG or GIF (max. 2MB)
+          </p>
+        </motion.div>
+      )}
+
+      <input
+        id="photo-input"
+        type="file"
+        className="hidden"
+        accept="image/*"
+        onChange={(e) => handleFileChange(e.target.files?.[0] || null)}
+      />
     </div>
   );
-};
-
-export default UserPhotoUpload;
+}
