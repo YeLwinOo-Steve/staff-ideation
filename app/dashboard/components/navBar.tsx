@@ -70,16 +70,30 @@ const NavBar = () => {
   }, [pathname]);
 
   const navigateTo = (path: string) => {
-    router.push(path);
-    setIsDropdownOpen(false);
+    if (mounted) {
+      // Close settings dropdown when navigating to non-settings pages
+      if (!path.startsWith("/dashboard/settings")) {
+        setIsSettingsOpen(false);
+      }
+      router.push(path);
+      setActiveMenu(path);
+    }
   };
 
   const handleMenuClick = (menu: string) => {
-    setActiveMenu(menu);
-    if (menu.startsWith("/dashboard/settings")) {
-      setIsSettingsOpen(true);
+    if (mounted) {
+      // If clicking settings, just toggle the dropdown
+      if (menu === "/dashboard/settings") {
+        setIsSettingsOpen(!isSettingsOpen);
+        setActiveMenu(menu);
+        return;
+      }
+      
+      // For other menus, navigate and close settings
+      setIsSettingsOpen(false);
+      router.push(menu);
+      setActiveMenu(menu);
     }
-    router.push(menu);
   };
 
   useEffect(() => {
@@ -191,7 +205,6 @@ const NavBar = () => {
                   e.preventDefault();
                   if (mounted) {
                     setIsSettingsOpen(!isSettingsOpen);
-                    router.push("/dashboard/settings");
                     setActiveMenu("/dashboard/settings");
                   }
                 }}
@@ -208,9 +221,7 @@ const NavBar = () => {
                   <a
                     onClick={() => {
                       if (mounted) {
-                        router.push("/dashboard/settings/account");
-                        setIsSettingsOpen(true);
-                        setActiveMenu("/dashboard/settings/account");
+                        navigateTo("/dashboard/settings/account");
                       }
                     }}
                     className={`flex items-center gap-2 py-2 ${
@@ -236,9 +247,7 @@ const NavBar = () => {
                   <a
                     onClick={() => {
                       if (mounted) {
-                        router.push("/dashboard/settings/system");
-                        setIsSettingsOpen(true);
-                        setActiveMenu("/dashboard/settings/system");
+                        navigateTo("/dashboard/settings/system");
                       }
                     }}
                     className={`flex items-center gap-2 py-2 ${
@@ -329,7 +338,7 @@ const NavBar = () => {
                 </a>
               </li>
               <li>
-                <a onClick={() => navigateTo("/dashboard/settings")}>
+                <a onClick={() => handleMenuClick("/dashboard/settings")}>
                   <Settings size={16} />
                   Settings
                 </a>
