@@ -70,6 +70,9 @@ interface ApiState {
   updateCategory: (id: number, data: Partial<Category>) => Promise<void>;
   deleteCategory: (id: number) => Promise<void>;
 
+  // Votes
+  createVote: (ideaId: number, vote: number) => Promise<void>;
+
   // System Settings
   fetchSystemSettings: () => Promise<void>;
   updateSystemSetting: (
@@ -451,6 +454,17 @@ export const useApiStore = create<ApiState>((set, get) => ({
       set({ error: message });
     } finally {
       set({ isLoading: false });
+    }
+  },
+
+  createVote: async (ideaId: number, vote: number) => {
+    try {
+      await api.voteApi.create({ idea_id: ideaId, vote_value: vote });
+      get().getIdea(ideaId);
+    } catch (error) {
+      const message = "Failed to create vote";
+      set({ error: message });
+      throw error;
     }
   },
 

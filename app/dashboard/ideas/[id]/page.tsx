@@ -157,7 +157,7 @@ const IdeaDetail = () => {
   const [loadingStage, setLoadingStage] = useState<
     "initial" | "idea" | "comments" | "complete"
   >("initial");
-  const { getIdea, getCommentsForIdea, idea, comments, isLoading } =
+  const { getIdea, getCommentsForIdea, idea, comments, isLoading, createVote } =
     useApiStore();
   const [userVote, setUserVote] = useState<number>(0);
   const [voteCount, setVoteCount] = useState<number>(0);
@@ -173,6 +173,12 @@ const IdeaDetail = () => {
     const voteDelta = newVoteValue - userVote;
     setVoteCount((prevCount) => prevCount + voteDelta);
     setUserVote(newVoteValue);
+    handleVoteSubmit();
+  };
+
+  const handleVoteSubmit = async () => {
+    if (!userVote) return;
+    await createVote(Number(id), userVote);
   };
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
