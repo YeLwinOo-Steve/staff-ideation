@@ -77,7 +77,7 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="flex flex-col gap-6 w-full max-w-full overflow-hidden"
+      className="flex flex-col gap-6 w-full max-w-full overflow-hidden pb-24 space-y-2"
     >
       <motion.div
         variants={containerVariants}
@@ -156,7 +156,7 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
       {lastPage > 1 && (
         <motion.div
           variants={itemVariants}
-          className="flex justify-center mt-4 overflow-x-auto pb-2"
+          className="fixed bottom-6 left-0 right-0 flex justify-center"
         >
           <div className="join">
             {Array.from({ length: Math.min(lastPage, 10) }).map((_, index) => (
@@ -164,7 +164,7 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
                 key={index}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className="join-item btn btn-square"
+                className="join-item btn"
                 type="radio"
                 name="options"
                 aria-label={`${index + 1}`}

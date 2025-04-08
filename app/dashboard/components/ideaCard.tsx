@@ -1,7 +1,13 @@
 "use client";
 
 import { Idea } from "@/api/models";
-import { MessageCircle, Paperclip, ThumbsUp, ThumbsDown } from "lucide-react";
+import {
+  MessageCircle,
+  Paperclip,
+  ThumbsUp,
+  ThumbsDown,
+  Lightbulb,
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
@@ -15,6 +21,23 @@ interface IdeaCardProps {
   idea: Idea;
   showVoteButtons?: boolean;
 }
+
+const itemVariants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.9,
+    y: 10,
+  },
+  show: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: "easeOut",
+    },
+  },
+};
 
 const buttonVariants = {
   initial: { scale: 1 },
@@ -54,15 +77,18 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
   };
 
   return (
-    <Link
-      href={`/dashboard/ideas/${idea.id}`}
-      className="card bg-base-200 h-full flex flex-col"
+    <motion.div
+      variants={itemVariants}
+      className="card bg-base-200 shadow-sm hover:shadow-sm duration-100 h-full"
+      whileHover={{ scale: 1.02 }}
+      transition={{ duration: 0.2 }}
+      layout
     >
-      <div className="card-body p-4">
-        <div className="flex justify-between items-center gap-2 mb-2">
-          <div className="flex items-center gap-2">
-            <div className="avatar placeholder">
-              <div className="bg-primary text-white mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
+      <div className="card-body p-5">
+        <div className="flex flex-col gap-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <div className="bg-primary/10 p-3 rounded-xl mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
                 {isAnonymous ? (
                   <EyeOff className="w-4 h-4" />
                 ) : idea.user_photo &&
@@ -70,78 +96,68 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
                   <Image
                     src={idea.user_photo}
                     alt={userName}
-                    width={48}
-                    height={48}
+                    width={40}
+                    height={40}
                     className="object-cover mask mask-squircle"
                   />
                 ) : (
                   getInitials(userName)
                 )}
               </div>
-            </div>
-
-            <div className="flex flex-col">
-              <span className="font-semibold text-sm">{userName}</span>
-              {idea.time && (
+              <div className="flex flex-col">
+                <h3 className="card-title text-lg">{idea.title}</h3>
                 <span className="text-xs opacity-70">{formattedDate}</span>
-              )}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <motion.button
+                className="btn btn-circle btn-sm bg-error/10 hover:bg-error border-0"
+                whileHover={{
+                  scale: 1.05,
+                  backgroundColor: "hsl(var(--er))",
+                }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <Flag className="w-4 h-4 text-error" />
+              </motion.button>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span
-              className="text-xs text-error tooltip tooltip-bottom"
-              data-tip="Report this idea!"
-            >
-              <Flag className="w-4 h-4" />
-            </span>
-          </div>
-        </div>
 
-        {/* Title and Content */}
-        <h3 className="card-title text-base">{idea.title}</h3>
-        <p className="text-md opacity-80 mb-2 line-clamp-4">{idea.content}</p>
+          <div className="divider divider-primary before:h-[1px] after:h-[1px] my-0"></div>
 
-        {/* Categories */}
-        {idea.category && idea.category.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-2">
-            {idea.category.map((cat, index) => (
-              <div
-                key={index}
-                className="badge badge-primary badge-outline text-xs"
-              >
-                {cat}
-              </div>
-            ))}
-          </div>
-        )}
+          {/* Content */}
+          <p className="text-md opacity-80 line-clamp-4">{idea.content}</p>
 
-        <div className="card-actions justify-between lg:justify-end items-center mt-auto pt-2">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 lg:mr-8">
+          {/* Categories */}
+          {idea.category && idea.category.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {idea.category.map((cat, index) => (
+                <div
+                  key={index}
+                  className="badge badge-primary badge-outline text-xs px-3 py-2"
+                >
+                  {cat}
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
               <motion.button
                 variants={buttonVariants}
                 initial="initial"
                 whileTap="tap"
                 whileHover="hover"
-                className={`p-2 rounded-full transition-colors duration-200 ${
-                  userVote === 1 ? "bg-primary/10" : "hover:bg-primary/5"
+                className={`btn btn-circle btn-sm ${
+                  userVote === 1
+                    ? "bg-primary text-primary-content border-0"
+                    : "bg-primary/10 hover:bg-primary border-0"
                 }`}
                 onClick={(e) => handleVote(1, e)}
               >
-                <motion.div
-                  animate={{
-                    scale: userVote === 1 ? [1, 1.2, 1] : 1,
-                    transition: { duration: 0.2 },
-                  }}
-                >
-                  <ThumbsUp
-                    className={`w-6 h-6 transition-colors duration-200 ${
-                      userVote === 1
-                        ? "stroke-primary fill-primary"
-                        : "stroke-gray-600 hover:stroke-primary"
-                    }`}
-                  />
-                </motion.div>
+                <ThumbsUp className="w-4 h-4" />
               </motion.button>
 
               <AnimatedNumber value={voteCount} />
@@ -151,40 +167,35 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
                 initial="initial"
                 whileTap="tap"
                 whileHover="hover"
-                className={`p-2 rounded-full transition-colors duration-200 ${
-                  userVote === -1 ? "bg-error/10" : "hover:bg-error/5"
+                className={`btn btn-circle btn-sm ${
+                  userVote === -1
+                    ? "bg-error text-error-content border-0"
+                    : "bg-error/10 hover:bg-error border-0"
                 }`}
                 onClick={(e) => handleVote(-1, e)}
               >
-                <motion.div
-                  animate={{
-                    scale: userVote === -1 ? [1, 1.2, 1] : 1,
-                    transition: { duration: 0.2 },
-                  }}
-                >
-                  <ThumbsDown
-                    className={`w-6 h-6 transition-colors duration-200 ${
-                      userVote === -1
-                        ? "stroke-error fill-error"
-                        : "stroke-gray-600 hover:stroke-error"
-                    }`}
-                  />
-                </motion.div>
+                <ThumbsDown className="w-4 h-4" />
               </motion.button>
             </div>
-          </div>
 
-          <div className="flex items-center gap-2 lg:mr-4 btn btn-sm shadow-none">
-            <span className="text-md font-bold">{idea.comments || 0}</span>
-            <MessageCircle size={24} />
-          </div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 bg-base-100 px-3 py-2 rounded-xl">
+                <MessageCircle className="w-4 h-4 text-info" />
+                <span className="text-sm font-medium text-info">
+                  {idea.comments || 0}
+                </span>
+              </div>
 
-          <div className="flex items-center gap-2 btn btn-sm shadow-none">
-            <span className="text-md font-bold">{idea.files?.length || 0}</span>
-            <Paperclip size={20} />
+              <div className="flex items-center gap-2 bg-base-100 px-3 py-2 rounded-xl">
+                <Paperclip className="w-4 h-4 text-success" />
+                <span className="text-sm font-medium text-success">
+                  {idea.files?.length || 0}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </Link>
+    </motion.div>
   );
 }
