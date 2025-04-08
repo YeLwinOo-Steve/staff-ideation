@@ -9,7 +9,7 @@ import { useTheme } from "next-themes";
 import {
   Lightbulb,
   Tags,
-  File,
+  FileArchive,
   Settings,
   Users,
   BriefcaseBusiness,
@@ -117,9 +117,7 @@ const NavBar = () => {
           <Image src="/logo.png" alt="EWSD" width={82} height={82} />
         </div>
         <div className="hidden md:flex gap-2">
-          <ul className="menu bg-base-200 menu-horizontal gap-1 rounded-xl text-base-content">
-
-          </ul>
+          <ul className="menu bg-base-200 menu-horizontal gap-1 rounded-xl text-base-content"></ul>
         </div>
       </div>
     );
@@ -137,7 +135,7 @@ const NavBar = () => {
       {/* Desktop menu */}
       <div className="hidden md:flex gap-2">
         <ul className="menu bg-base-200 menu-horizontal gap-1 rounded-xl text-base-content">
-          <li>
+          <li className="tooltip tooltip-bottom" data-tip="View Ideas">
             <a
               onClick={() => handleMenuClick("/dashboard")}
               className={`${activeMenu === "/dashboard" ? "active" : ""} text-base-content`}
@@ -147,7 +145,7 @@ const NavBar = () => {
               Home
             </a>
           </li>
-          <li>
+          <li className="tooltip tooltip-bottom" data-tip="Manage Users">
             <a
               onClick={() => handleMenuClick("/dashboard/users")}
               className={activeMenu === "/dashboard/users" ? "active" : ""}
@@ -157,17 +155,19 @@ const NavBar = () => {
               Users
             </a>
           </li>
-          <li>
+          <li className="tooltip tooltip-bottom" data-tip="Manage Departments">
             <a
               onClick={() => handleMenuClick("/dashboard/departments")}
-              className={activeMenu === "/dashboard/departments" ? "active" : ""}
+              className={
+                activeMenu === "/dashboard/departments" ? "active" : ""
+              }
               suppressHydrationWarning
             >
               <BriefcaseBusiness size={16} />
               Departments
             </a>
           </li>
-          <li>
+          <li className="tooltip tooltip-bottom" data-tip="Manage Categories">
             <a
               onClick={() => handleMenuClick("/dashboard/category")}
               className={activeMenu === "/dashboard/category" ? "active" : ""}
@@ -177,21 +177,18 @@ const NavBar = () => {
               Category
             </a>
           </li>
-          <li>
+          <li className="tooltip tooltip-bottom" data-tip="View Reports">
             <a
               onClick={() => handleMenuClick("/dashboard/reports")}
               className={activeMenu === "/dashboard/reports" ? "active" : ""}
               suppressHydrationWarning
             >
-              <File size={16} />
+              <FileArchive size={16} />
               Reports
             </a>
           </li>
-          <li>
-            <details 
-              open={isSettingsOpen}
-              suppressHydrationWarning
-            >
+          <li className="tooltip tooltip-bottom" data-tip="System Settings">
+            <details open={isSettingsOpen} suppressHydrationWarning>
               <summary
                 onClick={(e) => {
                   e.preventDefault();
@@ -207,16 +204,21 @@ const NavBar = () => {
                   Settings
                 </span>
               </summary>
-              <ul className="shadow-sm rounded-md p-2 bg-base-200 w-full z-50">
-                <li>
+              <ul className="menu menu-vertical shadow-sm rounded-md p-2 bg-base-200 full-width z-50">
+                <li
+                  className="tooltip tooltip-left"
+                  data-tip="Account Settings"
+                >
                   <a
                     onClick={() => {
                       if (mounted) {
                         navigateTo("/dashboard/settings/account");
                       }
                     }}
-                    className={`flex items-center gap-2 py-2 ${
-                      activeMenu === "/dashboard/settings/account" ? "active" : ""
+                    className={`flex items-center gap-2 ${
+                      activeMenu === "/dashboard/settings/account"
+                        ? "active"
+                        : ""
                     }`}
                     suppressHydrationWarning
                   >
@@ -224,25 +226,30 @@ const NavBar = () => {
                     Account
                   </a>
                 </li>
-                <li>
+                <li className="tooltip tooltip-left" data-tip="Switch Theme">
                   <a
                     onClick={handleThemeSwitch}
-                    className="flex items-center gap-2 py-2 w-full"
+                    className="flex items-center gap-2"
                     suppressHydrationWarning
                   >
                     <ThemeIcon size={16} />
                     {themeLabel}
                   </a>
                 </li>
-                <li>
+                <li
+                  className="tooltip tooltip-left"
+                  data-tip="System Settings"
+                >
                   <a
                     onClick={() => {
                       if (mounted) {
                         navigateTo("/dashboard/settings/system");
                       }
                     }}
-                    className={`flex items-center gap-2 py-2 ${
-                      activeMenu === "/dashboard/settings/system" ? "active" : ""
+                    className={`flex items-center gap-2 ${
+                      activeMenu === "/dashboard/settings/system"
+                        ? "active"
+                        : ""
                     }`}
                     suppressHydrationWarning
                   >
@@ -250,12 +257,13 @@ const NavBar = () => {
                     System
                   </a>
                 </li>
-                <li>
+                <div className="divider my-1"></div>
+                <li className="tooltip tooltip-left" data-tip="Sign Out">
                   <a
                     onClick={() => {
                       /* handle logout */
                     }}
-                    className="flex items-center gap-2 py-2 text-error hover:bg-error/10"
+                    className="flex items-center gap-2 text-error hover:bg-error/10"
                   >
                     <LogOut size={16} />
                     Logout
@@ -324,7 +332,7 @@ const NavBar = () => {
               </li>
               <li>
                 <a onClick={() => navigateTo("/dashboard/reports")}>
-                  <File size={16} />
+                  <FileArchive size={16} />
                   Reports
                 </a>
               </li>
