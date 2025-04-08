@@ -77,8 +77,8 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
       transition={{ duration: 0.2 }}
       layout
     >
-      <div className="card-body p-5">
-        <div className="flex flex-col gap-4">
+      <div className="card-body p-5 flex flex-col h-full">
+        <div className="flex flex-col gap-4 flex-1">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
               <div className="bg-primary/10 p-3 rounded-xl mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
@@ -139,56 +139,57 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
               ))}
             </div>
           )}
+        </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <motion.button
-                variants={buttonVariants}
-                initial="initial"
-                whileTap="tap"
-                whileHover="hover"
-                className={`btn btn-circle btn-sm ${
-                  userVote === 1
-                    ? "bg-primary text-primary-content border-0"
-                    : "bg-primary/10 hover:bg-primary border-0"
-                }`}
-                onClick={(e) => handleVote(1, e)}
-              >
-                <ThumbsUp className="w-4 h-4" />
-              </motion.button>
+        {/* Bottom row with voting, comments and attachments */}
+        <div className="flex items-center justify-between mt-auto pt-4">
+          <div className="flex items-center gap-2">
+            <motion.button
+              variants={buttonVariants}
+              initial="initial"
+              whileTap="tap"
+              whileHover="hover"
+              className={`btn btn-circle btn-sm ${
+                userVote === 1
+                  ? "bg-primary text-primary-content border-0"
+                  : "bg-primary/10 hover:bg-primary border-0"
+              }`}
+              onClick={(e) => handleVote(1, e)}
+            >
+              <ThumbsUp className="w-4 h-4" />
+            </motion.button>
 
-              <AnimatedNumber value={voteCount} />
+            <AnimatedNumber value={voteCount} />
 
-              <motion.button
-                variants={buttonVariants}
-                initial="initial"
-                whileTap="tap"
-                whileHover="hover"
-                className={`btn btn-circle btn-sm ${
-                  userVote === -1
-                    ? "bg-error text-error-content border-0"
-                    : "bg-error/10 hover:bg-error border-0"
-                }`}
-                onClick={(e) => handleVote(-1, e)}
-              >
-                <ThumbsDown className="w-4 h-4" />
-              </motion.button>
+            <motion.button
+              variants={buttonVariants}
+              initial="initial"
+              whileTap="tap"
+              whileHover="hover"
+              className={`btn btn-circle btn-sm ${
+                userVote === -1
+                  ? "bg-error text-error-content border-0"
+                  : "bg-error/10 hover:bg-error border-0"
+              }`}
+              onClick={(e) => handleVote(-1, e)}
+            >
+              <ThumbsDown className="w-4 h-4" />
+            </motion.button>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 bg-base-100 px-3 py-2 rounded-xl">
+              <MessageCircle className="w-4 h-4 text-info" />
+              <span className="text-sm font-medium text-info">
+                {idea.comments || 0}
+              </span>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 bg-base-100 px-3 py-2 rounded-xl">
-                <MessageCircle className="w-4 h-4 text-info" />
-                <span className="text-sm font-medium text-info">
-                  {idea.comments || 0}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2 bg-base-100 px-3 py-2 rounded-xl">
-                <Paperclip className="w-4 h-4 text-success" />
-                <span className="text-sm font-medium text-success">
-                  {idea.files?.length || 0}
-                </span>
-              </div>
+            <div className="flex items-center gap-2 bg-base-100 px-3 py-2 rounded-xl">
+              <Paperclip className="w-4 h-4 text-success" />
+              <span className="text-sm font-medium text-success">
+                {idea.files?.length || 0}
+              </span>
             </div>
           </div>
         </div>
