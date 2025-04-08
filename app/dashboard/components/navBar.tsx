@@ -138,59 +138,57 @@ const NavBar = () => {
       {/* Desktop menu */}
       <div className="hidden md:flex gap-2">
         <ul className="menu bg-base-200 menu-horizontal gap-1 rounded-xl text-base-content">
-          <li className="tooltip tooltip-bottom" data-tip="View Ideas">
+          <li>
             <a
               onClick={() => handleMenuClick("/dashboard")}
-              className={`${activeMenu === "/dashboard" ? "active" : ""} text-base-content`}
+              className={`${activeMenu === "/dashboard" ? "active" : ""} text-base-content flex items-center gap-2`}
               suppressHydrationWarning
             >
               <Lightbulb size={16} />
               Home
             </a>
           </li>
-          <li className="tooltip tooltip-bottom" data-tip="Manage Users">
+          <li>
             <a
               onClick={() => handleMenuClick("/dashboard/users")}
-              className={activeMenu === "/dashboard/users" ? "active" : ""}
+              className={`${activeMenu === "/dashboard/users" ? "active" : ""} flex items-center gap-2`}
               suppressHydrationWarning
             >
               <Users size={16} />
               Users
             </a>
           </li>
-          <li className="tooltip tooltip-bottom" data-tip="Manage Departments">
+          <li>
             <a
               onClick={() => handleMenuClick("/dashboard/departments")}
-              className={
-                activeMenu === "/dashboard/departments" ? "active" : ""
-              }
+              className={`${activeMenu === "/dashboard/departments" ? "active" : ""} flex items-center gap-2`}
               suppressHydrationWarning
             >
               <Building2 size={16} />
               Departments
             </a>
           </li>
-          <li className="tooltip tooltip-bottom" data-tip="Manage Categories">
+          <li>
             <a
               onClick={() => handleMenuClick("/dashboard/category")}
-              className={activeMenu === "/dashboard/category" ? "active" : ""}
+              className={`${activeMenu === "/dashboard/category" ? "active" : ""} flex items-center gap-2`}
               suppressHydrationWarning
             >
               <Blocks size={16} />
               Category
             </a>
           </li>
-          <li className="tooltip tooltip-bottom" data-tip="View Reports">
+          <li>
             <a
               onClick={() => handleMenuClick("/dashboard/reports")}
-              className={activeMenu === "/dashboard/reports" ? "active" : ""}
+              className={`${activeMenu === "/dashboard/reports" ? "active" : ""} flex items-center gap-2`}
               suppressHydrationWarning
             >
               <FileArchive size={16} />
               Reports
             </a>
           </li>
-          <li className="tooltip tooltip-bottom" data-tip="System Settings">
+          <li>
             <details open={isSettingsOpen} suppressHydrationWarning>
               <summary
                 onClick={(e) => {
@@ -199,7 +197,7 @@ const NavBar = () => {
                     setIsSettingsOpen(!isSettingsOpen);
                   }
                 }}
-                className={isSettingsOpen ? "active" : ""}
+                className={`${isSettingsOpen ? "active" : ""}`}
                 suppressHydrationWarning
               >
                 <span className="flex items-center gap-2">
@@ -208,10 +206,7 @@ const NavBar = () => {
                 </span>
               </summary>
               <ul className="menu menu-vertical shadow-sm rounded-md p-2 bg-base-200 full-width z-50">
-                <li
-                  className="tooltip tooltip-left"
-                  data-tip="Account Settings"
-                >
+                <li>
                   <a
                     onClick={() => {
                       if (mounted) {
@@ -229,7 +224,7 @@ const NavBar = () => {
                     Account
                   </a>
                 </li>
-                <li className="tooltip tooltip-left" data-tip="Switch Theme">
+                <li>
                   <a
                     onClick={handleThemeSwitch}
                     className="flex items-center gap-2"
@@ -239,7 +234,7 @@ const NavBar = () => {
                     {themeLabel}
                   </a>
                 </li>
-                <li className="tooltip tooltip-left" data-tip="System Settings">
+                <li>
                   <a
                     onClick={() => {
                       if (mounted) {
@@ -258,7 +253,7 @@ const NavBar = () => {
                   </a>
                 </li>
                 <div className="divider my-1"></div>
-                <li className="tooltip tooltip-left" data-tip="Sign Out">
+                <li>
                   <a
                     onClick={() => {
                       /* handle logout */
