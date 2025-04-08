@@ -1,7 +1,13 @@
 "use client";
 
 import { Idea } from "@/api/models";
-import { MessageCircle, Paperclip, ThumbsUp, ThumbsDown, Send } from "lucide-react";
+import {
+  MessageCircle,
+  Paperclip,
+  ThumbsUp,
+  ThumbsDown,
+  Send,
+} from "lucide-react";
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
 import { getInitials } from "@/util/getInitials";
@@ -41,7 +47,7 @@ const buttonVariants = {
 };
 
 export default function IdeaCard({ idea }: IdeaCardProps) {
-  const { submitIdea } = useApiStore();
+  const { submitIdea, error } = useApiStore();
   const { showSuccessToast, showErrorToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formattedDate = idea.time
@@ -50,7 +56,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
 
   const [userVote, setUserVote] = useState<number>(idea.user_vote_value || 0);
   const [voteCount, setVoteCount] = useState<number>(
-    idea.total_vote_value || 0,
+    idea.total_vote_value || 0
   );
   // If anonymous, don't show user details
   const isAnonymous = idea.is_anonymous || idea.user_name === "Anonymous";
@@ -77,13 +83,14 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
   const handleSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     setIsSubmitting(true);
     try {
       await submitIdea(idea.id);
       showSuccessToast("Idea submitted successfully");
-    } catch (error) {
-      showErrorToast("Failed to submit idea");
+    } catch (e) {
+      console.error("Failed to submit idea", e);
+      showErrorToast(error || "Failed to submit idea");
     } finally {
       setIsSubmitting(false);
     }
