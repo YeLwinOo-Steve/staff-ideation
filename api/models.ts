@@ -44,7 +44,6 @@ export interface Idea {
   total_vote_value?: number;
   user_vote_value?: number;
   time?: string;
-  user_id: number;
   system_setting_id: number;
   created_at: string;
   updated_at: string;

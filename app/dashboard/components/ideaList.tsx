@@ -145,7 +145,7 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
               key={idea.id}
               variants={itemVariants}
               className="h-full"
-              layout // Add layout prop for smooth grid transitions
+              layout
             >
               <IdeaCard idea={idea} />
             </motion.div>

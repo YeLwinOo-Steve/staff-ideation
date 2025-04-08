@@ -89,7 +89,7 @@ const ZipDownloadBtn = () => {
           const errorMessage =
             err instanceof Error ? err.message : "An unknown error occurred";
           throw new Error(
-            `Error downloading file ${index + 1}: ${errorMessage}`,
+            `Error downloading file ${index + 1}: ${errorMessage}`
           );
         }
       }
@@ -153,17 +153,10 @@ const IdeaDetail = () => {
   const { id } = useParams();
   const router = useRouter();
   const [loadingStage, setLoadingStage] = useState<
-    "initial" | "idea" | "comments" | "user" | "complete"
+    "initial" | "idea" | "comments" | "complete"
   >("initial");
-  const {
-    getIdea,
-    getCommentsForIdea,
-    getUser,
-    idea,
-    user,
-    comments,
-    isLoading,
-  } = useApiStore();
+  const { getIdea, getCommentsForIdea, idea, comments, isLoading } =
+    useApiStore();
   const [userVote, setUserVote] = useState<number>(0);
   const [voteCount, setVoteCount] = useState<number>(0);
 
@@ -192,21 +185,11 @@ const IdeaDetail = () => {
     const loadComments = async () => {
       if (id && loadingStage === "comments") {
         await getCommentsForIdea(Number(id));
-        setLoadingStage("user");
+        setLoadingStage("complete");
       }
     };
     loadComments();
   }, [id, getCommentsForIdea, loadingStage]);
-
-  useEffect(() => {
-    const loadUser = async () => {
-      if (idea && loadingStage === "user") {
-        await getUser(idea.user_id);
-        setLoadingStage("complete");
-      }
-    };
-    loadUser();
-  }, [idea, getUser, loadingStage]);
 
   if (loadingStage !== "complete" || isLoading) {
     return (
@@ -220,7 +203,6 @@ const IdeaDetail = () => {
           <div className="text-base-content/60">
             {loadingStage === "idea" && "Loading idea details..."}
             {loadingStage === "comments" && "Loading comments..."}
-            {loadingStage === "user" && "Loading user information..."}
           </div>
         </motion.div>
       </div>
@@ -289,12 +271,14 @@ const IdeaDetail = () => {
               <div className="flex items-center gap-3">
                 <div className="avatar placeholder">
                   <div className="bg-primary text-white mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
-                    {idea.is_anonymous ? "A" : getInitials(user?.name || "")}
+                    {idea.is_anonymous
+                      ? "A"
+                      : getInitials(idea.user_name || "")}
                   </div>
                 </div>
                 <div className="flex flex-col">
                   <span className="font-semibold text-md">
-                    {idea.is_anonymous ? "Anonymous User" : user?.name}
+                    {idea.is_anonymous ? "Anonymous User" : idea.user_name}
                   </span>
                   {idea.updated_at && (
                     <span className="text-xs opacity-70">
