@@ -62,8 +62,9 @@ const NavBar = () => {
   const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  // Set active menu based on current pathname
+  // Handle initial mount and theme
   useEffect(() => {
+    setMounted(true);
     setActiveMenu(pathname || "/dashboard");
     setIsSettingsOpen(pathname?.startsWith("/dashboard/settings") || false);
   }, [pathname]);
@@ -82,16 +83,6 @@ const NavBar = () => {
   };
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (mounted && resolvedTheme) {
-      document.documentElement.setAttribute("data-theme", resolvedTheme);
-    }
-  }, [mounted, resolvedTheme]);
-
-  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -105,216 +96,249 @@ const NavBar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Theme handling
   const handleThemeSwitch = () => {
+    if (!mounted) return;
     const newTheme = resolvedTheme === "abyss" ? "lemonade" : "abyss";
     setTheme(newTheme);
   };
 
-  const ThemeIcon = mounted ? (resolvedTheme === "abyss" ? Moon : Sun) : Sun;
-  const themeLabel = mounted
-    ? resolvedTheme === "abyss"
-      ? "Dark"
-      : "Light"
-    : "Light";
-
-  return (
-    <>
+  // Only show theme-dependent content after mounting
+  if (!mounted) {
+    return (
       <div className="navbar bg-base-100 z-50">
         <div className="flex-1">
           <Image src="/logo.png" alt="EWSD" width={82} height={82} />
         </div>
-
-        {/* Desktop menu */}
         <div className="hidden md:flex gap-2">
           <ul className="menu bg-base-200 menu-horizontal gap-1 rounded-xl text-base-content">
-            <li>
-              <a
-                onClick={() => handleMenuClick("/dashboard")}
-                className={`${activeMenu === "/dashboard" ? "active" : ""} text-base-content`}
-              >
-                <Lightbulb size={16} />
-                Home
-              </a>
-            </li>
-            <li>
-              <a
-                onClick={() => handleMenuClick("/dashboard/users")}
-                className={activeMenu === "/dashboard/users" ? "active" : ""}
-              >
-                <Users size={16} />
-                Users
-              </a>
-            </li>
-            <li>
-              <a
-                onClick={() => handleMenuClick("/dashboard/departments")}
-                className={activeMenu === "/dashboard/departments" ? "active" : ""}
-              >
-                <BriefcaseBusiness size={16} />
-                Departments
-              </a>
-            </li>
-            <li>
-              <a
-                onClick={() => handleMenuClick("/dashboard/category")}
-                className={activeMenu === "/dashboard/category" ? "active" : ""}
-              >
-                <Tags size={16} />
-                Category
-              </a>
-            </li>
-            <li>
-              <a
-                onClick={() => handleMenuClick("/dashboard/reports")}
-                className={activeMenu === "/dashboard/reports" ? "active" : ""}
-              >
-                <File size={16} />
-                Reports
-              </a>
-            </li>
-            <li>
-              <details open={isSettingsOpen}>
-                <summary
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsSettingsOpen(!isSettingsOpen);
-                    handleMenuClick("/dashboard/settings");
-                  }}
-                  className={activeMenu.startsWith("/dashboard/settings") ? "active" : ""}
-                >
-                  <a className="flex items-center gap-2">
-                    <Settings size={16} />
-                    Settings
-                  </a>
-                </summary>
-                <ul className="shadow-sm rounded-md p-2 bg-base-200 w-full z-50">
-                  <li>
-                    <a
-                      onClick={() => {
-                        navigateTo("/dashboard/settings/account");
-                        setIsSettingsOpen(true);
-                      }}
-                      className={`flex items-center gap-2 py-2 ${
-                        activeMenu === "/dashboard/settings/account" ? "active" : ""
-                      }`}
-                    >
-                      <UserCircle size={16} />
-                      Account
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      onClick={handleThemeSwitch}
-                      className="flex items-center gap-2 py-2 w-full"
-                    >
-                      <ThemeIcon size={16} />
-                      {themeLabel}
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      onClick={() => {
-                        navigateTo("/dashboard/settings/system");
-                        setIsSettingsOpen(true);
-                      }}
-                      className={`flex items-center gap-2 py-2 ${
-                        activeMenu === "/dashboard/settings/system" ? "active" : ""
-                      }`}
-                    >
-                      <Sliders size={16} />
-                      System
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      onClick={() => {
-                        /* handle logout */
-                      }}
-                      className="flex items-center gap-2 py-2 text-error hover:bg-error/10"
-                    >
-                      <LogOut size={16} />
-                      Logout
-                    </a>
-                  </li>
-                </ul>
-              </details>
-            </li>
+            {/* Loading state */}
           </ul>
         </div>
+      </div>
+    );
+  }
 
-        {/* Mobile menu */}
-        <div className="flex md:hidden">
-          <div className="dropdown dropdown-end" ref={dropdownRef}>
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-circle"
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+  const ThemeIcon = resolvedTheme === "abyss" ? Moon : Sun;
+  const themeLabel = resolvedTheme === "abyss" ? "Dark" : "Light";
+
+  return (
+    <div className="navbar bg-base-100 z-50" suppressHydrationWarning>
+      <div className="flex-1">
+        <Image src="/logo.png" alt="EWSD" width={82} height={82} />
+      </div>
+
+      {/* Desktop menu */}
+      <div className="hidden md:flex gap-2">
+        <ul className="menu bg-base-200 menu-horizontal gap-1 rounded-xl text-base-content">
+          <li>
+            <a
+              onClick={() => handleMenuClick("/dashboard")}
+              className={`${activeMenu === "/dashboard" ? "active" : ""} text-base-content`}
+              suppressHydrationWarning
             >
-              <motion.svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+              <Lightbulb size={16} />
+              Home
+            </a>
+          </li>
+          <li>
+            <a
+              onClick={() => handleMenuClick("/dashboard/users")}
+              className={activeMenu === "/dashboard/users" ? "active" : ""}
+              suppressHydrationWarning
+            >
+              <Users size={16} />
+              Users
+            </a>
+          </li>
+          <li>
+            <a
+              onClick={() => handleMenuClick("/dashboard/departments")}
+              className={activeMenu === "/dashboard/departments" ? "active" : ""}
+              suppressHydrationWarning
+            >
+              <BriefcaseBusiness size={16} />
+              Departments
+            </a>
+          </li>
+          <li>
+            <a
+              onClick={() => handleMenuClick("/dashboard/category")}
+              className={activeMenu === "/dashboard/category" ? "active" : ""}
+              suppressHydrationWarning
+            >
+              <Tags size={16} />
+              Category
+            </a>
+          </li>
+          <li>
+            <a
+              onClick={() => handleMenuClick("/dashboard/reports")}
+              className={activeMenu === "/dashboard/reports" ? "active" : ""}
+              suppressHydrationWarning
+            >
+              <File size={16} />
+              Reports
+            </a>
+          </li>
+          <li>
+            <details 
+              open={isSettingsOpen}
+              suppressHydrationWarning
+            >
+              <summary
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (mounted) {
+                    setIsSettingsOpen(!isSettingsOpen);
+                    router.push("/dashboard/settings");
+                    setActiveMenu("/dashboard/settings");
+                  }
+                }}
+                className={activeMenu.startsWith("/dashboard/settings") ? "active" : ""}
+                suppressHydrationWarning
               >
-                <motion.path
-                  variants={pathVariants}
-                  initial="closed"
-                  animate={isDropdownOpen ? "open" : "closed"}
-                />
-              </motion.svg>
-            </div>
-            {isDropdownOpen && (
-              <motion.ul
+                <span className="flex items-center gap-2">
+                  <Settings size={16} />
+                  Settings
+                </span>
+              </summary>
+              <ul className="shadow-sm rounded-md p-2 bg-base-200 w-full z-50">
+                <li>
+                  <a
+                    onClick={() => {
+                      if (mounted) {
+                        router.push("/dashboard/settings/account");
+                        setIsSettingsOpen(true);
+                        setActiveMenu("/dashboard/settings/account");
+                      }
+                    }}
+                    className={`flex items-center gap-2 py-2 ${
+                      activeMenu === "/dashboard/settings/account" ? "active" : ""
+                    }`}
+                    suppressHydrationWarning
+                  >
+                    <UserCircle size={16} />
+                    Account
+                  </a>
+                </li>
+                <li>
+                  <a
+                    onClick={handleThemeSwitch}
+                    className="flex items-center gap-2 py-2 w-full"
+                    suppressHydrationWarning
+                  >
+                    <ThemeIcon size={16} />
+                    {themeLabel}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    onClick={() => {
+                      if (mounted) {
+                        router.push("/dashboard/settings/system");
+                        setIsSettingsOpen(true);
+                        setActiveMenu("/dashboard/settings/system");
+                      }
+                    }}
+                    className={`flex items-center gap-2 py-2 ${
+                      activeMenu === "/dashboard/settings/system" ? "active" : ""
+                    }`}
+                    suppressHydrationWarning
+                  >
+                    <Sliders size={16} />
+                    System
+                  </a>
+                </li>
+                <li>
+                  <a
+                    onClick={() => {
+                      /* handle logout */
+                    }}
+                    className="flex items-center gap-2 py-2 text-error hover:bg-error/10"
+                  >
+                    <LogOut size={16} />
+                    Logout
+                  </a>
+                </li>
+              </ul>
+            </details>
+          </li>
+        </ul>
+      </div>
+
+      {/* Mobile menu */}
+      <div className="flex md:hidden">
+        <div className="dropdown dropdown-end" ref={dropdownRef}>
+          <div
+            tabIndex={0}
+            role="button"
+            className="btn btn-circle"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          >
+            <motion.svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <motion.path
+                variants={pathVariants}
                 initial="closed"
                 animate={isDropdownOpen ? "open" : "closed"}
-                variants={dropdownVariants}
-                tabIndex={0}
-                className="dropdown-content z-[1] menu p-4 shadow bg-base-200 rounded-box w-52 mt-2"
-              >
-                <li>
-                  <a onClick={() => navigateTo("/dashboard")}>
-                    <Lightbulb size={16} />
-                    Home
-                  </a>
-                </li>
-                <li>
-                  <a onClick={() => navigateTo("/dashboard/users")}>
-                    <Users size={16} />
-                    Users
-                  </a>
-                </li>
-                <li>
-                  <a onClick={() => navigateTo("/dashboard/departments")}>
-                    <BriefcaseBusiness size={16} />
-                    Departments
-                  </a>
-                </li>
-                <li>
-                  <a onClick={() => navigateTo("/dashboard/category")}>
-                    <Tags size={16} />
-                    Category
-                  </a>
-                </li>
-                <li>
-                  <a onClick={() => navigateTo("/dashboard/reports")}>
-                    <File size={16} />
-                    Reports
-                  </a>
-                </li>
-                <li>
-                  <a onClick={() => navigateTo("/dashboard/settings")}>
-                    <Settings size={16} />
-                    Settings
-                  </a>
-                </li>
-              </motion.ul>
-            )}
+              />
+            </motion.svg>
           </div>
+          {isDropdownOpen && (
+            <motion.ul
+              initial="closed"
+              animate={isDropdownOpen ? "open" : "closed"}
+              variants={dropdownVariants}
+              tabIndex={0}
+              className="dropdown-content z-[1] menu p-4 shadow bg-base-200 rounded-box w-52 mt-2"
+            >
+              <li>
+                <a onClick={() => navigateTo("/dashboard")}>
+                  <Lightbulb size={16} />
+                  Home
+                </a>
+              </li>
+              <li>
+                <a onClick={() => navigateTo("/dashboard/users")}>
+                  <Users size={16} />
+                  Users
+                </a>
+              </li>
+              <li>
+                <a onClick={() => navigateTo("/dashboard/departments")}>
+                  <BriefcaseBusiness size={16} />
+                  Departments
+                </a>
+              </li>
+              <li>
+                <a onClick={() => navigateTo("/dashboard/category")}>
+                  <Tags size={16} />
+                  Category
+                </a>
+              </li>
+              <li>
+                <a onClick={() => navigateTo("/dashboard/reports")}>
+                  <File size={16} />
+                  Reports
+                </a>
+              </li>
+              <li>
+                <a onClick={() => navigateTo("/dashboard/settings")}>
+                  <Settings size={16} />
+                  Settings
+                </a>
+              </li>
+            </motion.ul>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
