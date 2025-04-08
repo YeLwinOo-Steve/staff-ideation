@@ -6,6 +6,7 @@ import { useApiStore } from "@/store/apiStore";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 const UsersPage = () => {
   const { user: authUser } = useAuthStore();
@@ -26,6 +27,32 @@ const UsersPage = () => {
 
   const handlePageChange = (page: number) => {
     fetchUsers(page);
+  };
+
+  const tableVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const rowVariants = {
+    hidden: {
+      opacity: 0,
+      y: 20,
+    },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 12,
+      },
+    },
   };
 
   return (
@@ -61,7 +88,11 @@ const UsersPage = () => {
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <motion.tbody
+              variants={tableVariants}
+              initial="hidden"
+              animate="show"
+            >
               {users.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="text-center py-4">
@@ -70,7 +101,11 @@ const UsersPage = () => {
                 </tr>
               ) : (
                 users.map((user, index) => (
-                  <tr key={user.id}>
+                  <motion.tr
+                    key={user.id}
+                    variants={rowVariants}
+                    custom={index}
+                  >
                     <th>
                       <label>{index + 1}</label>
                     </th>
@@ -135,10 +170,10 @@ const UsersPage = () => {
                         </button>
                       </div>
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))
               )}
-            </tbody>
+            </motion.tbody>
           </table>
         </div>
       )}
