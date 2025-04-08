@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { PencilIcon, PlusIcon } from "lucide-react";
+import { PencilIcon, PlusIcon, Users } from "lucide-react";
 import { useApiStore } from "@/store/apiStore";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import Image from "next/image";
 
-const Users = () => {
+const UsersPage = () => {
   const { user: authUser } = useAuthStore();
   const {
     userPagination: { data: users, currentPage, lastPage, loading, total },
@@ -32,6 +32,7 @@ const Users = () => {
     <div className="container mx-auto p-6 max-w-7xl space-y-6">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
+          <Users className="w-8 h-8 text-primary" />
           <h1 className="text-2xl font-bold">Users </h1>
           <span className="badge badge-outline badge-lg">{total}</span>
         </div>
@@ -165,4 +166,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default UsersPage;
