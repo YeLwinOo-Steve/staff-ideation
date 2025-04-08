@@ -71,7 +71,7 @@ export default function Dashboard() {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="p-6 max-w-6xl mx-auto"
+      className="p-6 max-w-7xl mx-auto"
     >
       <div className="mb-8">
         <div className="flex flex-wrap justify-between items-center">

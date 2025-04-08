@@ -10,6 +10,7 @@ import {
   Trash,
   Send,
   X,
+  Trash2Icon,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useApiStore } from "@/store/apiStore";
@@ -528,30 +529,58 @@ const IdeaDetail = () => {
 
       {/* Delete Confirmation Dialog */}
       {showDeleteDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        >
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
+            initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-base-100 p-6 rounded-lg max-w-md w-full mx-4"
+            exit={{ scale: 0.95, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="bg-base-100 rounded-2xl shadow-xl max-w-md w-full overflow-hidden border border-base-300"
           >
-            <h3 className="font-bold text-lg mb-4">Delete Idea</h3>
-            <p className="mb-6">
-              Are you sure you want to delete this idea? This action cannot be
-              undone.
-            </p>
-            <div className="flex justify-end gap-2">
-              <button
-                className="btn btn-ghost"
-                onClick={() => setShowDeleteDialog(false)}
-              >
-                Cancel
-              </button>
-              <button className="btn btn-error" onClick={handleDelete}>
-                Delete
-              </button>
+            <div className="p-6 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="bg-error/10 p-3 rounded-xl">
+                  <Trash2Icon className="w-5 h-5 text-error" />
+                </div>
+                <h3 className="text-xl font-bold">Delete Idea</h3>
+              </div>
+
+              <div className="divider divider-error before:h-[1px] after:h-[1px] my-2"></div>
+
+              <div className="bg-error/5 p-4 rounded-xl space-y-1">
+                <p className="font-medium">Are you sure?</p>
+                <p className="text-base-content/70 text-sm">
+                  This action cannot be undone. This will permanently delete your idea and remove all associated data.
+                </p>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <motion.button
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => setShowDeleteDialog(false)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Cancel
+                </motion.button>
+                <motion.button
+                  className="btn btn-error btn-sm"
+                  onClick={handleDelete}
+                  whileHover={{ scale: 1.02, backgroundColor: "hsl(var(--er))" }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Trash2Icon className="w-4 h-4" />
+                  Delete
+                </motion.button>
+              </div>
             </div>
           </motion.div>
-        </div>
+        </motion.div>
       )}
     </>
   );
