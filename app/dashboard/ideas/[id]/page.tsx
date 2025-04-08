@@ -19,6 +19,7 @@ import saveAs from "file-saver";
 import JSZip from "jszip";
 import { AnimatedNumber } from "../../components/animatedNumber";
 import { useToast } from "@/components/toast";
+import { AxiosError } from "axios";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -196,19 +197,24 @@ const IdeaDetail = () => {
     e.preventDefault();
     if (!newComment.trim()) return;
 
-    setIsSubmittingComment(true);
-    const formData = new FormData();
-    formData.append("idea_id", id as string);
-    formData.append("comment", newComment);
-    formData.append("is_anonymous", isAnonymousComment ? "1" : "0");
     try {
+      setIsSubmittingComment(true);
+      const formData = new FormData();
+      formData.append("idea_id", id as string);
+      formData.append("comment", newComment);
+      formData.append("is_anonymous", isAnonymousComment ? "1" : "0");
+      
       await createComment(formData);
+      
+      // Reset form state after successful submission
       setNewComment("");
-      setIsSubmittingComment(false);
+      setIsAnonymousComment(false);
       showSuccessToast("Comment submitted successfully");
-    } catch (e) {
-      console.error("Error submitting comment:", e);
-      showErrorToast(e as string);
+    } catch (error) {
+      const e = error as AxiosError<{ message: string }>;
+      const message = e.response?.data?.message || "Failed to submit comment";
+      showErrorToast(message);
+    } finally {
       setIsSubmittingComment(false);
     }
   };
