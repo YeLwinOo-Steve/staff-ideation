@@ -59,7 +59,7 @@ const FilePreview: React.FC<{ setFiles: (files: File[]) => void }> = ({
   }, [files]);
 
   return (
-    <section className="container bg-base-100">
+    <section className="w-full">
       <div
         {...getRootProps({
           className:
