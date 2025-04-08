@@ -79,21 +79,23 @@ const ToastMessage = ({
   }[type];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 50, scale: 0.3 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
-      className={`flex items-center gap-3 px-4 py-3 rounded-xl ${alertClass}`}
-    >
-      <Icon className="w-5 h-5 shrink-0" />
-      <span className="text-sm font-medium">{message}</span>
-      <button
-        onClick={() => setIsVisible(false)}
-        className="btn btn-circle btn-ghost btn-xs ml-2"
+    isVisible && (
+      <motion.div
+        initial={{ opacity: 0, y: 50, scale: 0.3 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
+        className={`flex items-center gap-3 px-4 py-3 rounded-xl ${alertClass}`}
       >
-        <X className="w-4 h-4" />
-      </button>
-    </motion.div>
+        <Icon className="w-5 h-5 shrink-0" />
+        <span className="text-sm font-medium">{message}</span>
+        <button
+          onClick={() => setIsVisible(false)}
+          className="btn btn-circle btn-ghost btn-xs ml-2"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </motion.div>
+    )
   );
 };
 
