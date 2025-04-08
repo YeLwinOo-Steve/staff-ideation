@@ -7,7 +7,6 @@ import { useAuthStore } from "@/store/authStore";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft } from "lucide-react";
-import NavBar from "../../../components/navBar";
 import { userFormSchema } from "@/schema/validations";
 import { z } from "zod";
 import UserPhotoUpload from "../../../components/userPhotoUpload";
@@ -16,7 +15,7 @@ import RolesSection from "../../components/roleSection";
 import DepartmentsSection from "../../components/departmentsSection";
 import PermissionsSection from "../../components/permissionsSection";
 import { useRolePermissions } from "../../hooks/userRolePermissions";
-import { Department, Permission, Role, User } from "@/api/models";
+import { Permission, Role, User } from "@/api/models";
 import { useToast } from "@/components/toast";
 import { uploadToCloudinary } from "@/util/uploadCloudinary";
 import { AxiosError } from "axios";
@@ -43,7 +42,8 @@ const EditUser = () => {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [fetchedUser, setUser] = useState<User>();
-  const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
+  const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] =
+    useState(false);
   const methods = useForm<UserFormValues>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
@@ -112,7 +112,7 @@ const EditUser = () => {
 
             if (user.department) {
               const foundDept = departments.find(
-                (dept) => dept.department_name === user.department
+                (dept) => dept.department_name === user.department,
               );
               if (foundDept) {
                 setValue("department_ids", [foundDept.id.toString()]);
@@ -211,6 +211,7 @@ const EditUser = () => {
         showErrorToast("Failed to reset password");
       }
     } catch (error) {
+      console.log("Error resetting password:", error);
       showErrorToast("Failed to reset password");
     } finally {
       setIsResetPasswordModalOpen(false);
@@ -238,7 +239,7 @@ const EditUser = () => {
             <ChevronLeft size={24} />
             <h1 className="font-bold">Edit User</h1>
           </button>
-          <button 
+          <button
             className="btn btn-error btn-md"
             onClick={() => setIsResetPasswordModalOpen(true)}
           >
@@ -324,7 +325,8 @@ const EditUser = () => {
             <div className="modal-box">
               <h3 className="font-bold text-lg">Reset Password</h3>
               <p className="py-4">
-                Are you sure you want to reset the password for this user? This action cannot be undone.
+                Are you sure you want to reset the password for this user? This
+                action cannot be undone.
               </p>
               <div className="modal-action">
                 <button
@@ -333,16 +335,15 @@ const EditUser = () => {
                 >
                   Cancel
                 </button>
-                <button
-                  className="btn btn-error"
-                  onClick={handleResetPassword}
-                >
+                <button className="btn btn-error" onClick={handleResetPassword}>
                   Reset Password
                 </button>
               </div>
             </div>
             <form method="dialog" className="modal-backdrop">
-              <button onClick={() => setIsResetPasswordModalOpen(false)}>close</button>
+              <button onClick={() => setIsResetPasswordModalOpen(false)}>
+                close
+              </button>
             </form>
           </dialog>
         )}
