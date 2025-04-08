@@ -22,7 +22,7 @@ import { Avatar } from "@/app/components/Avatar";
 import { SearchableUserDropdown } from "@/app/components/SearchableUserDropdown";
 
 const containerVariants = {
-  hidden: { opacity: 0 },
+  hidden: { opacity: 1 },
   show: {
     opacity: 1,
     transition: {
@@ -33,9 +33,14 @@ const containerVariants = {
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: {
+    opacity: 0,
+    scale: 0.9,
+    y: 10,
+  },
   show: {
     opacity: 1,
+    scale: 1,
     y: 0,
     transition: {
       duration: 0.4,
@@ -60,9 +65,10 @@ const DepartmentCard = ({
   return (
     <motion.div
       variants={itemVariants}
-      className="card bg-base-100 shadow-sm hover:shadow-md transition-all duration-300 border border-base-200"
+      className="card bg-base-100 shadow-sm hover:shadow-md duration-300 border border-base-200"
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
+      layout
     >
       <div className="card-body p-5">
         <div className="flex flex-col gap-4">
@@ -273,9 +279,10 @@ const DepartmentsPage = () => {
       initial="hidden"
       animate="show"
       className="p-6 max-w-7xl mx-auto"
+      layout
     >
       <div className="flex justify-between items-center mb-8">
-        <motion.div variants={itemVariants} className="flex items-center gap-3">
+        <motion.div variants={itemVariants} className="flex items-center gap-3" layout>
           <Building2 className="w-8 h-8 text-primary" />
           <h1 className="text-3xl font-bold">Departments</h1>
         </motion.div>
@@ -291,6 +298,7 @@ const DepartmentsPage = () => {
           }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          layout
         >
           <PlusIcon className="w-5 h-5" />
           Add Department
@@ -298,24 +306,39 @@ const DepartmentsPage = () => {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center items-center h-64">
+        <motion.div 
+          className="flex justify-center items-center h-64"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          layout
+        >
           <span className="loading loading-spinner loading-lg text-primary"></span>
-        </div>
+        </motion.div>
       ) : (
         <motion.div
           variants={containerVariants}
+          initial="hidden"
+          animate="show"
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          layout
         >
           {departments.map((department) => (
-            <DepartmentCard
+            <motion.div
               key={department.id}
-              department={department}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              qaCoordinator={allUsers.find(
-                (u) => u.id === department.QACoordinatorID
-              )}
-            />
+              variants={itemVariants}
+              className="h-full"
+              layout
+            >
+              <DepartmentCard
+                department={department}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                qaCoordinator={allUsers.find(
+                  (u) => u.id === department.QACoordinatorID
+                )}
+              />
+            </motion.div>
           ))}
         </motion.div>
       )}
