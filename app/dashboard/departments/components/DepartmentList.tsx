@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Department, User } from "@/api/models";
 import { DepartmentCard } from "./DepartmentCard";
 
@@ -30,12 +30,11 @@ export function DepartmentList({
 }: DepartmentListProps) {
   if (isLoading) {
     return (
-      <motion.div 
+      <motion.div
         className="flex justify-center items-center h-64"
-        initial={{ opacity: 0 }}
+        initial={{ opacity: 1 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        layout
       >
         <span className="loading loading-spinner loading-lg text-primary"></span>
       </motion.div>
@@ -48,24 +47,17 @@ export function DepartmentList({
       initial="hidden"
       animate="show"
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-      layout
     >
       {departments.map((department) => (
-        <motion.div
-          key={department.id}
-          className="h-full"
-          layout
-        >
-          <DepartmentCard
-            department={department}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            qaCoordinator={allUsers.find(
-              (u) => u.id === department.QACoordinatorID
-            )}
-          />
-        </motion.div>
+        <DepartmentCard
+          department={department}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          qaCoordinator={allUsers.find(
+            (u) => u.id === department.QACoordinatorID
+          )}
+        />
       ))}
     </motion.div>
   );
-} 
+}
