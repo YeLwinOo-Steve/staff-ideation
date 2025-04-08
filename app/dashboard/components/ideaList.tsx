@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import IdeaCard from "./ideaCard";
 import { useApiStore } from "@/store/apiStore";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 interface IdeaListProps {
   baseUrl?: string;
@@ -141,14 +142,19 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
           className={gridClass}
         >
           {ideas.map((idea) => (
-            <motion.div
+            <Link
               key={idea.id}
-              variants={itemVariants}
+              href={`/dashboard/ideas/${idea.id}`}
               className="h-full"
-              layout
             >
-              <IdeaCard idea={idea} />
-            </motion.div>
+              <motion.div
+                variants={itemVariants}
+                className="h-full"
+                layout
+              >
+                <IdeaCard idea={idea} />
+              </motion.div>
+            </Link>
           ))}
         </motion.div>
       )}

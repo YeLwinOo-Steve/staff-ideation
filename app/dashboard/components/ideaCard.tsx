@@ -113,11 +113,15 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
             <div className="flex items-center gap-2">
               <motion.button
                 className="btn btn-circle btn-sm bg-error/10 hover:bg-error border-0"
-                whileHover={{
-                  scale: 1.05,
-                  backgroundColor: "hsl(var(--er))",
+                variants={buttonVariants}
+                initial="initial"
+                whileTap="tap"
+                whileHover="hover"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log("flagged idea", idea.id);
                 }}
-                whileTap={{ scale: 0.9 }}
               >
                 <Flag className="w-4 h-4 text-error" />
               </motion.button>
