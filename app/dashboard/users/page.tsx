@@ -29,7 +29,7 @@ const UsersPage = () => {
   };
 
   return (
-    <div className="container mx-auto p-6 max-w-7xl space-y-6">
+    <div className="p-6 min-h-screen pb-24 relative">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
           <Users className="w-8 h-8 text-primary" />
@@ -50,7 +50,7 @@ const UsersPage = () => {
           <span className="loading loading-spinner loading-lg"></span>
         </div>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto bg-base-100 rounded-xl">
           <table className="table table-zebra">
             <thead>
               <tr>
@@ -139,29 +139,25 @@ const UsersPage = () => {
                 ))
               )}
             </tbody>
-
-            <tfoot>
-              <tr>
-                <td colSpan={5} className="text-center">
-                  <div className="join">
-                    {Array.from({ length: lastPage }).map((_, index) => (
-                      <input
-                        key={index}
-                        className="join-item btn btn-square"
-                        type="radio"
-                        name="options"
-                        aria-label={`${index + 1}`}
-                        checked={currentPage === index + 1}
-                        onChange={() => handlePageChange(index + 1)}
-                      />
-                    ))}
-                  </div>
-                </td>
-              </tr>
-            </tfoot>
           </table>
         </div>
       )}
+
+      <div className="fixed bottom-6 left-0 right-0 flex justify-center">
+        <div className="join bg-base-100">
+          {Array.from({ length: lastPage }).map((_, index) => (
+            <input
+              key={index}
+              className="join-item btn btn-square"
+              type="radio"
+              name="options"
+              aria-label={`${index + 1}`}
+              checked={currentPage === index + 1}
+              onChange={() => handlePageChange(index + 1)}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
