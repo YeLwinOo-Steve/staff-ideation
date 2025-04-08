@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { CheckCircle2, XCircle, AlertCircle, Info, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export type ToastType = "success" | "error" | "warning" | "info";
 
@@ -22,15 +24,17 @@ export const Toast = ({ messages, duration = 2000, onClose }: ToastProps) => {
 
   return createPortal(
     <div className="toast toast-center z-50">
-      {messages.map((msg) => (
-        <ToastMessage
-          key={msg.id}
-          message={msg.message}
-          type={msg.type}
-          duration={duration}
-          onClose={() => onClose(msg.id)}
-        />
-      ))}
+      <AnimatePresence>
+        {messages.map((msg) => (
+          <ToastMessage
+            key={msg.id}
+            message={msg.message}
+            type={msg.type}
+            duration={duration}
+            onClose={() => onClose(msg.id)}
+          />
+        ))}
+      </AnimatePresence>
     </div>,
     document.body,
   );
@@ -59,21 +63,37 @@ const ToastMessage = ({
 
     return () => clearTimeout(timer);
   }, [duration, onClose]);
+
   const alertClass = {
-    success: "alert-success",
-    error: "alert-error",
-    warning: "alert-warning",
-    info: "alert-info",
+    success: "bg-success text-success-content",
+    error: "bg-error text-error-content",
+    warning: "bg-warning text-warning-content",
+    info: "bg-info text-info-content",
+  }[type];
+
+  const Icon = {
+    success: CheckCircle2,
+    error: XCircle,
+    warning: AlertCircle,
+    info: Info,
   }[type];
 
   return (
-    <div
-      className={`alert ${alertClass} transition-opacity duration-300 ${
-        isVisible ? "opacity-100" : "opacity-0"
-      }`}
+    <motion.div
+      initial={{ opacity: 0, y: 50, scale: 0.3 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
+      className={`flex items-center gap-3 px-4 py-3 rounded-xl ${alertClass}`}
     >
-      <span>{message}</span>
-    </div>
+      <Icon className="w-5 h-5 shrink-0" />
+      <span className="text-sm font-medium">{message}</span>
+      <button
+        onClick={() => setIsVisible(false)}
+        className="btn btn-circle btn-ghost btn-xs ml-2"
+      >
+        <X className="w-4 h-4" />
+      </button>
+    </motion.div>
   );
 };
 
