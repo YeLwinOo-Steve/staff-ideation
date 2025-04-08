@@ -259,7 +259,7 @@ const IdeaDetail = () => {
         animate="show"
       >
         <div className="bg-base-100 z-30 -mx-6 px-6 py-4">
-          <div className="flex justify-between max-w-4xl mx-auto">
+          <div className="flex justify-between max-w-6xl mx-auto">
             <motion.button
               variants={itemVariants}
               whileHover={{ scale: 1.02 }}
