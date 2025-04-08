@@ -203,9 +203,9 @@ const IdeaDetail = () => {
       formData.append("idea_id", id as string);
       formData.append("comment", newComment);
       formData.append("is_anonymous", isAnonymousComment ? "1" : "0");
-      
+
       await createComment(formData);
-      
+
       // Reset form state after successful submission
       setNewComment("");
       setIsAnonymousComment(false);
