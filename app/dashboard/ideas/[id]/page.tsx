@@ -94,7 +94,7 @@ const ZipDownloadBtn = () => {
           const errorMessage =
             err instanceof Error ? err.message : "An unknown error occurred";
           throw new Error(
-            `Error downloading file ${index + 1}: ${errorMessage}`,
+            `Error downloading file ${index + 1}: ${errorMessage}`
           );
         }
       }
@@ -491,7 +491,7 @@ const IdeaDetail = () => {
               </motion.p>
             ) : (
               <div className="space-y-4">
-                {comments.map((comment) => (
+                {comments.reverse().map((comment) => (
                   <motion.div
                     key={comment.id}
                     variants={itemVariants}
@@ -518,7 +518,9 @@ const IdeaDetail = () => {
                         )}
                       </div>
                     </div>
-                    <p className="text-md ml-10">{comment.comment}</p>
+                    <p className="text-md ml-10 opacity-70">
+                      {comment.comment}
+                    </p>
                   </motion.div>
                 ))}
               </div>
@@ -555,7 +557,8 @@ const IdeaDetail = () => {
               <div className="bg-error/5 p-4 rounded-xl space-y-1">
                 <p className="font-medium">Are you sure?</p>
                 <p className="text-base-content/70 text-sm">
-                  This action cannot be undone. This will permanently delete your idea and remove all associated data.
+                  This action cannot be undone. This will permanently delete
+                  your idea and remove all associated data.
                 </p>
               </div>
 
@@ -571,7 +574,10 @@ const IdeaDetail = () => {
                 <motion.button
                   className="btn btn-error btn-sm"
                   onClick={handleDelete}
-                  whileHover={{ scale: 1.02, backgroundColor: "hsl(var(--er))" }}
+                  whileHover={{
+                    scale: 1.02,
+                    backgroundColor: "hsl(var(--er))",
+                  }}
                   whileTap={{ scale: 0.98 }}
                 >
                   <Trash2Icon className="w-4 h-4" />
