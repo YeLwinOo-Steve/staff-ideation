@@ -29,7 +29,7 @@ const UsersPage = () => {
   };
 
   return (
-    <div className="p-6 min-h-screen pb-24 relative">
+    <div className="p-6 min-h-screen pb-24 relative mx-auto max-w-7xl space-y-6">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
           <Users className="w-8 h-8 text-primary" />
