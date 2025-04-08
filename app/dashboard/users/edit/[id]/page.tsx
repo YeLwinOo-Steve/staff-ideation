@@ -30,6 +30,7 @@ const EditUser = () => {
     departments,
     roles,
     isLoading,
+    error,
   } = useApiStore();
   const { resetPassword } = useAuthStore();
 
@@ -111,7 +112,7 @@ const EditUser = () => {
 
             if (user.department) {
               const foundDept = departments.find(
-                (dept) => dept.department_name === user.department,
+                (dept) => dept.department_name === user.department
               );
               if (foundDept) {
                 setValue("department_ids", [foundDept.id.toString()]);
@@ -123,7 +124,7 @@ const EditUser = () => {
                 .map((perm: string | Permission) => {
                   if (typeof perm === "string") {
                     const foundPerm = allPermissions.find(
-                      (p) => p.permission === perm,
+                      (p) => p.permission === perm
                     );
                     return foundPerm ? foundPerm.id.toString() : null;
                   }
@@ -190,7 +191,7 @@ const EditUser = () => {
       router.back();
       showSuccessToast("User updated successfully");
     } catch (e) {
-      showErrorToast(e as string);
+      showErrorToast(error || "Failed to update user");
       console.error("Failed to update user:", e);
     } finally {
       setIsUploading(false);

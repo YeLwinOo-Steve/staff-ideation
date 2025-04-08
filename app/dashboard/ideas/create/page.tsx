@@ -30,7 +30,7 @@ const itemVariants = {
 const IdeaCreatePage = () => {
   const router = useRouter();
   const { showSuccessToast, showErrorToast } = useToast();
-  const { fetchCategories, createIdea, categories } = useApiStore();
+  const { fetchCategories, createIdea, categories, error } = useApiStore();
   const { user: authUser } = useAuthStore();
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [formData, setFormData] = useState({
@@ -50,7 +50,7 @@ const IdeaCreatePage = () => {
     setSelectedCategories((prev) =>
       prev.includes(categoryId)
         ? prev.filter((id) => id !== categoryId)
-        : [...prev, categoryId],
+        : [...prev, categoryId]
     );
   };
 
@@ -61,7 +61,9 @@ const IdeaCreatePage = () => {
       return;
     }
 
+    if (isSubmitting) return; // Prevent double submission
     setIsSubmitting(true);
+
     try {
       const ideaFormData = new FormData();
       ideaFormData.append("title", formData.title);
@@ -73,13 +75,25 @@ const IdeaCreatePage = () => {
       });
 
       await createIdea(ideaFormData);
-      router.push("/dashboard");
-      showSuccessToast("Idea created successfully");
-    } catch (e) {
-      showErrorToast(e as string);
-      console.error("Failed to create idea:", e);
-    } finally {
+
+      // Reset form state before navigation
+      setFormData({
+        title: "",
+        content: "",
+        isAnonymous: false,
+        agreeToTerms: false,
+      });
+      setSelectedCategories([]);
+      setFiles([]);
       setIsSubmitting(false);
+
+      showSuccessToast("Idea created successfully");
+      // Navigate after state is reset
+      router.push("/dashboard");
+    } catch (e) {
+      setIsSubmitting(false);
+      showErrorToast(error || "Failed to create idea");
+      console.error("Failed to create idea:", e);
     }
   };
 
