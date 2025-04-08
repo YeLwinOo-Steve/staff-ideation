@@ -101,7 +101,7 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
   }
 
   return (
-    <div className="space-y-6 pb-24">
+    <div className="space-y-6 pb-24 w-full">
       {/* Header with tabs and filters */}
       <motion.div
         variants={containerVariants}
