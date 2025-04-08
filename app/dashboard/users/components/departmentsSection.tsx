@@ -21,8 +21,8 @@ const DepartmentsSection = ({
   return (
     <div className="form-control mt-4">
       <label className="label">
-        <span className="label-text">Departments</span>
-        <span className="label-text-alt text-info">Select at least one</span>
+        <span className="label-text">Department</span>
+        <span className="label-text-alt text-info">Select one</span>
       </label>
       <div className="flex flex-wrap gap-2">
         <Controller
@@ -35,16 +35,12 @@ const DepartmentsSection = ({
                   <div key={dept.id} className="form-control">
                     <label className="label cursor-pointer">
                       <input
-                        type="checkbox"
-                        className="checkbox checkbox-primary"
+                        type="radio"
+                        className="radio radio-primary"
                         value={dept.id}
-                        checked={field.value.includes(dept.id.toString())}
+                        checked={field.value[0] === dept.id.toString()}
                         onChange={(e) => {
-                          const value = dept.id.toString();
-                          const newValues = e.target.checked
-                            ? [...field.value, value]
-                            : field.value.filter((v: string) => v !== value);
-                          field.onChange(newValues);
+                          field.onChange([e.target.value]);
                         }}
                       />
                       <span className="label-text ml-2">

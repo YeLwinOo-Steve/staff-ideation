@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useApiStore } from "@/store/apiStore";
+import { useAuthStore } from "@/store/authStore";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft } from "lucide-react";
@@ -32,6 +33,7 @@ const EditUser = () => {
     roles,
     isLoading,
   } = useApiStore();
+  const { resetPassword } = useAuthStore();
 
   const router = useRouter();
   const params = useParams();
@@ -41,6 +43,7 @@ const EditUser = () => {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [fetchedUser, setUser] = useState<User>();
+  const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
   const methods = useForm<UserFormValues>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
@@ -107,12 +110,13 @@ const EditUser = () => {
               setValue("role_ids", roleIds);
             }
 
-            if (user.department && Array.isArray(user.department)) {
-              const deptIds = user.department.map(
-                (dept: string | Department) =>
-                  typeof dept === "string" ? dept : dept.id.toString(),
+            if (user.department) {
+              const foundDept = departments.find(
+                (dept) => dept.department_name === user.department
               );
-              setValue("department_ids", deptIds);
+              if (foundDept) {
+                setValue("department_ids", [foundDept.id.toString()]);
+              }
             }
 
             if (user.permissions && Array.isArray(user.permissions)) {
@@ -198,10 +202,24 @@ const EditUser = () => {
     }
   };
 
+  const handleResetPassword = async () => {
+    try {
+      const success = await resetPassword(userId);
+      if (success) {
+        showSuccessToast("Password has been reset successfully");
+      } else {
+        showErrorToast("Failed to reset password");
+      }
+    } catch (error) {
+      showErrorToast("Failed to reset password");
+    } finally {
+      setIsResetPasswordModalOpen(false);
+    }
+  };
+
   if (isPageLoading) {
     return (
       <div className="bg-base-100 min-h-screen">
-        <NavBar />
         <div className="flex justify-center items-center h-64">
           <span className="loading loading-spinner loading-lg"></span>
         </div>
@@ -220,7 +238,12 @@ const EditUser = () => {
             <ChevronLeft size={24} />
             <h1 className="font-bold">Edit User</h1>
           </button>
-          <button className="btn btn-error btn-md">Reset Password</button>
+          <button 
+            className="btn btn-error btn-md"
+            onClick={() => setIsResetPasswordModalOpen(true)}
+          >
+            Reset Password
+          </button>
         </div>
 
         <div className="max-w-3xl mx-auto">
@@ -295,6 +318,34 @@ const EditUser = () => {
             </form>
           </FormProvider>
         </div>
+
+        {isResetPasswordModalOpen && (
+          <dialog className="modal modal-open">
+            <div className="modal-box">
+              <h3 className="font-bold text-lg">Reset Password</h3>
+              <p className="py-4">
+                Are you sure you want to reset the password for this user? This action cannot be undone.
+              </p>
+              <div className="modal-action">
+                <button
+                  className="btn btn-ghost"
+                  onClick={() => setIsResetPasswordModalOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn btn-error"
+                  onClick={handleResetPassword}
+                >
+                  Reset Password
+                </button>
+              </div>
+            </div>
+            <form method="dialog" className="modal-backdrop">
+              <button onClick={() => setIsResetPasswordModalOpen(false)}>close</button>
+            </form>
+          </dialog>
+        )}
       </div>
     </>
   );
