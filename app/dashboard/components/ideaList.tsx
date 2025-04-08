@@ -41,15 +41,26 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
   const [page, setPage] = useState(1);
   const [latest, setLatest] = useState<boolean | null>(null);
   const [popular, setPopular] = useState<boolean | null>(null);
+  const [activeTab, setActiveTab] = useState<"all" | "pending">("all");
   const {
     ideaPagination: { data: ideas, currentPage, lastPage, loading },
+    pendingIdeas,
     fetchIdeas,
+    fetchUsers,
+    getToSubmit,
   } = useApiStore();
 
-  const gridClass = `grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-${Math.min(gridCols, 4)} gap-4`;
+  const displayedIdeas = activeTab === "pending" ? pendingIdeas : ideas;
+  const gridClass = `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Math.min(gridCols, 4)} gap-6`;
 
   useEffect(() => {
-    if (popular !== null && popular === true) {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  useEffect(() => {
+    if (activeTab === "pending") {
+      getToSubmit();
+    } else if (popular !== null && popular === true) {
       fetchIdeas({
         page: page.toString(),
         popular: "desc",
@@ -59,7 +70,14 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
     } else {
       fetchIdeas({ page: page.toString() });
     }
-  }, [page, popular, latest, fetchIdeas]);
+  }, [page, popular, latest, fetchIdeas, getToSubmit, activeTab]);
+
+  const handleTabChange = (tab: "all" | "pending") => {
+    setActiveTab(tab);
+    setPage(1);
+    setPopular(null);
+    setLatest(null);
+  };
 
   if (loading) {
     return (
@@ -74,60 +92,75 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
   }
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
-      className="flex flex-col gap-6 w-full max-w-full overflow-hidden pb-24 space-y-2"
-    >
+    <div className="space-y-6 pb-24">
+      {/* Header with tabs and filters */}
       <motion.div
         variants={containerVariants}
-        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+        initial="hidden"
+        animate="show"
+        className="flex flex-col sm:flex-row justify-between items-center sm:items-center gap-4"
       >
-        <h2 className="text-xl font-bold">Ideas</h2>
-        <div className="flex flex-wrap gap-4 w-full sm:w-auto">
-          <motion.label
-            variants={itemVariants}
-            className="flex items-center gap-2"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+        <div className="tabs tabs-boxed">
+          <button
+            className={`tab ${activeTab === "all" ? "tab-active" : ""}`}
+            onClick={() => handleTabChange("all")}
           >
-            <input
-              type="radio"
-              name="radio-4"
-              className="radio radio-primary"
-              checked={popular === true}
-              onChange={() => {
-                setPage(1);
-                setPopular(true);
-                setLatest(null);
-              }}
-            />
-            Popular
-          </motion.label>
-          <motion.label
-            variants={itemVariants}
-            className="flex items-center gap-2"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            All Ideas
+          </button>
+          <button
+            className={`tab ${activeTab === "pending" ? "tab-active" : ""}`}
+            onClick={() => handleTabChange("pending")}
           >
-            <input
-              type="radio"
-              name="radio-4"
-              className="radio radio-primary"
-              checked={latest === true}
-              onChange={() => {
-                setPage(1);
-                setPopular(false);
-                setLatest(true);
-              }}
-            />
-            Latest
-          </motion.label>
+            Pending Ideas
+          </button>
         </div>
+
+        {activeTab === "all" && (
+          <div className="flex flex-wrap gap-4 w-full sm:w-auto">
+            <motion.label
+              variants={itemVariants}
+              className="flex items-center gap-2"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <input
+                type="radio"
+                name="radio-4"
+                className="radio radio-primary"
+                checked={popular === true}
+                onChange={() => {
+                  setPage(1);
+                  setPopular(true);
+                  setLatest(null);
+                }}
+              />
+              Popular
+            </motion.label>
+            <motion.label
+              variants={itemVariants}
+              className="flex items-center gap-2"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <input
+                type="radio"
+                name="radio-4"
+                className="radio radio-primary"
+                checked={latest === true}
+                onChange={() => {
+                  setPage(1);
+                  setPopular(false);
+                  setLatest(true);
+                }}
+              />
+              Latest
+            </motion.label>
+          </div>
+        )}
       </motion.div>
 
-      {ideas.length === 0 ? (
+      {/* Ideas Grid */}
+      {displayedIdeas.length === 0 ? (
         <motion.div
           variants={itemVariants}
           className="flex justify-center items-center py-8"
@@ -141,7 +174,7 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
           animate="show"
           className={gridClass}
         >
-          {ideas.map((idea) => (
+          {displayedIdeas.map((idea) => (
             <Link
               key={idea.id}
               href={`/dashboard/ideas/${idea.id}`}
@@ -155,18 +188,19 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
         </motion.div>
       )}
 
-      {lastPage > 1 && (
+      {/* Only show pagination for all ideas */}
+      {activeTab === "all" && lastPage > 1 && (
         <motion.div
           variants={itemVariants}
-          className="fixed bottom-6 left-0 right-0 flex justify-center"
+          className="fixed bottom-6 left-0 right-0 flex justify-center z-10"
         >
-          <div className="join">
+          <div className="join bg-base-100">
             {Array.from({ length: Math.min(lastPage, 10) }).map((_, index) => (
               <motion.input
                 key={index}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className="join-item btn"
+                className="join-item btn btn-square"
                 type="radio"
                 name="options"
                 aria-label={`${index + 1}`}
@@ -179,6 +213,6 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
           </div>
         </motion.div>
       )}
-    </motion.div>
+    </div>
   );
 }

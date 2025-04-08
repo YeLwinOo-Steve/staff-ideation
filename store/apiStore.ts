@@ -9,6 +9,7 @@ import {
   Comment,
 } from "@/api/models";
 import * as api from "@/api/repository";
+import { AxiosError } from "axios";
 
 interface ApiState {
   departments: Department[];
@@ -25,6 +26,7 @@ interface ApiState {
   roles: Role[];
   allUsers: User[];
   isLoadingAllUsers: boolean;
+  pendingIdeas: Idea[];
   ideaPagination: {
     data: Idea[];
     currentPage: number;
@@ -60,6 +62,8 @@ interface ApiState {
   submitIdea: (id: number) => Promise<void>;
   getIdea: (id: number) => Promise<void | null>;
   deleteIdea: (id: number) => Promise<void>;
+  getToSubmit: () => Promise<void>;
+
   // Comments
   getCommentsForIdea: (id: number) => Promise<void>;
   createComment: (data: FormData) => Promise<void>;
@@ -76,7 +80,7 @@ interface ApiState {
   fetchSystemSettings: () => Promise<void>;
   updateSystemSetting: (
     id: number,
-    data: Partial<SystemSetting>,
+    data: Partial<SystemSetting>
   ) => Promise<void>;
 
   // Error handling
@@ -101,6 +105,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
   roles: [],
   allUsers: [],
   isLoadingAllUsers: false,
+  pendingIdeas: [],
   ideaPagination: {
     data: [],
     currentPage: 1,
@@ -318,6 +323,21 @@ export const useApiStore = create<ApiState>((set, get) => ({
       }));
     }
   },
+  getToSubmit: async () => {
+    try {
+      set({ isLoading: true });
+      const response = await api.ideaApi.getToSubmit();
+      set({ pendingIdeas: response.data.data });
+    } catch (error) {
+      const e = error as AxiosError<{ message: string }>;
+      const message =
+        e.response?.data?.message || "Failed to get ideas to submit";
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
 
   createIdea: async (data) => {
     try {
@@ -326,6 +346,21 @@ export const useApiStore = create<ApiState>((set, get) => ({
       get().fetchIdeas();
     } catch (error) {
       const message = "Failed to create idea";
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  submitIdea: async (id) => {
+    try {
+      set({ isLoading: true });
+      await api.ideaApi.submit(id);
+      get().fetchIdeas();
+    } catch (error) {
+      const e = error as AxiosError<{ message: string }>;
+      const message = e.response?.data?.message || "Failed to submit idea";
       set({ error: message });
       throw error;
     } finally {
@@ -368,20 +403,6 @@ export const useApiStore = create<ApiState>((set, get) => ({
       set({ idea: response.data.data });
     } catch (error) {
       const message = "Failed to get idea";
-      set({ error: message });
-      throw error;
-    } finally {
-      set({ isLoading: false });
-    }
-  },
-
-  submitIdea: async (id) => {
-    try {
-      set({ isLoading: true });
-      await api.ideaApi.submit(id);
-      get().fetchIdeas();
-    } catch (error) {
-      const message = "Failed to submit idea";
       set({ error: message });
       throw error;
     } finally {
@@ -510,13 +531,13 @@ export const useApiStore = create<ApiState>((set, get) => ({
 
       const remainingPages = Array.from(
         { length: lastPage - 1 },
-        (_, i) => i + 2,
+        (_, i) => i + 2
       );
       await Promise.all(
         remainingPages.map(async (page) => {
           const pageResponse = await api.userApi.getAll(page);
           allUsers = [...allUsers, ...pageResponse.data.data];
-        }),
+        })
       );
 
       set({ allUsers });

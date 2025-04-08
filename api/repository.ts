@@ -48,7 +48,7 @@ export const ideaApi = {
     apiClient.put<Idea>(`/idea/submit/${id}`, { is_enabled: 1 }),
   updateCategory: (id: number, categories: string) =>
     apiClient.put(`/update-idea-category/${id}`, { category: categories }),
-  getToSubmit: () => apiClient.get<Idea[]>("/idea/to-submit"),
+  getToSubmit: () => apiClient.get<{ data: Idea[] }>("/idea/to-submit"),
 };
 
 export const categoryApi = {
