@@ -56,7 +56,7 @@ export const categoryApi = {
   getOne: (id: number) => apiClient.get<Category>(`/categories/${id}`),
   create: (data: { name: string }) =>
     apiClient.post<Category>("/categories", data),
-  update: (id: number, data: { name: string }) =>
+  update: (id: number, data: Partial<Category>) =>
     apiClient.put<Category>(`/categories/${id}`, data),
   delete: (id: number) => apiClient.delete(`/categories/${id}`),
 };

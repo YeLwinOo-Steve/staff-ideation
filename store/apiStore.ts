@@ -67,6 +67,8 @@ interface ApiState {
   // Categories
   fetchCategories: () => Promise<void>;
   createCategory: (name: string) => Promise<void>;
+  updateCategory: (id: number, data: Partial<Category>) => Promise<void>;
+  deleteCategory: (id: number) => Promise<void>;
 
   // System Settings
   fetchSystemSettings: () => Promise<void>;
@@ -329,6 +331,34 @@ export const useApiStore = create<ApiState>((set, get) => ({
     }
   },
 
+  updateCategory: async (id, data) => {
+    try {
+      set({ isLoading: true });
+      await api.categoryApi.update(id, data);
+      get().fetchCategories();
+    } catch (error) {
+      const message = "Failed to update category";
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  deleteCategory: async (id) => {
+    try {
+      set({ isLoading: true });
+      await api.categoryApi.delete(id);
+      get().fetchCategories();
+    } catch (error) {
+      const message = "Failed to delete category";
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
   getIdea: async (id) => {
     try {
       set({ isLoading: true });
@@ -436,13 +466,16 @@ export const useApiStore = create<ApiState>((set, get) => ({
       set({ isLoadingAllUsers: true });
       let allUsers: User[] = [];
       let currentPage = 1;
-      
+
       const response = await api.userApi.getAll(currentPage);
       allUsers = [...response.data.data];
-      
+
       const lastPage = response.data.meta.last_page;
-      
-      const remainingPages = Array.from({ length: lastPage - 1 }, (_, i) => i + 2);
+
+      const remainingPages = Array.from(
+        { length: lastPage - 1 },
+        (_, i) => i + 2
+      );
       await Promise.all(
         remainingPages.map(async (page) => {
           const pageResponse = await api.userApi.getAll(page);
@@ -452,7 +485,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
 
       set({ allUsers });
     } catch (error) {
-      console.error('Failed to fetch all users:', error);
+      console.error("Failed to fetch all users:", error);
       throw error;
     } finally {
       set({ isLoadingAllUsers: false });

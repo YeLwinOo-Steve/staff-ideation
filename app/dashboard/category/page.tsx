@@ -12,11 +12,20 @@ export default function CategoryPage() {
   // State
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null
+  );
   const [categoryName, setCategoryName] = useState("");
 
   // Store & Hooks
-  const { categories, fetchCategories, createCategory, isLoading } = useApiStore();
+  const {
+    categories,
+    fetchCategories,
+    createCategory,
+    updateCategory,
+    deleteCategory,
+    isLoading,
+  } = useApiStore();
   const { showSuccessToast, showErrorToast } = useToast();
 
   // Effects
@@ -52,7 +61,11 @@ export default function CategoryPage() {
     }
 
     try {
-      await createCategory(categoryName);
+      if (selectedCategory) {
+        await updateCategory(selectedCategory.id, { name: categoryName });
+      } else {
+        await createCategory(categoryName);
+      }
       showSuccessToast(
         `Category ${selectedCategory ? "updated" : "created"} successfully`
       );
@@ -72,8 +85,7 @@ export default function CategoryPage() {
     if (!selectedCategory) return;
 
     try {
-      // Using the existing createCategory method as delete is not available in the store
-      await fetchCategories();
+      await deleteCategory(selectedCategory.id);
       showSuccessToast("Category deleted successfully");
       setIsDeleteModalOpen(false);
     } catch (error) {
