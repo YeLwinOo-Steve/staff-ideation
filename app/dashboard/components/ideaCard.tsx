@@ -3,10 +3,12 @@
 import { Idea } from "@/api/models";
 import { MessageCircle, Paperclip, ThumbsUp, ThumbsDown } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
 import { getInitials } from "@/util/getInitials";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { EyeOff, Flag } from "lucide-react";
 import { AnimatedNumber } from "./animatedNumber";
 
 interface IdeaCardProps {
@@ -27,10 +29,10 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
 
   const [userVote, setUserVote] = useState<number>(idea.user_vote_value || 0);
   const [voteCount, setVoteCount] = useState<number>(
-    idea.total_vote_value || 0,
+    idea.total_vote_value || 0
   );
   // If anonymous, don't show user details
-  const isAnonymous = idea.is_anonymous;
+  const isAnonymous = idea.is_anonymous || idea.user_name === "Anonymous";
   const userName = isAnonymous ? "Anonymous" : idea.user_name || "Unknown";
 
   const handleVote = (value: number, e: React.MouseEvent) => {
@@ -57,27 +59,41 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
       className="card bg-base-200 h-full flex flex-col"
     >
       <div className="card-body p-4">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="avatar placeholder">
-            <div className="bg-primary text-white mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
-              {/* {idea.user_photo && !isAnonymous ? (
-                <img
-                  src={idea.user_photo}
-                  alt={userName}
-                  className="object-cover mask mask-squircle"
-                />
-              ) : (
-                getInitials(userName)
-              )} */}
-              {isAnonymous ? "A" : getInitials(userName)}
+        <div className="flex justify-between items-center gap-2 mb-2">
+          <div className="flex items-center gap-2">
+            <div className="avatar placeholder">
+              <div className="bg-primary text-white mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
+                {isAnonymous ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : idea.user_photo &&
+                  idea.user_photo.includes("cloudinary") ? (
+                  <Image
+                    src={idea.user_photo}
+                    alt={userName}
+                    width={48}
+                    height={48}
+                    className="object-cover mask mask-squircle"
+                  />
+                ) : (
+                  getInitials(userName)
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-col">
+              <span className="font-semibold text-sm">{userName}</span>
+              {idea.time && (
+                <span className="text-xs opacity-70">{formattedDate}</span>
+              )}
             </div>
           </div>
-
-          <div className="flex flex-col">
-            <span className="font-semibold text-sm">{userName}</span>
-            {idea.time && (
-              <span className="text-xs opacity-70">{formattedDate}</span>
-            )}
+          <div className="flex items-center gap-2">
+            <span
+              className="text-xs text-error tooltip tooltip-bottom"
+              data-tip="Report this idea!"
+            >
+              <Flag className="w-4 h-4" />
+            </span>
           </div>
         </div>
 
