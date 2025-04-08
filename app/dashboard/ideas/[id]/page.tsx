@@ -167,6 +167,7 @@ const IdeaDetail = () => {
     isLoading,
     createVote,
     createComment,
+    deleteIdea,
   } = useApiStore();
   const [userVote, setUserVote] = useState<number>(0);
   const [voteCount, setVoteCount] = useState<number>(0);
@@ -209,16 +210,22 @@ const IdeaDetail = () => {
     } catch (e) {
       console.error("Error submitting comment:", e);
       const error = e as AxiosError<{ message: string }>;
-      const errorMessage = error.response?.data?.message || "Failed to submit comment";
+      const errorMessage =
+        error.response?.data?.message || "Failed to submit comment";
       showErrorToast(errorMessage);
       setIsSubmittingComment(false);
     }
   };
 
   const handleDelete = async () => {
-    // TODO: Implement delete
-    setShowDeleteDialog(false);
-    router.push("/dashboard/ideas");
+    try {
+      await deleteIdea(Number(id));
+      showSuccessToast("Idea deleted successfully");
+      router.back();
+    } catch (e) {
+      console.error("Error deleting idea:", e);
+      showErrorToast("Failed to delete idea");
+    }
   };
 
   useEffect(() => {

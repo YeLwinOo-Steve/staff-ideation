@@ -59,7 +59,7 @@ interface ApiState {
   createIdea: (data: FormData) => Promise<void>;
   submitIdea: (id: number) => Promise<void>;
   getIdea: (id: number) => Promise<void | null>;
-
+  deleteIdea: (id: number) => Promise<void>;
   // Comments
   getCommentsForIdea: (id: number) => Promise<void>;
   createComment: (data: FormData) => Promise<void>;
@@ -389,6 +389,19 @@ export const useApiStore = create<ApiState>((set, get) => ({
     }
   },
 
+  deleteIdea: async (id) => {
+    try {
+      set({ isLoading: true });
+      await api.ideaApi.delete(id);
+      get().fetchIdeas();
+    } catch (error) {
+      const message = "Failed to delete idea";
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
   getCommentsForIdea: async (id) => {
     try {
       const response = await api.commentApi.getCommentsForIdea(id);
