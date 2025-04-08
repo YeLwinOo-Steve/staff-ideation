@@ -7,6 +7,7 @@ import IdeaList from "./components/ideaList";
 import { useApiStore } from "@/store/apiStore";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { PlusIcon } from "lucide-react";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -70,7 +71,7 @@ export default function Dashboard() {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="p-6 max-w-7xl mx-auto"
+      className="p-6 max-w-6xl mx-auto"
     >
       <div className="mb-8">
         <div className="flex flex-wrap justify-between items-center">
@@ -81,7 +82,8 @@ export default function Dashboard() {
             href="/dashboard/ideas/create"
             className="btn btn-primary btn-md"
           >
-            Submit New Idea
+            <PlusIcon className="w-4 h-4" />
+            Create New Idea
           </Link>
         </div>
 
