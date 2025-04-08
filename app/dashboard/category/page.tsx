@@ -39,7 +39,7 @@ export default function CategoryPage() {
       }
     };
     loadCategories();
-  }, []); 
+  }, [fetchCategories, showErrorToast]);
 
   useEffect(() => {
     if (error) {
