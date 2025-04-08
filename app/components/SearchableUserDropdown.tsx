@@ -48,10 +48,10 @@ export function SearchableUserDropdown({
 
   // Open dropdown when typing
   useEffect(() => {
-    if (searchQuery && !isOpen) {
+    if (searchQuery && !isOpen && !selectedUser) {
       setIsOpen(true);
     }
-  }, [searchQuery, isOpen]);
+  }, [searchQuery, isOpen, selectedUser]);
 
   useEffect(() => {
     if (isInView && hasMore && !isLoading) {
