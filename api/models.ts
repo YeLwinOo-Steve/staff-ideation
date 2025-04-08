@@ -35,6 +35,7 @@ export interface Idea {
   category: string[];
   document?: string[];
   is_enabled?: boolean;
+  isPending?: boolean;
   user_name?: string;
   user_email?: string;
   user_photo?: string;

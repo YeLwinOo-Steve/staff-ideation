@@ -327,7 +327,11 @@ export const useApiStore = create<ApiState>((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await api.ideaApi.getToSubmit();
-      set({ pendingIdeas: response.data.data });
+      const pendingIdeas = response.data.data.map(idea => ({
+        ...idea,
+        isPending: true
+      }));
+      set({ pendingIdeas });
     } catch (error) {
       const e = error as AxiosError<{ message: string }>;
       const message =

@@ -1,7 +1,7 @@
 "use client";
 
 import { Idea } from "@/api/models";
-import { MessageCircle, Paperclip, ThumbsUp, ThumbsDown } from "lucide-react";
+import { MessageCircle, Paperclip, ThumbsUp, ThumbsDown, Send } from "lucide-react";
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
 import { getInitials } from "@/util/getInitials";
@@ -9,6 +9,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { EyeOff, Flag } from "lucide-react";
 import { AnimatedNumber } from "./animatedNumber";
+import { useApiStore } from "@/store/apiStore";
+import { useToast } from "@/components/toast";
 
 interface IdeaCardProps {
   idea: Idea;
@@ -39,6 +41,9 @@ const buttonVariants = {
 };
 
 export default function IdeaCard({ idea }: IdeaCardProps) {
+  const { submitIdea } = useApiStore();
+  const { showSuccessToast, showErrorToast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const formattedDate = idea.time
     ? formatDistanceToNow(new Date(idea.time), { addSuffix: true })
     : "";
@@ -67,6 +72,21 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
     setUserVote(newVoteValue);
 
     // TODO (Ye): API call to update vote
+  };
+
+  const handleSubmit = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    setIsSubmitting(true);
+    try {
+      await submitIdea(idea.id);
+      showSuccessToast("Idea submitted successfully");
+    } catch (error) {
+      showErrorToast("Failed to submit idea");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -144,37 +164,58 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
         {/* Bottom row with voting, comments and attachments */}
         <div className="flex items-center justify-between mt-auto pt-4">
           <div className="flex items-center gap-2">
-            <motion.button
-              variants={buttonVariants}
-              initial="initial"
-              whileTap="tap"
-              whileHover="hover"
-              className={`btn btn-circle btn-sm ${
-                userVote === 1
-                  ? "bg-primary text-primary-content border-0"
-                  : "bg-primary/10 hover:bg-primary border-0"
-              }`}
-              onClick={(e) => handleVote(1, e)}
-            >
-              <ThumbsUp className="w-4 h-4" />
-            </motion.button>
+            {idea.isPending ? (
+              <motion.button
+                variants={buttonVariants}
+                initial="initial"
+                whileTap="tap"
+                whileHover="hover"
+                className="btn btn-primary btn-sm gap-2"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <span className="loading loading-spinner loading-xs" />
+                ) : (
+                  <Send className="w-4 h-4" />
+                )}
+                Submit Idea
+              </motion.button>
+            ) : (
+              <>
+                <motion.button
+                  variants={buttonVariants}
+                  initial="initial"
+                  whileTap="tap"
+                  whileHover="hover"
+                  className={`btn btn-circle btn-sm ${
+                    userVote === 1
+                      ? "bg-primary text-primary-content border-0"
+                      : "bg-primary/10 hover:bg-primary border-0"
+                  }`}
+                  onClick={(e) => handleVote(1, e)}
+                >
+                  <ThumbsUp className="w-4 h-4" />
+                </motion.button>
 
-            <AnimatedNumber value={voteCount} />
+                <AnimatedNumber value={voteCount} />
 
-            <motion.button
-              variants={buttonVariants}
-              initial="initial"
-              whileTap="tap"
-              whileHover="hover"
-              className={`btn btn-circle btn-sm ${
-                userVote === -1
-                  ? "bg-error text-error-content border-0"
-                  : "bg-error/10 hover:bg-error border-0"
-              }`}
-              onClick={(e) => handleVote(-1, e)}
-            >
-              <ThumbsDown className="w-4 h-4" />
-            </motion.button>
+                <motion.button
+                  variants={buttonVariants}
+                  initial="initial"
+                  whileTap="tap"
+                  whileHover="hover"
+                  className={`btn btn-circle btn-sm ${
+                    userVote === -1
+                      ? "bg-error text-error-content border-0"
+                      : "bg-error/10 hover:bg-error border-0"
+                  }`}
+                  onClick={(e) => handleVote(-1, e)}
+                >
+                  <ThumbsDown className="w-4 h-4" />
+                </motion.button>
+              </>
+            )}
           </div>
 
           <div className="flex items-center gap-3">
