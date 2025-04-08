@@ -34,7 +34,7 @@ export function CategoryCard({
   return (
     <motion.div
       variants={itemVariants}
-      className="card bg-base-100 shadow-sm hover:shadow-md duration-300 border border-base-200"
+      className="card bg-base-200 shadow-sm hover:shadow-md duration-300 border border-base-200"
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
       layout

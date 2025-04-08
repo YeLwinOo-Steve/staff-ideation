@@ -25,16 +25,27 @@ export default function CategoryPage() {
     updateCategory,
     deleteCategory,
     isLoading,
+    error,
   } = useApiStore();
   const { showSuccessToast, showErrorToast } = useToast();
 
-  // Effects
   useEffect(() => {
-    fetchCategories().catch((error) => {
-      console.error("Failed to fetch categories", error);
-      showErrorToast("Failed to fetch categories");
-    });
-  }, [fetchCategories, showErrorToast]);
+    const loadCategories = async () => {
+      try {
+        await fetchCategories();
+      } catch (error) {
+        console.error("Failed to fetch categories", error);
+        showErrorToast("Failed to fetch categories");
+      }
+    };
+    loadCategories();
+  }, []); 
+
+  useEffect(() => {
+    if (error) {
+      showErrorToast(error);
+    }
+  }, [error, showErrorToast]);
 
   // Handlers
   const handleAddClick = () => {
