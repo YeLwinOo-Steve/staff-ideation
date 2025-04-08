@@ -6,6 +6,18 @@ import { useEffect } from "react";
 import IdeaList from "./components/ideaList";
 import { useApiStore } from "@/store/apiStore";
 import Link from "next/link";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
 
 export default function Dashboard() {
   const user = useAuthStore((state) => state.user);
@@ -54,7 +66,12 @@ export default function Dashboard() {
   ]);
 
   return (
-    <div className="p-6">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="p-6 max-w-7xl mx-auto"
+    >
       <div className="mb-8">
         <div className="flex flex-wrap justify-between items-center">
           <h1 className="text-2xl font-bold">
@@ -95,6 +112,6 @@ export default function Dashboard() {
       {/* <div className="mt-8">
           <ZipDownloadBtn />
         </div> */}
-    </div>
+    </motion.div>
   );
 }
