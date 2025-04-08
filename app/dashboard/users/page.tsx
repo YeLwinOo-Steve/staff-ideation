@@ -29,7 +29,7 @@ const Users = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="container mx-auto p-6 max-w-7xl space-y-6">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
           <h1 className="text-2xl font-bold">Users </h1>

@@ -127,7 +127,7 @@ const NavBar = () => {
   const themeLabel = resolvedTheme === "abyss" ? "Dark" : "Light";
 
   return (
-    <div className="navbar bg-base-100 z-50" suppressHydrationWarning>
+    <div className="navbar sticky top-0 bg-base-100 z-50" suppressHydrationWarning>
       <div className="flex-1">
         <Image src="/logo.png" alt="EWSD" width={82} height={82} />
       </div>
