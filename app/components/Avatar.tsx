@@ -10,17 +10,22 @@ interface AvatarProps {
   className?: string;
 }
 
-export function Avatar({ src, alt, fallbackText, className = "w-8 h-8" }: AvatarProps) {
+export function Avatar({
+  src,
+  alt,
+  fallbackText,
+  className = "w-8 h-8",
+}: AvatarProps) {
   const [imageError, setImageError] = useState(false);
 
   if (!src || imageError) {
     return (
-      <div 
+      <div
         className={`${className} rounded-full bg-primary/10 flex items-center justify-center`}
         title={alt}
       >
         <span className="text-primary font-medium text-sm">
-          {fallbackText || (alt?.substring(0, 2).toUpperCase() || "?")}
+          {fallbackText || alt?.substring(0, 2).toUpperCase() || "?"}
         </span>
       </div>
     );
@@ -37,4 +42,4 @@ export function Avatar({ src, alt, fallbackText, className = "w-8 h-8" }: Avatar
       />
     </div>
   );
-} 
+}

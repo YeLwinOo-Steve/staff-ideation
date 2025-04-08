@@ -13,7 +13,7 @@ export default function CategoryPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null
+    null,
   );
   const [categoryName, setCategoryName] = useState("");
 
@@ -67,7 +67,7 @@ export default function CategoryPage() {
         await createCategory(categoryName);
       }
       showSuccessToast(
-        `Category ${selectedCategory ? "updated" : "created"} successfully`
+        `Category ${selectedCategory ? "updated" : "created"} successfully`,
       );
       setIsEditModalOpen(false);
       setCategoryName("");
@@ -76,7 +76,7 @@ export default function CategoryPage() {
     } catch (error) {
       console.error("Failed to save category", error);
       showErrorToast(
-        `Failed to ${selectedCategory ? "update" : "create"} category`
+        `Failed to ${selectedCategory ? "update" : "create"} category`,
       );
     }
   };

@@ -147,11 +147,7 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
               href={`/dashboard/ideas/${idea.id}`}
               className="h-full"
             >
-              <motion.div
-                variants={itemVariants}
-                className="h-full"
-                layout
-              >
+              <motion.div variants={itemVariants} className="h-full" layout>
                 <IdeaCard idea={idea} />
               </motion.div>
             </Link>

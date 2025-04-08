@@ -53,7 +53,7 @@ export default function DepartmentsPage() {
     getDepartmentUsers(department.id);
     setDepartmentName(department.department_name);
     const qaCoordinator = allUsers.find(
-      (u: User) => u.id === department.QACoordinatorID
+      (u: User) => u.id === department.QACoordinatorID,
     );
     setSelectedQACoordinator(qaCoordinator || null);
     setSearchQuery(qaCoordinator?.name || "");
@@ -104,7 +104,7 @@ export default function DepartmentsPage() {
       user.roles.includes("QA Coordinators") ||
       (user.roles.includes("Administrator") &&
         (!searchQuery ||
-          user.name.toLowerCase().includes(searchQuery.toLowerCase())))
+          user.name.toLowerCase().includes(searchQuery.toLowerCase()))),
   );
 
   return (

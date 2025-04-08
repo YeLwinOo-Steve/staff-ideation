@@ -51,7 +51,7 @@ export function SearchableUserDropdown({
     if (searchQuery && !isOpen) {
       setIsOpen(true);
     }
-  }, [searchQuery]);
+  }, [searchQuery, isOpen]);
 
   useEffect(() => {
     if (isInView && hasMore && !isLoading) {
@@ -61,14 +61,17 @@ export function SearchableUserDropdown({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [isOpen]);
 
   // Don't render anything until mounted
   if (!mounted) {
@@ -85,10 +88,7 @@ export function SearchableUserDropdown({
 
   return (
     <div className="relative w-full" ref={dropdownRef}>
-      <div
-        className="w-full cursor-pointer"
-        onClick={() => setIsOpen(!isOpen)}
-      >
+      <div className="w-full cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
         {selectedUser ? (
           <div className="input input-bordered bg-base-200/50 flex items-center gap-2 pr-2">
             <div className="flex-1 flex items-center gap-2">
@@ -120,7 +120,7 @@ export function SearchableUserDropdown({
               onChange={(e) => onSearchChange(e.target.value)}
               onClick={(e) => e.stopPropagation()}
             />
-            <ChevronDown 
+            <ChevronDown
               className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
               suppressHydrationWarning
             />
@@ -155,8 +155,15 @@ export function SearchableUserDropdown({
                         className="w-8 h-8"
                       />
                       <div className="flex flex-col">
-                        <span suppressHydrationWarning className="font-medium">{user.name}</span>
-                        <span suppressHydrationWarning className="text-sm opacity-70">{user.email}</span>
+                        <span suppressHydrationWarning className="font-medium">
+                          {user.name}
+                        </span>
+                        <span
+                          suppressHydrationWarning
+                          className="text-sm opacity-70"
+                        >
+                          {user.email}
+                        </span>
                       </div>
                     </motion.div>
                   ))}
@@ -165,7 +172,9 @@ export function SearchableUserDropdown({
                       {isLoading ? (
                         <span className="loading loading-spinner loading-sm text-primary"></span>
                       ) : (
-                        <span className="text-sm opacity-70">Scroll for more...</span>
+                        <span className="text-sm opacity-70">
+                          Scroll for more...
+                        </span>
                       )}
                     </div>
                   )}
@@ -176,7 +185,9 @@ export function SearchableUserDropdown({
                     <span className="loading loading-spinner loading-sm text-primary"></span>
                   ) : (
                     <span suppressHydrationWarning>
-                      {searchQuery ? "No users found" : "No QA coordinators available"}
+                      {searchQuery
+                        ? "No users found"
+                        : "No QA coordinators available"}
                     </span>
                   )}
                 </div>
@@ -187,4 +198,4 @@ export function SearchableUserDropdown({
       </AnimatePresence>
     </div>
   );
-} 
+}

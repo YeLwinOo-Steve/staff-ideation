@@ -93,7 +93,7 @@ const ZipDownloadBtn = () => {
           const errorMessage =
             err instanceof Error ? err.message : "An unknown error occurred";
           throw new Error(
-            `Error downloading file ${index + 1}: ${errorMessage}`
+            `Error downloading file ${index + 1}: ${errorMessage}`,
           );
         }
       }

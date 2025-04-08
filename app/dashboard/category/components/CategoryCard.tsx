@@ -23,10 +23,14 @@ const itemVariants = {
       duration: 0.4,
       ease: "easeOut",
     },
-  }
+  },
 };
 
-export function CategoryCard({ category, onEdit, onDelete }: CategoryCardProps) {
+export function CategoryCard({
+  category,
+  onEdit,
+  onDelete,
+}: CategoryCardProps) {
   return (
     <motion.div
       variants={itemVariants}
@@ -42,9 +46,7 @@ export function CategoryCard({ category, onEdit, onDelete }: CategoryCardProps) 
               <div className="bg-primary/10 p-3 rounded-xl">
                 <Blocks className="w-5 h-5 text-primary" />
               </div>
-              <h3 className="card-title text-lg">
-                {category.name}
-              </h3>
+              <h3 className="card-title text-lg">{category.name}</h3>
             </div>
             <div className="flex gap-2">
               <motion.button
@@ -103,4 +105,4 @@ export function CategoryCard({ category, onEdit, onDelete }: CategoryCardProps) 
       </div>
     </motion.div>
   );
-} 
+}

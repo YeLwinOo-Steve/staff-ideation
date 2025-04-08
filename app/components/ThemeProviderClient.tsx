@@ -16,4 +16,4 @@ export const ThemeProviderClient = ({ children }: { children: ReactNode }) => {
       {children}
     </ThemeProvider>
   );
-}; 
+};

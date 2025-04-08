@@ -1,14 +1,7 @@
 "use client";
 
 import { Idea } from "@/api/models";
-import {
-  MessageCircle,
-  Paperclip,
-  ThumbsUp,
-  ThumbsDown,
-  Lightbulb,
-} from "lucide-react";
-import Link from "next/link";
+import { MessageCircle, Paperclip, ThumbsUp, ThumbsDown } from "lucide-react";
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
 import { getInitials } from "@/util/getInitials";
@@ -52,7 +45,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
 
   const [userVote, setUserVote] = useState<number>(idea.user_vote_value || 0);
   const [voteCount, setVoteCount] = useState<number>(
-    idea.total_vote_value || 0
+    idea.total_vote_value || 0,
   );
   // If anonymous, don't show user details
   const isAnonymous = idea.is_anonymous || idea.user_name === "Anonymous";

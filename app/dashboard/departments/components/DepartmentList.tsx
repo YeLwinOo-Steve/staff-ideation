@@ -38,7 +38,6 @@ const itemVariants = {
   },
 };
 
-
 export function DepartmentList({
   departments,
   onEdit,
@@ -73,7 +72,7 @@ export function DepartmentList({
             onEdit={onEdit}
             onDelete={onDelete}
             qaCoordinator={allUsers.find(
-              (u) => u.id === department.QACoordinatorID
+              (u) => u.id === department.QACoordinatorID,
             )}
           />
         </motion.div>
