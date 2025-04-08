@@ -8,6 +8,8 @@ import {
   ChevronLeft,
   Pencil,
   Trash,
+  Send,
+  X,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useApiStore } from "@/store/apiStore";
@@ -159,6 +161,9 @@ const IdeaDetail = () => {
     useApiStore();
   const [userVote, setUserVote] = useState<number>(0);
   const [voteCount, setVoteCount] = useState<number>(0);
+  const [newComment, setNewComment] = useState("");
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const handleVote = (value: number, e: React.MouseEvent) => {
     e.preventDefault();
@@ -168,6 +173,23 @@ const IdeaDetail = () => {
     const voteDelta = newVoteValue - userVote;
     setVoteCount((prevCount) => prevCount + voteDelta);
     setUserVote(newVoteValue);
+  };
+
+  const handleCommentSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+
+    setIsSubmittingComment(true);
+    // TODO: Implement comment submission
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setNewComment("");
+    setIsSubmittingComment(false);
+  };
+
+  const handleDelete = async () => {
+    // TODO: Implement delete
+    setShowDeleteDialog(false);
+    router.push("/dashboard/ideas");
   };
 
   useEffect(() => {
@@ -236,38 +258,50 @@ const IdeaDetail = () => {
         initial="hidden"
         animate="show"
       >
-        {/* Back button section */}
-        <div className="flex justify-between mx-4 my-2">
-          <motion.button
-            variants={itemVariants}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="btn btn-ghost btn-md mb-4"
-            onClick={() => router.back()}
-          >
-            <ChevronLeft size={24} />
-            <span className="font-bold">Back to ideas</span>
-          </motion.button>
-          <div className="flex gap-2 mb-4">
-            <button className="btn btn-sm">
-              <Pencil size={16} />
-              <span className="font-bold">Edit</span>
-            </button>
-            <button className="btn btn-sm btn-error">
-              <Trash size={16} />
-              <span className="font-bold">Delete</span>
-            </button>
+        <div className="bg-base-100 z-30 -mx-6 px-6 py-4">
+          <div className="flex justify-between max-w-4xl mx-auto">
+            <motion.button
+              variants={itemVariants}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="btn btn-ghost btn-sm"
+              onClick={() => router.back()}
+            >
+              <ChevronLeft size={20} />
+              <span className="font-bold">Back to ideas</span>
+            </motion.button>
+            <div className="flex gap-2">
+              <motion.button
+                variants={buttonVariants}
+                whileHover="hover"
+                whileTap="tap"
+                className="btn btn-sm btn-primary"
+              >
+                <Pencil size={16} />
+                <span className="font-bold">Edit</span>
+              </motion.button>
+              <motion.button
+                variants={buttonVariants}
+                whileHover="hover"
+                whileTap="tap"
+                className="btn btn-sm btn-error"
+                onClick={() => setShowDeleteDialog(true)}
+              >
+                <Trash size={16} />
+                <span className="font-bold">Delete</span>
+              </motion.button>
+            </div>
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto p-6">
+        <div className="max-w-4xl mx-auto p-6 pt-4">
           {/* Header section */}
           <motion.div
             variants={itemVariants}
             className="bg-base-200 p-6 rounded-lg mb-6"
           >
             <h1 className="font-bold text-2xl mb-4">{idea.title}</h1>
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center flex-wrap">
               <div className="flex items-center gap-3">
                 <div className="avatar placeholder">
                   <div className="bg-primary text-white mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
@@ -303,31 +337,20 @@ const IdeaDetail = () => {
             variants={itemVariants}
             className="flex justify-end items-center gap-3 mb-8"
           >
-            <div className="flex items-center gap-2 lg:mr-8">
+            <div className="flex items-center gap-2">
               <motion.button
                 variants={buttonVariants}
                 initial="initial"
                 whileTap="tap"
                 whileHover="hover"
-                className={`p-2 rounded-full transition-colors duration-200 ${
-                  userVote === 1 ? "bg-primary/10" : "hover:bg-primary/5"
+                className={`btn btn-circle btn-md ${
+                  userVote === 1
+                    ? "bg-primary text-primary-content border-0"
+                    : "bg-primary/10 hover:bg-primary border-0"
                 }`}
                 onClick={(e) => handleVote(1, e)}
               >
-                <motion.div
-                  animate={{
-                    scale: userVote === 1 ? [1, 1.2, 1] : 1,
-                    transition: { duration: 0.2 },
-                  }}
-                >
-                  <ThumbsUp
-                    className={`w-8 h-8 transition-colors duration-200 ${
-                      userVote === 1
-                        ? "stroke-primary fill-primary"
-                        : "stroke-gray-600 hover:stroke-primary"
-                    }`}
-                  />
-                </motion.div>
+                <ThumbsUp className="w-6 h-6" />
               </motion.button>
 
               <AnimatedNumber value={voteCount} />
@@ -337,82 +360,144 @@ const IdeaDetail = () => {
                 initial="initial"
                 whileTap="tap"
                 whileHover="hover"
-                className={`p-2 rounded-full transition-colors duration-200 ${
-                  userVote === -1 ? "bg-error/10" : "hover:bg-error/5"
+                className={`btn btn-circle btn-md ${
+                  userVote === -1
+                    ? "bg-error text-error-content border-0"
+                    : "bg-error/10 hover:bg-error border-0"
                 }`}
                 onClick={(e) => handleVote(-1, e)}
               >
-                <motion.div
-                  animate={{
-                    scale: userVote === -1 ? [1, 1.2, 1] : 1,
-                    transition: { duration: 0.2 },
-                  }}
-                >
-                  <ThumbsDown
-                    className={`w-8 h-8 transition-colors duration-200 ${
-                      userVote === -1
-                        ? "stroke-error fill-error"
-                        : "stroke-gray-600 hover:stroke-error"
-                    }`}
-                  />
-                </motion.div>
+                <ThumbsDown className="w-6 h-6" />
               </motion.button>
             </div>
           </motion.div>
 
           {/* Comments section */}
-          <motion.div variants={listContainerVariants} className="mt-8">
+          <motion.div
+            variants={listContainerVariants}
+            className="mt-8 space-y-6"
+          >
             <motion.h2
               variants={itemVariants}
-              className="text-xl font-bold mb-4 flex items-center gap-2"
+              className="text-xl font-bold flex items-center gap-2"
             >
               Comments{" "}
               <span className="badge badge-outline text-sm opacity-70">
                 {comments.length}
               </span>
             </motion.h2>
+
+            {/* New Comment Form */}
+            <motion.form
+              variants={itemVariants}
+              onSubmit={handleCommentSubmit}
+              className="flex flex-col gap-4 bg-base-200 p-4 rounded-lg"
+            >
+              <textarea
+                className="textarea textarea-bordered w-full"
+                placeholder="Write your comment..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                rows={3}
+              />
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => setNewComment("")}
+                  disabled={isSubmittingComment || !newComment.trim()}
+                >
+                  <X size={16} />
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-sm"
+                  disabled={isSubmittingComment || !newComment.trim()}
+                >
+                  {isSubmittingComment ? (
+                    <span className="loading loading-spinner loading-sm" />
+                  ) : (
+                    <Send size={16} />
+                  )}
+                  Comment
+                </button>
+              </div>
+            </motion.form>
+
+            {/* Comments List */}
             {comments.length === 0 ? (
               <motion.p
                 variants={itemVariants}
-                className="text-center text-sm opacity-70"
+                className="text-center text-sm opacity-70 bg-base-200 p-4 rounded-lg"
               >
-                No comments yet
+                No comments yet. Be the first to comment!
               </motion.p>
             ) : (
-              comments.map((comment) => (
-                <motion.div
-                  key={comment.id}
-                  variants={itemVariants}
-                  className="bg-base-200 p-4 rounded-lg mb-4"
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="avatar placeholder">
-                      <div className="bg-base-100 text-primary-content mask mask-squircle w-8 h-8 flex items-center justify-center text-xs font-bold">
-                        {comment.is_anonymous
-                          ? "?"
-                          : getInitials(comment.user_name)}
+              <div className="space-y-4">
+                {comments.map((comment) => (
+                  <motion.div
+                    key={comment.id}
+                    variants={itemVariants}
+                    className="bg-base-200 p-4 rounded-lg"
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="avatar placeholder">
+                        <div className="bg-base-100 text-primary-content mask mask-squircle w-8 h-8 flex items-center justify-center text-xs font-bold">
+                          {comment.is_anonymous
+                            ? "?"
+                            : getInitials(comment.user_name)}
+                        </div>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-sm">
+                          {comment.user_name}
+                        </span>
+                        {comment.created_at && (
+                          <span className="text-xs opacity-70">
+                            {formatDistanceToNow(new Date(comment.created_at), {
+                              addSuffix: true,
+                            })}
+                          </span>
+                        )}
                       </div>
                     </div>
-                    <div className="flex flex-col">
-                      <span className="font-semibold text-sm">
-                        {comment.user_name}
-                      </span>
-                      {comment.created_at && (
-                        <span className="text-xs opacity-70">
-                          {formatDistanceToNow(new Date(comment.created_at), {
-                            addSuffix: true,
-                          })}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <p className="text-md ml-12">{comment.comment}</p>
-                </motion.div>
-              ))
+                    <p className="text-md ml-10">{comment.comment}</p>
+                  </motion.div>
+                ))}
+              </div>
             )}
           </motion.div>
         </div>
       </motion.div>
+
+      {/* Delete Confirmation Dialog */}
+      {showDeleteDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-base-100 p-6 rounded-lg max-w-md w-full mx-4"
+          >
+            <h3 className="font-bold text-lg mb-4">Delete Idea</h3>
+            <p className="mb-6">
+              Are you sure you want to delete this idea? This action cannot be
+              undone.
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                className="btn btn-ghost"
+                onClick={() => setShowDeleteDialog(false)}
+              >
+                Cancel
+              </button>
+              <button className="btn btn-error" onClick={handleDelete}>
+                Delete
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </>
   );
 };
