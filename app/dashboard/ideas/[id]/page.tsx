@@ -166,12 +166,17 @@ const IdeaDetail = () => {
     getIdea,
     getCommentsForIdea,
     idea,
+    pendingIdeas,
     comments,
     isLoading,
     createVote,
     createComment,
     deleteIdea,
+    submitIdea,
+    error,
   } = useApiStore();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPending, setIsPending] = useState(false);
   const [userVote, setUserVote] = useState<number>(0);
   const [voteCount, setVoteCount] = useState<number>(0);
   const [newComment, setNewComment] = useState("");
@@ -190,6 +195,23 @@ const IdeaDetail = () => {
     setVoteCount((prevCount) => prevCount + voteDelta);
     setUserVote(newVoteValue);
     handleVoteSubmit();
+  };
+
+  const handleSubmit = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    setIsSubmitting(true);
+    try {
+      await submitIdea(Number(id));
+      setIsPending(false);
+      showSuccessToast("Idea submitted successfully");
+    } catch (e) {
+      console.error("Failed to submit idea", e);
+      showErrorToast(error || "Failed to submit idea");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleVoteSubmit = async () => {
@@ -239,6 +261,9 @@ const IdeaDetail = () => {
       if (id && loadingStage === "initial") {
         setLoadingStage("idea");
         await getIdea(Number(id));
+        if (pendingIdeas.findIndex((idea) => idea.id === Number(id)) !== -1) {
+          setIsPending(true);
+        }
         setLoadingStage("comments");
       }
     };
@@ -313,25 +338,46 @@ const IdeaDetail = () => {
               <span className="font-bold">Idea Details</span>
             </motion.button>
             <div className="flex gap-2">
-              <motion.button
-                variants={buttonVariants}
-                whileHover="hover"
-                whileTap="tap"
-                className="btn btn-md btn-primary"
-              >
-                <Pencil size={16} />
-                <span className="font-bold">Edit</span>
-              </motion.button>
-              <motion.button
-                variants={buttonVariants}
-                whileHover="hover"
-                whileTap="tap"
-                className="btn btn-md btn-error"
-                onClick={() => setShowDeleteDialog(true)}
-              >
-                <Trash size={16} />
-                <span className="font-bold">Delete</span>
-              </motion.button>
+              {isPending ? (
+                <motion.button
+                  variants={buttonVariants}
+                  initial="initial"
+                  whileTap="tap"
+                  whileHover="hover"
+                  className="btn btn-primary btn-md gap-2"
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <span className="loading loading-spinner loading-xs" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                  Submit Idea
+                </motion.button>
+              ) : (
+                <>
+                  <motion.button
+                    variants={buttonVariants}
+                    whileHover="hover"
+                    whileTap="tap"
+                    className="btn btn-md btn-primary"
+                  >
+                    <Pencil size={16} />
+                    <span className="font-bold">Edit</span>
+                  </motion.button>
+                  <motion.button
+                    variants={buttonVariants}
+                    whileHover="hover"
+                    whileTap="tap"
+                    className="btn btn-md btn-error"
+                    onClick={() => setShowDeleteDialog(true)}
+                  >
+                    <Trash size={16} />
+                    <span className="font-bold">Delete</span>
+                  </motion.button>
+                </>
+              )}
             </div>
           </div>
         </div>

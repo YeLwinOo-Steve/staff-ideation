@@ -52,8 +52,8 @@ const buttonVariants = {
 
 export default function IdeaCard({ idea }: IdeaCardProps) {
   const { submitIdea, error } = useApiStore();
-  const { showSuccessToast, showErrorToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { showSuccessToast, showErrorToast } = useToast();
   const [showReportDialog, setShowReportDialog] = useState(false);
   const formattedDate = idea.time
     ? formatDistanceToNow(new Date(idea.time), { addSuffix: true })
