@@ -42,10 +42,10 @@ const itemVariants = {
 };
 
 const buttonVariants = {
-  hidden: { opacity: 0, x: -20 },
+  hidden: { opacity: 0, y: 20 },
   show: {
     opacity: 1,
-    x: 0,
+    y: 0,
     transition: { duration: 0.3 },
   },
   hover: { scale: 1.05 },
@@ -159,7 +159,7 @@ const CreateUser = () => {
     } catch (error) {
       console.error("Failed to create user:", error);
       showErrorToast(
-        error instanceof Error ? error.message : "Failed to create user",
+        error instanceof Error ? error.message : "Failed to create user"
       );
     } finally {
       setIsUploading(false);
@@ -179,12 +179,21 @@ const CreateUser = () => {
 
   return (
     <>
-      <div className="bg-base-100 p-6">
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="bg-base-100 p-6"
+      >
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Header */}
-          <div className="lg:sticky md:sticky top-[5rem] z-30 bg-base-100 pb-4">
+          <motion.div
+            variants={itemVariants}
+            className="lg:sticky md:sticky top-[5rem] z-30 bg-base-100 pb-4"
+          >
             <div className="flex items-center justify-between">
               <motion.button
+                variants={buttonVariants}
                 className="btn gap-2 text-md"
                 onClick={() => router.back()}
                 whileHover={{ scale: 1.02 }}
@@ -194,15 +203,21 @@ const CreateUser = () => {
                 <span>Create New User</span>
               </motion.button>
             </div>
-          </div>
+          </motion.div>
 
           {/* Main Content */}
-          <div className="max-w-4xl mx-auto">
+          <motion.div variants={itemVariants} className="max-w-4xl mx-auto">
             <FormProvider {...methods}>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-                <div className="flex flex-col lg:flex-row gap-8">
+                <motion.div
+                  variants={containerVariants}
+                  className="flex flex-col lg:flex-row gap-8"
+                >
                   {/* Left Column - Photo Upload */}
-                  <div className="w-full lg:w-1/3">
+                  <motion.div
+                    variants={itemVariants}
+                    className="w-full lg:w-1/3"
+                  >
                     <div className="sticky top-48 z-[31] max-w-sm mx-auto lg:max-w-full">
                       <UserPhotoUpload
                         initialPhoto={null}
@@ -225,47 +240,69 @@ const CreateUser = () => {
                         Upload Profile Image
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
 
                   {/* Right Column - Form Sections */}
-                  <div className="lg:w-2/3 space-y-6">
-                    <UserDetailsSection
-                      nameError={errors.name?.message}
-                      emailError={errors.email?.message}
-                    />
+                  <motion.div
+                    variants={containerVariants}
+                    className="lg:w-2/3 space-y-6"
+                  >
+                    <motion.div variants={itemVariants}>
+                      <UserDetailsSection
+                        nameError={errors.name?.message}
+                        emailError={errors.email?.message}
+                      />
+                    </motion.div>
 
-                    <div className="divider before:bg-base-300/50 after:bg-base-300/50"></div>
+                    <motion.div variants={itemVariants}>
+                      <div className="divider before:bg-base-300/50 after:bg-base-300/50"></div>
+                      <RolesSection
+                        filteredRoles={filteredRoles}
+                        selectedRoles={selectedRoles}
+                        handleRoleChange={(roleId) =>
+                          handleRoleChange(
+                            roleId,
+                            !selectedRoles.includes(roleId)
+                          )
+                        }
+                        error={errors.role_ids?.message}
+                      />
+                    </motion.div>
 
-                    <RolesSection
-                      filteredRoles={filteredRoles}
-                      selectedRoles={selectedRoles}
-                      handleRoleChange={(roleId) => handleRoleChange(roleId, !selectedRoles.includes(roleId))}
-                      error={errors.role_ids?.message}
-                    />
+                    <motion.div variants={itemVariants}>
+                      <div className="divider before:bg-base-300/50 after:bg-base-300/50"></div>
+                      <DepartmentsSection
+                        departments={departments}
+                        control={methods.control}
+                        error={errors.department_ids?.message}
+                      />
+                    </motion.div>
 
-                    <div className="divider before:bg-base-300/50 after:bg-base-300/50"></div>
-
-                    <DepartmentsSection
-                      departments={departments}
-                      control={methods.control}
-                      error={errors.department_ids?.message}
-                    />
-
-                    <div className="divider before:bg-base-300/50 after:bg-base-300/50"></div>
-
-                    <PermissionsSection
-                      allPermissions={allPermissions}
-                      selectedPermissions={selectedPermissions}
-                      handlePermissionChange={(permId) => handlePermissionChange(permId, !selectedPermissions.includes(permId))}
-                      roles={roles}
-                      error={errors.permission_ids?.message}
-                    />
-                  </div>
-                </div>
+                    <motion.div variants={itemVariants}>
+                      <div className="divider before:bg-base-300/50 after:bg-base-300/50"></div>
+                      <PermissionsSection
+                        allPermissions={allPermissions}
+                        selectedPermissions={selectedPermissions}
+                        handlePermissionChange={(permId) =>
+                          handlePermissionChange(
+                            permId,
+                            !selectedPermissions.includes(permId)
+                          )
+                        }
+                        roles={roles}
+                        error={errors.permission_ids?.message}
+                      />
+                    </motion.div>
+                  </motion.div>
+                </motion.div>
 
                 {/* Action Buttons */}
-                <div className="flex justify-end gap-3 pt-6">
+                <motion.div
+                  variants={itemVariants}
+                  className="flex justify-end gap-3 pt-6"
+                >
                   <motion.button
+                    variants={buttonVariants}
                     type="button"
                     className="btn btn-ghost"
                     onClick={() => router.back()}
@@ -276,6 +313,7 @@ const CreateUser = () => {
                     Cancel
                   </motion.button>
                   <motion.button
+                    variants={buttonVariants}
                     type="submit"
                     className="btn btn-primary btn-wide"
                     disabled={isUploading || isLoading}
@@ -293,12 +331,12 @@ const CreateUser = () => {
                       "Create User"
                     )}
                   </motion.button>
-                </div>
+                </motion.div>
               </form>
             </FormProvider>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 };
