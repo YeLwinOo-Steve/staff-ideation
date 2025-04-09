@@ -179,6 +179,16 @@ const NavBar = () => {
               </Link>
             </li>
             <li>
+              <Link
+                href="/dashboard/settings/system"
+                className={`flex items-center gap-2 ${pathname === "/dashboard/settings/system" ? "active" : ""}`}
+                suppressHydrationWarning
+              >
+                <Sliders size={16} />
+                System
+              </Link>
+            </li>
+            <li>
               <details open={isSettingsOpen} suppressHydrationWarning>
                 <summary
                   onClick={(e) => {
@@ -215,16 +225,6 @@ const NavBar = () => {
                       <ThemeIcon size={16} />
                       {themeLabel}
                     </a>
-                  </li>
-                  <li>
-                    <Link
-                      href="/dashboard/settings/system"
-                      className={`flex items-center gap-2 ${pathname === "/dashboard/settings/system" ? "active" : ""}`}
-                      suppressHydrationWarning
-                    >
-                      <Sliders size={16} />
-                      System
-                    </Link>
                   </li>
                   <div className="divider my-1"></div>
                   <li>
@@ -335,6 +335,17 @@ const NavBar = () => {
                     <FileArchive className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                     <span className="text-base sm:text-lg">Reports</span>
                   </Link>
+                  <div className="divider my-0.5 sm:my-1"></div>
+                  <Link
+                    href="/dashboard/settings/system"
+                    className="flex items-center gap-2 sm:gap-3 py-1 px-2 sm:px-3 hover:bg-base-300 rounded-lg transition-colors"
+                    onClick={() =>
+                      handleNavigation("/dashboard/settings/system")
+                    }
+                  >
+                    <Sliders className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="text-sm sm:text-base">System</span>
+                  </Link>
 
                   <div className="divider my-0.5 sm:my-1"></div>
 
@@ -370,17 +381,6 @@ const NavBar = () => {
                           {themeLabel}
                         </span>
                       </button>
-
-                      <Link
-                        href="/dashboard/settings/system"
-                        className="flex items-center gap-2 sm:gap-3 py-1 px-2 sm:px-3 hover:bg-base-300 rounded-lg transition-colors"
-                        onClick={() =>
-                          handleNavigation("/dashboard/settings/system")
-                        }
-                      >
-                        <Sliders className="w-4 h-4 sm:w-5 sm:h-5" />
-                        <span className="text-sm sm:text-base">System</span>
-                      </Link>
                     </div>
                   </div>
 
