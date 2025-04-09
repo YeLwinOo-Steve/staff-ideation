@@ -22,6 +22,38 @@ import { motion } from "framer-motion";
 
 type UserFormValues = z.infer<typeof userFormSchema>;
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: "easeOut",
+    },
+  },
+};
+
+const buttonVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.3 },
+  },
+};
+
 const EditUser = () => {
   const {
     updateUser,
@@ -236,12 +268,21 @@ const EditUser = () => {
 
   return (
     <>
-      <div className="bg-base-100 p-6">
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="bg-base-100 p-6"
+      >
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Header */}
-          <div className="lg:sticky md:sticky top-[5rem] z-30 bg-base-100 pb-4">
+          <motion.div
+            variants={itemVariants}
+            className="lg:sticky md:sticky top-[5rem] z-30 bg-base-100 pb-4"
+          >
             <div className="flex items-center justify-between">
               <motion.button
+                variants={buttonVariants}
                 className="btn gap-2 text-md"
                 onClick={() => router.back()}
                 whileHover={{ scale: 1.02 }}
@@ -251,6 +292,7 @@ const EditUser = () => {
                 <span>Edit User Profile</span>
               </motion.button>
               <motion.button
+                variants={buttonVariants}
                 className="btn btn-error gap-2"
                 onClick={() => setIsResetPasswordModalOpen(true)}
                 whileHover={{ scale: 1.02 }}
@@ -260,15 +302,21 @@ const EditUser = () => {
                 Reset Password
               </motion.button>
             </div>
-          </div>
+          </motion.div>
 
           {/* Main Content */}
-          <div className="max-w-4xl mx-auto">
+          <motion.div variants={itemVariants} className="max-w-4xl mx-auto">
             <FormProvider {...methods}>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-                <div className="flex flex-col lg:flex-row gap-8">
+                <motion.div
+                  variants={containerVariants}
+                  className="flex flex-col lg:flex-row gap-8"
+                >
                   {/* Left Column - Photo Upload */}
-                  <div className="w-full lg:w-1/3">
+                  <motion.div
+                    variants={itemVariants}
+                    className="w-full lg:w-1/3"
+                  >
                     <div className="sticky top-48 z-[31] max-w-sm mx-auto lg:max-w-full">
                       <UserPhotoUpload
                         initialPhoto={
@@ -296,48 +344,60 @@ const EditUser = () => {
                         Upload Profile Image
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
 
                   {/* Right Column - Form Sections */}
-                  <div className="lg:w-2/3 space-y-6">
-                    <UserDetailsSection
-                      nameError={errors.name?.message}
-                      emailError={errors.email?.message}
-                      user={fetchedUser}
-                    />
+                  <motion.div
+                    variants={containerVariants}
+                    className="lg:w-2/3 space-y-6"
+                  >
+                    <motion.div variants={itemVariants}>
+                      <UserDetailsSection
+                        nameError={errors.name?.message}
+                        emailError={errors.email?.message}
+                        user={fetchedUser}
+                      />
+                    </motion.div>
 
-                    <div className="divider before:bg-base-300/50 after:bg-base-300/50"></div>
+                    <motion.div variants={itemVariants}>
+                      <div className="divider before:bg-base-300/50 after:bg-base-300/50"></div>
+                      <RolesSection
+                        filteredRoles={filteredRoles}
+                        selectedRoles={selectedRoles}
+                        handleRoleChange={handleRoleSelection}
+                        error={errors.role_ids?.message}
+                      />
+                    </motion.div>
 
-                    <RolesSection
-                      filteredRoles={filteredRoles}
-                      selectedRoles={selectedRoles}
-                      handleRoleChange={handleRoleSelection}
-                      error={errors.role_ids?.message}
-                    />
+                    <motion.div variants={itemVariants}>
+                      <div className="divider before:bg-base-300/50 after:bg-base-300/50"></div>
+                      <DepartmentsSection
+                        departments={departments}
+                        control={methods.control}
+                        error={errors.department_ids?.message}
+                      />
+                    </motion.div>
 
-                    <div className="divider before:bg-base-300/50 after:bg-base-300/50"></div>
-
-                    <DepartmentsSection
-                      departments={departments}
-                      control={methods.control}
-                      error={errors.department_ids?.message}
-                    />
-
-                    <div className="divider before:bg-base-300/50 after:bg-base-300/50"></div>
-
-                    <PermissionsSection
-                      allPermissions={allPermissions}
-                      selectedPermissions={selectedPermissions}
-                      handlePermissionChange={handlePermissionSelection}
-                      roles={roles}
-                      error={errors.permission_ids?.message}
-                    />
-                  </div>
-                </div>
+                    <motion.div variants={itemVariants}>
+                      <div className="divider before:bg-base-300/50 after:bg-base-300/50"></div>
+                      <PermissionsSection
+                        allPermissions={allPermissions}
+                        selectedPermissions={selectedPermissions}
+                        handlePermissionChange={handlePermissionSelection}
+                        roles={roles}
+                        error={errors.permission_ids?.message}
+                      />
+                    </motion.div>
+                  </motion.div>
+                </motion.div>
 
                 {/* Action Buttons */}
-                <div className="flex justify-end gap-3 pt-6">
+                <motion.div
+                  variants={itemVariants}
+                  className="flex justify-end gap-3 pt-6"
+                >
                   <motion.button
+                    variants={buttonVariants}
                     type="button"
                     className="btn btn-ghost"
                     onClick={() => router.back()}
@@ -347,6 +407,7 @@ const EditUser = () => {
                     Cancel
                   </motion.button>
                   <motion.button
+                    variants={buttonVariants}
                     type="submit"
                     className="btn btn-primary btn-wide"
                     disabled={isLoading || isUploading}
@@ -364,85 +425,85 @@ const EditUser = () => {
                       "Update User"
                     )}
                   </motion.button>
-                </div>
+                </motion.div>
               </form>
             </FormProvider>
-          </div>
+          </motion.div>
         </div>
+      </motion.div>
 
-        {/* Reset Password Dialog */}
-        {isResetPasswordModalOpen && (
+      {/* Reset Password Dialog */}
+      {isResetPasswordModalOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={() => setIsResetPasswordModalOpen(false)}
+        >
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-            onClick={() => setIsResetPasswordModalOpen(false)}
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.95, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="bg-base-100 rounded-2xl shadow-xl max-w-md w-full overflow-hidden border border-base-300"
+            onClick={(e) => e.stopPropagation()}
           >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="bg-base-100 rounded-2xl shadow-xl max-w-md w-full overflow-hidden border border-base-300"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="p-6 space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="bg-error/10 p-3 rounded-xl">
-                    <AlertTriangle className="w-5 h-5 text-error" />
-                  </div>
-                  <div className="flex flex-col">
-                    <h3 className="text-xl font-bold">Reset Password</h3>
-                    <p className="text-sm text-base-content/70">
-                      {fetchedUser?.name}
-                    </p>
-                  </div>
+            <div className="p-6 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="bg-error/10 p-3 rounded-xl">
+                  <AlertTriangle className="w-5 h-5 text-error" />
                 </div>
-
-                <div className="divider divider-error before:h-[1px] after:h-[1px] my-2"></div>
-
-                <div className="bg-error/5 p-4 rounded-xl space-y-2">
-                  <p className="font-medium">
-                    Are you sure you want to reset the password?
+                <div className="flex flex-col">
+                  <h3 className="text-xl font-bold">Reset Password</h3>
+                  <p className="text-sm text-base-content/70">
+                    {fetchedUser?.name}
                   </p>
-                  <p className="text-base-content/70 text-sm">
-                    This action will:
-                  </p>
-                  <ul className="text-sm text-base-content/70 list-disc list-inside space-y-1">
-                    <li>Generate a new temporary password</li>
-                    <li>Send it to the user&apos;s email address</li>
-                  </ul>
-                  <p className="text-sm bg-error/5 text-error p-3 rounded-lg">
-                    This action cannot be undone.
-                  </p>
-                </div>
-
-                <div className="flex justify-end gap-2 pt-2">
-                  <motion.button
-                    className="btn btn-ghost btn-sm"
-                    onClick={() => setIsResetPasswordModalOpen(false)}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <X className="w-4 h-4" />
-                    Cancel
-                  </motion.button>
-                  <motion.button
-                    className="btn btn-error btn-sm"
-                    onClick={handleResetPassword}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <KeyRound className="w-4 h-4" />
-                    Reset Password
-                  </motion.button>
                 </div>
               </div>
-            </motion.div>
+
+              <div className="divider divider-error before:h-[1px] after:h-[1px] my-2"></div>
+
+              <div className="bg-error/5 p-4 rounded-xl space-y-2">
+                <p className="font-medium">
+                  Are you sure you want to reset the password?
+                </p>
+                <p className="text-base-content/70 text-sm">
+                  This action will:
+                </p>
+                <ul className="text-sm text-base-content/70 list-disc list-inside space-y-1">
+                  <li>Generate a new temporary password</li>
+                  <li>Send it to the user&apos;s email address</li>
+                </ul>
+                <p className="text-sm bg-error/5 text-error p-3 rounded-lg">
+                  This action cannot be undone.
+                </p>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <motion.button
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => setIsResetPasswordModalOpen(false)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <X className="w-4 h-4" />
+                  Cancel
+                </motion.button>
+                <motion.button
+                  className="btn btn-error btn-sm"
+                  onClick={handleResetPassword}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <KeyRound className="w-4 h-4" />
+                  Reset Password
+                </motion.button>
+              </div>
+            </div>
           </motion.div>
-        )}
-      </div>
+        </motion.div>
+      )}
     </>
   );
 };
