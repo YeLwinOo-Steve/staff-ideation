@@ -131,7 +131,8 @@ const CreateUser = () => {
 
     try {
       if (photoFile) {
-        photoUrl = await uploadToCloudinary(photoFile, (fileName, progress) => {
+        setIsUploading(true);
+        photoUrl = await uploadToCloudinary(photoFile, (progress) => {
           setUploadProgress(progress);
         });
       }

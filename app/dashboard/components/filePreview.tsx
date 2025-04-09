@@ -36,7 +36,7 @@ export default function FilePreview({
       }
       return acceptedFiles;
     },
-    [currentFiles.length, showErrorToast],
+    [currentFiles.length, showErrorToast]
   );
 
   const {
@@ -52,28 +52,9 @@ export default function FilePreview({
 
   useEffect(() => {
     setMounted(true);
-    return () => {
-      // Cleanup all preview URLs when component unmounts
-      previewFiles.forEach((file) => {
-        if (file.preview) {
-          URL.revokeObjectURL(file.preview);
-        }
-      });
-    };
-  }, []);
 
-  // Separate effect for handling preview files
-  useEffect(() => {
     if (!mounted) return;
 
-    // Cleanup old preview URLs
-    previewFiles.forEach((file) => {
-      if (file.preview) {
-        URL.revokeObjectURL(file.preview);
-      }
-    });
-
-    // Create new preview URLs for images
     const imageFiles = files
       .filter((file) => file.type.startsWith("image/"))
       .map((file) => {
@@ -85,7 +66,6 @@ export default function FilePreview({
     setPreviewFiles(imageFiles);
     setFiles(files);
 
-    // Cleanup preview URLs when files change
     return () => {
       imageFiles.forEach((file) => {
         if (file.preview) {
