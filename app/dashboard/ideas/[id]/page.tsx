@@ -174,6 +174,7 @@ const IdeaDetail = () => {
     deleteIdea,
     submitIdea,
     error,
+    getToSubmit,
   } = useApiStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPending, setIsPending] = useState(false);
@@ -260,15 +261,32 @@ const IdeaDetail = () => {
     const loadIdea = async () => {
       if (id && loadingStage === "initial") {
         setLoadingStage("idea");
+        
+        // First load the idea
         await getIdea(Number(id));
-        if (pendingIdeas.findIndex((idea) => idea.id === Number(id)) !== -1) {
-          setIsPending(true);
+        
+        // Then load pending ideas if needed and check status
+        if (pendingIdeas.length === 0) {
+          await getToSubmit();
         }
+
+        // Now check the pending status after both operations are complete
+        const isPendingIdea = pendingIdeas.some((idea) => idea.id === Number(id));
+        setIsPending(isPendingIdea);
+        
         setLoadingStage("comments");
       }
     };
     loadIdea();
-  }, [id, getIdea, loadingStage, pendingIdeas]);
+  }, [id, getIdea, loadingStage, getToSubmit]);
+
+  // Add a separate effect to update pending status when pendingIdeas changes
+  useEffect(() => {
+    if (id && pendingIdeas.length > 0) {
+      const isPendingIdea = pendingIdeas.some((idea) => idea.id === Number(id));
+      setIsPending(isPendingIdea);
+    }
+  }, [id, pendingIdeas]);
 
   useEffect(() => {
     const loadComments = async () => {
@@ -279,13 +297,6 @@ const IdeaDetail = () => {
     };
     loadComments();
   }, [id, getCommentsForIdea, loadingStage]);
-
-  useEffect(() => {
-    const idea = pendingIdeas.find((i) => i.id === Number(id));
-    if (idea) {
-      setIsPending(true);
-    }
-  }, [id, pendingIdeas]);
 
   if (loadingStage !== "complete" || isLoading) {
     return (
