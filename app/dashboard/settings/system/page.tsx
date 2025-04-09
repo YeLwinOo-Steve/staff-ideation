@@ -8,6 +8,8 @@ import { DatePicker, DatePickerProps } from "antd";
 import { Dayjs } from "dayjs";
 import { Sliders, Calendar, CheckCircle2, School } from "lucide-react";
 import { format } from "date-fns";
+import { SystemSettingCard } from "./components/SystemSettingCard";
+import { SystemSetting } from "@/api/models";
 
 const containerVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -40,7 +42,7 @@ const itemVariants = {
     scale: 0.9,
     y: 10,
   },
-  show: {
+  visible: {
     opacity: 1,
     scale: 1,
     y: 0,
@@ -65,7 +67,7 @@ export default function SystemSettingsPage() {
 
   useEffect(() => {
     fetchSystemSettings();
-  }, [fetchSystemSettings]);
+  }, []);
 
   const isFormValid = () => {
     return (
@@ -124,6 +126,21 @@ export default function SystemSettingsPage() {
     }
   };
 
+  const handleUpdate = (setting: SystemSetting) => {
+    // TODO: Implement update functionality
+    showSuccessToast("Update functionality coming soon!");
+  };
+
+  const handleDelete = (setting: SystemSetting) => {
+    // TODO: Implement delete functionality
+    showSuccessToast("Delete functionality coming soon!");
+  };
+
+  const handleDownload = (setting: SystemSetting) => {
+    // TODO: Implement download functionality
+    showSuccessToast("Download functionality coming soon!");
+  };
+
   return (
     <motion.div
       className="container mx-auto p-6"
@@ -162,76 +179,16 @@ export default function SystemSettingsPage() {
           <div className="prose">
             <h2 className="text-2xl font-bold mb-6">All</h2>
           </div>
-          <div className="grid grid-cols-1 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-2 sm:grid-cols-1 gap-3">
             {Array.isArray(systemSettings) && systemSettings.length > 0 ? (
               systemSettings.map((setting) => (
-                <motion.div
+                <SystemSettingCard
                   key={setting.id}
-                  variants={itemVariants}
-                  className="card bg-base-200 shadow-sm hover:shadow-sm duration-100"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.2 }}
-                  layout
-                >
-                  <div className="card-body p-5">
-                    <div className="flex flex-col gap-4">
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-primary/10 p-3 rounded-xl">
-                            <School className="w-5 h-5 text-primary" />
-                          </div>
-                          <h3 className="card-title text-lg">
-                            {setting.academic_year}
-                          </h3>
-                        </div>
-                        {setting.status === 1 && (
-                          <div className="badge badge-success gap-2">
-                            <CheckCircle2 className="w-3 h-3" />
-                            Active
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="divider divider-primary before:h-[1px] after:h-[1px] my-0"></div>
-
-                      <div className="grid gap-3">
-                        <div className="flex items-center gap-3 bg-info/5 p-3 rounded-xl">
-                          <div className="bg-info/10 p-2 rounded-lg">
-                            <Calendar className="w-6 h-6 text-info" />
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-xs opacity-70">
-                              Idea Closure
-                            </span>
-                            <span className="text-sm font-medium">
-                              {format(
-                                new Date(setting.idea_closure_date),
-                                "PPP",
-                              )}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-3 bg-info/5 p-3 rounded-xl">
-                          <div className="bg-info/10 p-2 rounded-lg">
-                            <Calendar className="w-6 h-6 text-info" />
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-xs opacity-70">
-                              Final Closure
-                            </span>
-                            <span className="text-sm font-medium">
-                              {format(
-                                new Date(setting.final_closure_date),
-                                "PPP",
-                              )}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
+                  setting={setting}
+                  onUpdate={handleUpdate}
+                  onDelete={handleDelete}
+                  onDownload={handleDownload}
+                />
               ))
             ) : (
               <div className="text-center py-8 text-base-content/70">
