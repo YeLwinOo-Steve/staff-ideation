@@ -171,129 +171,135 @@ const CreateUser = () => {
   if (!isFormReady) {
     return (
       <div className="bg-base-100 min-h-screen">
-        <NavBar />
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex justify-center items-center h-64"
-        >
+        <div className="flex justify-center items-center h-64">
           <span className="loading loading-spinner loading-lg"></span>
-        </motion.div>
+        </div>
       </div>
     );
   }
 
   return (
     <>
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-        className="p-6"
-      >
-        <motion.div variants={itemVariants} className="flex items-center mb-6">
-          <motion.button
-            variants={buttonVariants}
-            whileHover="hover"
-            whileTap="tap"
-            className="btn btn-ghost btn-md mr-2"
-            onClick={() => router.back()}
-          >
-            <ChevronLeft size={24} />
-            <h1 className="font-bold">Create New User</h1>
-          </motion.button>
-        </motion.div>
+      <div className="bg-base-100 p-6">
+        <div className="max-w-6xl mx-auto space-y-8">
+          {/* Header */}
+          <div className="lg:sticky md:sticky top-[5rem] z-30 bg-base-100 pb-4">
+            <div className="flex items-center justify-between">
+              <motion.button
+                className="btn gap-2 text-md"
+                onClick={() => router.back()}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <ChevronLeft className="w-5 h-5" />
+                <span>Create New User</span>
+              </motion.button>
+            </div>
+          </div>
 
-        <motion.div variants={containerVariants} className="max-w-3xl mx-auto">
-          <FormProvider {...methods}>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="flex flex-col md:flex-row gap-6">
-                <motion.div variants={itemVariants}>
-                  <UserPhotoUpload
-                    initialPhoto={null}
-                    onPhotoChange={handlePhotoChange}
-                  />
-                </motion.div>
+          {/* Main Content */}
+          <div className="max-w-4xl mx-auto">
+            <FormProvider {...methods}>
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+                <div className="flex flex-col lg:flex-row gap-8">
+                  {/* Left Column - Photo Upload */}
+                  <div className="w-full lg:w-1/3">
+                    <div className="sticky top-48 z-[31] max-w-sm mx-auto lg:max-w-full">
+                      <UserPhotoUpload
+                        initialPhoto={null}
+                        onPhotoChange={handlePhotoChange}
+                      />
+                      {isUploading && (
+                        <div className="mt-4">
+                          <div className="w-full bg-base-200 rounded-full h-2">
+                            <div
+                              className="bg-primary h-2 rounded-full transition-all duration-300"
+                              style={{ width: `${uploadProgress}%` }}
+                            />
+                          </div>
+                          <p className="text-sm text-center mt-2 text-base-content/70">
+                            Uploading... {uploadProgress}%
+                          </p>
+                        </div>
+                      )}
+                      <div className="text-center mt-4">
+                        Upload Profile Image
+                      </div>
+                    </div>
+                  </div>
 
-                <motion.div
-                  variants={containerVariants}
-                  className="w-full md:w-2/3"
-                >
-                  <motion.div variants={itemVariants}>
+                  {/* Right Column - Form Sections */}
+                  <div className="lg:w-2/3 space-y-6">
                     <UserDetailsSection
                       nameError={errors.name?.message}
                       emailError={errors.email?.message}
                     />
-                  </motion.div>
 
-                  <motion.div variants={itemVariants}>
+                    <div className="divider before:bg-base-300/50 after:bg-base-300/50"></div>
+
                     <RolesSection
                       filteredRoles={filteredRoles}
                       selectedRoles={selectedRoles}
-                      handleRoleChange={handleRoleChange}
+                      handleRoleChange={(roleId) => handleRoleChange(roleId, !selectedRoles.includes(roleId))}
                       error={errors.role_ids?.message}
                     />
-                  </motion.div>
 
-                  <motion.div variants={itemVariants}>
+                    <div className="divider before:bg-base-300/50 after:bg-base-300/50"></div>
+
                     <DepartmentsSection
                       departments={departments}
                       control={methods.control}
                       error={errors.department_ids?.message}
                     />
-                  </motion.div>
 
-                  <motion.div variants={itemVariants}>
+                    <div className="divider before:bg-base-300/50 after:bg-base-300/50"></div>
+
                     <PermissionsSection
                       allPermissions={allPermissions}
                       selectedPermissions={selectedPermissions}
-                      handlePermissionChange={handlePermissionChange}
+                      handlePermissionChange={(permId) => handlePermissionChange(permId, !selectedPermissions.includes(permId))}
                       roles={roles}
                       error={errors.permission_ids?.message}
                     />
-                  </motion.div>
-                </motion.div>
-              </div>
+                  </div>
+                </div>
 
-              <motion.div
-                variants={itemVariants}
-                className="card-actions justify-end mt-6"
-              >
-                <motion.button
-                  variants={buttonVariants}
-                  whileHover="hover"
-                  whileTap="tap"
-                  type="button"
-                  className="btn btn-ghost"
-                  onClick={() => router.back()}
-                  disabled={isUploading || isLoading}
-                >
-                  Cancel
-                </motion.button>
-                <motion.button
-                  variants={buttonVariants}
-                  whileHover="hover"
-                  whileTap="tap"
-                  type="submit"
-                  className="btn btn-primary btn-wide"
-                  disabled={isUploading || isLoading}
-                >
-                  {isUploading ? (
-                    <div className="flex items-center gap-2">
-                      <span className="loading loading-spinner loading-sm"></span>
-                      <span>Uploading... {uploadProgress}%</span>
-                    </div>
-                  ) : isLoading ? (
-                    <span className="loading loading-spinner loading-sm"></span>
-                  ) : (
-                    "Create User"
-                  )}
-                </motion.button>
-              </motion.div>
-            </form>
-          </FormProvider>
-        </motion.div>
-      </motion.div>
+                {/* Action Buttons */}
+                <div className="flex justify-end gap-3 pt-6">
+                  <motion.button
+                    type="button"
+                    className="btn btn-ghost"
+                    onClick={() => router.back()}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    disabled={isUploading || isLoading}
+                  >
+                    Cancel
+                  </motion.button>
+                  <motion.button
+                    type="submit"
+                    className="btn btn-primary btn-wide"
+                    disabled={isUploading || isLoading}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    {isLoading || isUploading ? (
+                      <div className="flex items-center gap-2">
+                        <span className="loading loading-spinner loading-sm"></span>
+                        <span>
+                          {isUploading ? "Uploading..." : "Creating..."}
+                        </span>
+                      </div>
+                    ) : (
+                      "Create User"
+                    )}
+                  </motion.button>
+                </div>
+              </form>
+            </FormProvider>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
