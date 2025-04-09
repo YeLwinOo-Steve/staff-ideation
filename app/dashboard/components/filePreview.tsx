@@ -121,19 +121,26 @@ export default function FilePreview({ setFiles, uploadProgress = {} }: FilePrevi
   return (
     <div className="space-y-4">
       <div
-        {...getRootProps({
+        {...(files.length >= MAX_FILES ? {} : getRootProps({
           className:
             "border-2 border-dashed border-base-200 rounded-xl p-8 cursor-pointer hover:border-primary/50 hover:bg-base-200/30 transition-colors",
-        })}
+        }))}
+        className={`border-2 border-dashed rounded-xl p-8 ${
+          files.length >= MAX_FILES
+            ? "border-base-200/40 bg-base-200/10 cursor-not-allowed"
+            : "border-base-200 cursor-pointer hover:border-primary/50 hover:bg-base-200/30 transition-colors"
+        }`}
       >
-        <input {...getInputProps()} />
+        {files.length < MAX_FILES && <input {...getInputProps()} />}
         <div className="flex flex-col items-center gap-3">
-          <div className="p-4 bg-base-200 rounded-xl">
-            <FilePlus2 size={32} className="text-base-content/60" />
+          <div className={`p-4 rounded-xl ${files.length >= MAX_FILES ? 'bg-base-200/40' : 'bg-base-200'}`}>
+            <FilePlus2 size={32} className={`${files.length >= MAX_FILES ? 'text-base-content/30' : 'text-base-content/60'}`} />
           </div>
           <div className="text-center">
-            <p className="font-medium">Drop files here or click to select</p>
-            <p className="text-sm text-base-content/60 mt-1">
+            <p className={`font-medium ${files.length >= MAX_FILES ? 'text-base-content/40' : ''}`}>
+              {files.length >= MAX_FILES ? 'Maximum files reached' : 'Drop files here or click to select'}
+            </p>
+            <p className={`text-sm mt-1 ${files.length >= MAX_FILES ? 'text-base-content/30' : 'text-base-content/60'}`}>
               Supports images and documents (max {MAX_FILES} files)
             </p>
           </div>
