@@ -55,7 +55,7 @@ export default function PermissionsSection({
           {allPermissions.map((permission) => {
             const rolesWithPermission = roles
               .filter((role) =>
-                role.permissions.some((p) => p.id === permission.id)
+                role.permissions.some((p) => p.id === permission.id),
               )
               .map((role) => role.role);
 
@@ -75,7 +75,7 @@ export default function PermissionsSection({
                   type="checkbox"
                   className="hidden"
                   checked={selectedPermissions.includes(
-                    permission.id.toString()
+                    permission.id.toString(),
                   )}
                   onChange={() =>
                     handlePermissionChange(permission.id.toString())

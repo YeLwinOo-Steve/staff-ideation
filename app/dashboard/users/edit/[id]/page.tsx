@@ -153,7 +153,7 @@ const EditUser = () => {
 
             if (user.department) {
               const foundDept = departments.find(
-                (dept) => dept.department_name === user.department
+                (dept) => dept.department_name === user.department,
               );
               if (foundDept) {
                 setValue("department_ids", [foundDept.id.toString()]);
@@ -165,7 +165,7 @@ const EditUser = () => {
                 .map((perm: string | Permission) => {
                   if (typeof perm === "string") {
                     const foundPerm = allPermissions.find(
-                      (p) => p.permission === perm
+                      (p) => p.permission === perm,
                     );
                     return foundPerm ? foundPerm.id.toString() : null;
                   }

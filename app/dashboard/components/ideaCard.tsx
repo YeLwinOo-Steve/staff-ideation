@@ -60,7 +60,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
 
   const [userVote, setUserVote] = useState<number>(idea.user_vote_value || 0);
   const [voteCount, setVoteCount] = useState<number>(
-    idea.total_vote_value || 0
+    idea.total_vote_value || 0,
   );
   // If anonymous, don't show user details
   const isAnonymous = idea.is_anonymous || idea.user_name === "Anonymous";

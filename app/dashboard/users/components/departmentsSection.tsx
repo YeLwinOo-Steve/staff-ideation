@@ -4,10 +4,14 @@ import { Department } from "@/api/models";
 import { Building2 } from "lucide-react";
 import { Control, useController } from "react-hook-form";
 import { motion } from "framer-motion";
+import { userFormSchema } from "@/schema/validations";
+import { z } from "zod";
+
+type UserFormValues = z.infer<typeof userFormSchema>;
 
 interface DepartmentsSectionProps {
   departments: Department[];
-  control: Control<any>;
+  control: Control<UserFormValues>;
   error?: string;
 }
 

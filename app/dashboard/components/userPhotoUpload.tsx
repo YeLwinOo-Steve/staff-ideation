@@ -28,7 +28,7 @@ export default function UserPhotoUpload({
         onPhotoChange(file);
       }
     },
-    [onPhotoChange]
+    [onPhotoChange],
   );
 
   const handleDrop = useCallback(
@@ -40,7 +40,7 @@ export default function UserPhotoUpload({
         handleFileChange(file);
       }
     },
-    [handleFileChange]
+    [handleFileChange],
   );
 
   const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
