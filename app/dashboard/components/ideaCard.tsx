@@ -9,8 +9,6 @@ import {
   Send,
   EyeOff,
   Flag,
-  AlertTriangle,
-  X,
 } from "lucide-react";
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";

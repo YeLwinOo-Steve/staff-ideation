@@ -268,7 +268,7 @@ const IdeaDetail = () => {
       }
     };
     loadIdea();
-  }, [id, getIdea, loadingStage]);
+  }, [id, getIdea, loadingStage, pendingIdeas]);
 
   useEffect(() => {
     const loadComments = async () => {
@@ -279,6 +279,13 @@ const IdeaDetail = () => {
     };
     loadComments();
   }, [id, getCommentsForIdea, loadingStage]);
+
+  useEffect(() => {
+    const idea = pendingIdeas.find((i) => i.id === Number(id));
+    if (idea) {
+      setIsPending(true);
+    }
+  }, [id, pendingIdeas]);
 
   if (loadingStage !== "complete" || isLoading) {
     return (

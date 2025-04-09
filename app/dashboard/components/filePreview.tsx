@@ -2,7 +2,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { FilePlus2, X, FileText, Image as ImageIcon } from "lucide-react";
-import { useFileDropzone } from "@/components/useFileDropzone";
 import { motion, AnimatePresence } from "framer-motion";
 import ImageGalleryDialog from "./ImageGalleryDialog";
 import { useToast } from "@/components/toast";
@@ -24,13 +23,21 @@ export default function FilePreview({
   uploadProgress = {},
 }: FilePreviewProps) {
   const { showErrorToast } = useToast();
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (acceptedFiles.length + files.length > MAX_FILES) {
-      showErrorToast(`You can only upload up to ${MAX_FILES} files`);
-      return;
-    }
-    return acceptedFiles;
-  }, []);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(-1);
+  const [previewFiles, setPreviewFiles] = useState<FileWithPreview[]>([]);
+  const [mounted, setMounted] = useState(false);
+  const [currentFiles, setCurrentFiles] = useState<File[]>([]);
+
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      if (acceptedFiles.length + currentFiles.length > MAX_FILES) {
+        showErrorToast(`You can only upload up to ${MAX_FILES} files`);
+        return;
+      }
+      return acceptedFiles;
+    },
+    [currentFiles.length, showErrorToast]
+  );
 
   const {
     files,
@@ -38,9 +45,10 @@ export default function FilePreview({
     getInputProps,
     setFiles: setDropzoneFiles,
   } = useFileDropzoneUtil({ onDrop });
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(-1);
-  const [previewFiles, setPreviewFiles] = useState<FileWithPreview[]>([]);
-  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setCurrentFiles(files);
+  }, [files]);
 
   useEffect(() => {
     setMounted(true);
@@ -64,7 +72,7 @@ export default function FilePreview({
     return () => {
       previewFiles.forEach((file) => URL.revokeObjectURL(file.preview));
     };
-  }, [files, setFiles, mounted]);
+  }, [files, setFiles, mounted, previewFiles]);
 
   const isImage = (file: File) => file.type.startsWith("image/");
 
