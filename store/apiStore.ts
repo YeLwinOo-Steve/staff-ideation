@@ -102,7 +102,7 @@ interface ApiState {
   createSystemSetting: (data: Partial<SystemSetting>) => Promise<void>;
   updateSystemSetting: (
     id: number,
-    data: Partial<SystemSetting>
+    data: Partial<SystemSetting>,
   ) => Promise<void>;
   deleteSystemSetting: (id: number) => Promise<void>;
   getCSV: (id: number) => Promise<void>;
@@ -592,7 +592,8 @@ export const useApiStore = create<ApiState>((set, get) => ({
 
   getCSV: async (id) => {
     try {
-      await api.systemSettingApi.getCSV(id);
+      const response = await api.systemSettingApi.getCSV(id);
+      // return new Blob([response.data], { type: 'text/csv' });
     } catch (error) {
       const message = handleError(error, "Failed to get CSV");
       set({ error: message });
@@ -631,13 +632,13 @@ export const useApiStore = create<ApiState>((set, get) => ({
 
       const remainingPages = Array.from(
         { length: lastPage - 1 },
-        (_, i) => i + 2
+        (_, i) => i + 2,
       );
       await Promise.all(
         remainingPages.map(async (page) => {
           const pageResponse = await api.userApi.getAll(page);
           allUsers = [...allUsers, ...pageResponse.data.data];
-        })
+        }),
       );
 
       set({ allUsers });

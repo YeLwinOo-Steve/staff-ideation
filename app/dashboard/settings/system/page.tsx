@@ -6,8 +6,7 @@ import { useToast } from "@/components/toast";
 import { motion } from "framer-motion";
 import { DatePicker, DatePickerProps } from "antd";
 import { Dayjs } from "dayjs";
-import { Sliders, Calendar, CheckCircle2, School } from "lucide-react";
-import { format } from "date-fns";
+import { Sliders } from "lucide-react";
 import { SystemSettingCard } from "./components/SystemSettingCard";
 import { SystemSetting } from "@/api/models";
 
@@ -36,23 +35,6 @@ const formVariants = {
   },
 };
 
-const itemVariants = {
-  hidden: {
-    opacity: 0,
-    scale: 0.9,
-    y: 10,
-  },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: {
-      duration: 0.4,
-      ease: "easeOut",
-    },
-  },
-};
-
 export default function SystemSettingsPage() {
   const { RangePicker } = DatePicker;
   const [activeTab, setActiveTab] = useState<"all" | "create">("all");
@@ -61,7 +43,6 @@ export default function SystemSettingsPage() {
     fetchSystemSettings,
     updateSystemSetting,
     deleteSystemSetting,
-    getCSV,
     systemSettings,
     error,
   } = useApiStore();
@@ -74,7 +55,7 @@ export default function SystemSettingsPage() {
 
   useEffect(() => {
     fetchSystemSettings();
-  }, []);
+  }, [fetchSystemSettings]);
 
   const isFormValid = () => {
     return (
@@ -164,7 +145,25 @@ export default function SystemSettingsPage() {
     e.preventDefault();
     e.stopPropagation();
     try {
-      await getCSV(setting.id);
+      // Use fetch to get the CSV data
+      const response = await fetch(`/api/system-settings/${setting.id}/csv`);
+      const blob = await response.blob();
+
+      // Create a URL for the blob
+      const url = window.URL.createObjectURL(blob);
+
+      // Create a temporary link element
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `system-setting-${setting.academic_year}.csv`;
+
+      // Append link to body, click it, and remove it
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Clean up the URL
+      window.URL.revokeObjectURL(url);
       showSuccessToast("System settings downloaded successfully!");
     } catch (e) {
       console.log("system settings error", e);

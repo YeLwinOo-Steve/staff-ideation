@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import {
   Sliders,
   Calendar,
-  CheckCircle2,
   PencilIcon,
   Trash2Icon,
   DownloadIcon,
@@ -14,7 +13,7 @@ interface SystemSettingCardProps {
   setting: SystemSetting;
   onUpdate: (e: React.FormEvent, setting: SystemSetting) => void;
   onDelete: (e: React.FormEvent, setting: SystemSetting) => void;
-  onDownload: (e: React.FormEvent, setting: SystemSetting) => void;
+  onDownload: (e: React.FormEvent, setting: SystemSetting) => Promise<void>;
 }
 
 const itemVariants = {
@@ -113,7 +112,10 @@ export function SystemSettingCard({
               </motion.button>
               <motion.button
                 className="btn btn-circle btn-sm bg-success/10 hover:bg-success border-0"
-                onClick={(e) => onDownload(e, setting)}
+                onClick={async (e) => {
+                  e.preventDefault();
+                  await onDownload(e, setting);
+                }}
                 whileHover={{
                   scale: 1.1,
                   backgroundColor: "hsl(var(--su))",
