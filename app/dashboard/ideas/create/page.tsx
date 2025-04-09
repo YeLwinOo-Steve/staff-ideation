@@ -117,7 +117,7 @@ const IdeaCreatePage = () => {
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <button
-        className="btn btn-outline btn-md mb-6"
+        className="btn btn-md mb-6"
         onClick={() => router.back()}
       >
         <ChevronLeft size={24} />
