@@ -12,12 +12,12 @@ interface CategoryListProps {
 }
 
 const containerVariants = {
-  hidden: { opacity: 0 },
+  hidden: { opacity: 1 },
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.05,
-      when: "beforeChildren",
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
     },
   },
 };
@@ -47,18 +47,13 @@ export function CategoryList({
 }: CategoryListProps) {
   if (isLoading) {
     return (
-      <motion.div
-        className="flex justify-center items-center h-64"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      >
+      <motion.div className="flex justify-center items-center h-64">
         <span className="loading loading-spinner loading-lg text-primary"></span>
       </motion.div>
     );
   }
 
-  if (categories.length === 0) {
+  if (!categories || categories.length === 0) {
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -83,9 +78,8 @@ export function CategoryList({
       {categories.map((category) => (
         <motion.div
           key={category.id}
-          layoutId={`category-${category.id}`}
-          className="h-full"
           variants={itemVariants}
+          className="h-full"
           layout
         >
           <CategoryCard

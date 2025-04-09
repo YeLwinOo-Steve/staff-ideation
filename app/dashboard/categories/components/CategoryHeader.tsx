@@ -1,3 +1,5 @@
+"use client";
+
 import { Blocks, PlusIcon } from "lucide-react";
 import { motion } from "framer-motion";
 

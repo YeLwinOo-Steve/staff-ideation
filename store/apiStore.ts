@@ -16,11 +16,11 @@ const handleError = (error: unknown, defaultMessage: string): string => {
   if (axios.isAxiosError(error)) {
     return error.response?.data?.message || defaultMessage;
   }
-  
-  if (error && typeof error === 'object' && 'message' in error) {
+
+  if (error && typeof error === "object" && "message" in error) {
     return error.message as string;
   }
-  
+
   return defaultMessage;
 };
 
@@ -502,13 +502,17 @@ export const useApiStore = create<ApiState>((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await api.categoryApi.getAll();
-      set({ categories: response.data.data });
+      set((state) => ({
+        ...state,
+        categories: response.data.data,
+        isLoading: false,
+      }));
     } catch (error) {
       const message = handleError(error, "Failed to fetch categories");
       set({ error: message });
       throw error;
     } finally {
-      set({ isLoading: false });
+      set((state) => ({ ...state, isLoading: false }));
     }
   },
 

@@ -12,9 +12,7 @@ export default function CategoryPage() {
   // State
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null,
-  );
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [categoryName, setCategoryName] = useState("");
 
   // Store & Hooks
@@ -29,13 +27,12 @@ export default function CategoryPage() {
   } = useApiStore();
   const { showSuccessToast, showErrorToast } = useToast();
 
+  // Initial load
   useEffect(() => {
-    const loadCategories = async () => {
-      await fetchCategories();
-    };
-    loadCategories();
+    fetchCategories();
   }, [fetchCategories]);
 
+  // Error handling
   useEffect(() => {
     if (error) {
       showErrorToast(error);
@@ -78,7 +75,6 @@ export default function CategoryPage() {
       setIsEditModalOpen(false);
       setCategoryName("");
       setSelectedCategory(null);
-      await fetchCategories();
     } catch (error) {
       console.error("Failed to save category", error);
       showErrorToast(
