@@ -478,7 +478,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
   getCommentsForIdea: async (id) => {
     try {
       const response = await api.commentApi.getCommentsForIdea(id);
-      set({ comments: response.data.data });
+      set({ comments: response.data.data.reverse() });
     } catch (error) {
       const message = handleError(error, "Failed to get comments for idea");
       set({ error: message });

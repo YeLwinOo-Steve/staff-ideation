@@ -565,7 +565,7 @@ const IdeaDetail = () => {
               </motion.p>
             ) : (
               <div className="space-y-4">
-                {comments.reverse().map((comment) => (
+                {comments.map((comment) => (
                   <motion.div
                     key={comment.id}
                     variants={itemVariants}
