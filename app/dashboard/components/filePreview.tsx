@@ -52,13 +52,28 @@ export default function FilePreview({
 
   useEffect(() => {
     setMounted(true);
+    return () => {
+      // Cleanup all preview URLs when component unmounts
+      previewFiles.forEach((file) => {
+        if (file.preview) {
+          URL.revokeObjectURL(file.preview);
+        }
+      });
+    };
   }, []);
 
+  // Separate effect for handling preview files
   useEffect(() => {
     if (!mounted) return;
 
-    setFiles(files);
-    // Create preview URLs for images only on client side
+    // Cleanup old preview URLs
+    previewFiles.forEach((file) => {
+      if (file.preview) {
+        URL.revokeObjectURL(file.preview);
+      }
+    });
+
+    // Create new preview URLs for images
     const imageFiles = files
       .filter((file) => file.type.startsWith("image/"))
       .map((file) => {
@@ -66,13 +81,19 @@ export default function FilePreview({
           preview: URL.createObjectURL(file),
         }) as FileWithPreview;
       });
-    setPreviewFiles(imageFiles);
 
-    // Cleanup preview URLs when component unmounts or files change
+    setPreviewFiles(imageFiles);
+    setFiles(files);
+
+    // Cleanup preview URLs when files change
     return () => {
-      previewFiles.forEach((file) => URL.revokeObjectURL(file.preview));
+      imageFiles.forEach((file) => {
+        if (file.preview) {
+          URL.revokeObjectURL(file.preview);
+        }
+      });
     };
-  }, [files, setFiles, mounted, previewFiles]);
+  }, [files, setFiles, mounted]);
 
   const isImage = (file: File) => file.type.startsWith("image/");
 
@@ -116,6 +137,7 @@ export default function FilePreview({
           height={400}
           className="w-full h-full object-cover rounded-xl cursor-pointer"
           onClick={(e) => handleImageClick(e, file)}
+          priority
         />
       </div>
     );
@@ -189,7 +211,7 @@ export default function FilePreview({
           className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-8 sm:grid-cols-3 gap-4"
           layout
         >
-          <AnimatePresence>
+          <AnimatePresence mode="popLayout">
             {files.map((file) => (
               <motion.div
                 key={file.name}
