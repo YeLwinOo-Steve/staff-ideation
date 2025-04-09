@@ -12,9 +12,9 @@ import { SystemSetting } from "@/api/models";
 
 interface SystemSettingCardProps {
   setting: SystemSetting;
-  onUpdate: (setting: SystemSetting) => void;
-  onDelete: (setting: SystemSetting) => void;
-  onDownload: (setting: SystemSetting) => void;
+  onUpdate: (e: React.FormEvent, setting: SystemSetting) => void;
+  onDelete: (e: React.FormEvent, setting: SystemSetting) => void;
+  onDownload: (e: React.FormEvent, setting: SystemSetting) => void;
 }
 
 const itemVariants = {
@@ -91,7 +91,7 @@ export function SystemSettingCard({
             <div className="flex items-center justify-end gap-2">
               <motion.button
                 className="btn btn-circle btn-sm bg-primary/10 hover:bg-primary border-0"
-                onClick={() => onUpdate(setting)}
+                onClick={(e) => onUpdate(e, setting)}
                 whileHover={{
                   scale: 1.1,
                   backgroundColor: "hsl(var(--p))",
@@ -102,7 +102,7 @@ export function SystemSettingCard({
               </motion.button>
               <motion.button
                 className="btn btn-circle btn-sm bg-error/10 hover:bg-error border-0"
-                onClick={() => onDelete(setting)}
+                onClick={(e) => onDelete(e, setting)}
                 whileHover={{
                   scale: 1.1,
                   backgroundColor: "hsl(var(--er))",
@@ -113,7 +113,7 @@ export function SystemSettingCard({
               </motion.button>
               <motion.button
                 className="btn btn-circle btn-sm bg-success/10 hover:bg-success border-0"
-                onClick={() => onDownload(setting)}
+                onClick={(e) => onDownload(e, setting)}
                 whileHover={{
                   scale: 1.1,
                   backgroundColor: "hsl(var(--su))",

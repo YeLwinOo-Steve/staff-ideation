@@ -102,8 +102,10 @@ interface ApiState {
   createSystemSetting: (data: Partial<SystemSetting>) => Promise<void>;
   updateSystemSetting: (
     id: number,
-    data: Partial<SystemSetting>,
+    data: Partial<SystemSetting>
   ) => Promise<void>;
+  deleteSystemSetting: (id: number) => Promise<void>;
+  getCSV: (id: number) => Promise<void>;
 
   // Error handling
   setError: (error: string | null) => void;
@@ -536,7 +538,6 @@ export const useApiStore = create<ApiState>((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await api.systemSettingApi.getAll();
-      console.log("response", response.data.data);
       set({ systemSettings: response.data.data });
     } catch (error) {
       const message = handleError(error, "Failed to fetch system settings");
@@ -575,6 +576,30 @@ export const useApiStore = create<ApiState>((set, get) => ({
     }
   },
 
+  deleteSystemSetting: async (id) => {
+    try {
+      set({ isLoading: true });
+      await api.systemSettingApi.delete(id);
+      get().fetchSystemSettings();
+    } catch (error) {
+      const message = handleError(error, "Failed to delete system setting");
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  getCSV: async (id) => {
+    try {
+      await api.systemSettingApi.getCSV(id);
+    } catch (error) {
+      const message = handleError(error, "Failed to get CSV");
+      set({ error: message });
+      throw error;
+    }
+  },
+
   createVote: async (ideaId: number, vote: number) => {
     try {
       await api.voteApi.create({ idea_id: ideaId, vote_value: vote });
@@ -606,13 +631,13 @@ export const useApiStore = create<ApiState>((set, get) => ({
 
       const remainingPages = Array.from(
         { length: lastPage - 1 },
-        (_, i) => i + 2,
+        (_, i) => i + 2
       );
       await Promise.all(
         remainingPages.map(async (page) => {
           const pageResponse = await api.userApi.getAll(page);
           allUsers = [...allUsers, ...pageResponse.data.data];
-        }),
+        })
       );
 
       set({ allUsers });

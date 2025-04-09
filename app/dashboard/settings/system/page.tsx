@@ -56,8 +56,15 @@ const itemVariants = {
 export default function SystemSettingsPage() {
   const { RangePicker } = DatePicker;
   const [activeTab, setActiveTab] = useState<"all" | "create">("all");
-  const { createSystemSetting, fetchSystemSettings, systemSettings, error } =
-    useApiStore();
+  const {
+    createSystemSetting,
+    fetchSystemSettings,
+    updateSystemSetting,
+    deleteSystemSetting,
+    getCSV,
+    systemSettings,
+    error,
+  } = useApiStore();
   const { showSuccessToast, showErrorToast } = useToast();
   const [formData, setFormData] = useState({
     idea_closure_date: "",
@@ -119,26 +126,50 @@ export default function SystemSettingsPage() {
         final_closure_date: "",
         academic_year: "",
       });
-      fetchSystemSettings(); // Refresh the list
+      fetchSystemSettings();
     } catch (e) {
       console.log("system settings error", e);
       showErrorToast(error || "Failed to create system settings");
     }
   };
 
-  const handleUpdate = (setting: SystemSetting) => {
-    // TODO: Implement update functionality
-    showSuccessToast("Update functionality coming soon!");
+  const handleUpdate = async (e: React.FormEvent, setting: SystemSetting) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await updateSystemSetting(setting.id, {
+        ...setting,
+        ...formData,
+      });
+      showSuccessToast("System settings updated successfully!");
+    } catch (e) {
+      console.log("system settings error", e);
+      showErrorToast(error || "Failed to update system settings");
+    }
   };
 
-  const handleDelete = (setting: SystemSetting) => {
-    // TODO: Implement delete functionality
-    showSuccessToast("Delete functionality coming soon!");
+  const handleDelete = async (e: React.FormEvent, setting: SystemSetting) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await deleteSystemSetting(setting.id);
+      showSuccessToast("System settings deleted successfully!");
+    } catch (e) {
+      console.log("system settings error", e);
+      showErrorToast(error || "Failed to delete system settings");
+    }
   };
 
-  const handleDownload = (setting: SystemSetting) => {
-    // TODO: Implement download functionality
-    showSuccessToast("Download functionality coming soon!");
+  const handleDownload = async (e: React.FormEvent, setting: SystemSetting) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await getCSV(setting.id);
+      showSuccessToast("System settings downloaded successfully!");
+    } catch (e) {
+      console.log("system settings error", e);
+      showErrorToast(error || "Failed to download system settings");
+    }
   };
 
   return (
@@ -176,8 +207,11 @@ export default function SystemSettingsPage() {
           className={`flex-1 ${activeTab === "create" ? "hidden lg:block" : ""} overflow-auto`}
           variants={containerVariants}
         >
-          <div className="prose">
-            <h2 className="text-2xl font-bold mb-6">All</h2>
+          <div className="flex items-center mb-6">
+            <h2 className="text-2xl font-bold">All</h2>
+            <span className="text-sm text-base-content/70 badge badge-info p-3 ml-2">
+              {systemSettings.length}
+            </span>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-2 sm:grid-cols-1 gap-3">
             {Array.isArray(systemSettings) && systemSettings.length > 0 ? (
