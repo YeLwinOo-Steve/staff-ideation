@@ -142,7 +142,7 @@ const IdeaCreatePage = () => {
                 <p className="text-base-content/60">{authUser?.email}</p>
               </div>
             </div>
-            <div className="badge badge-neutral gap-2 p-4">
+            <div className="badge badge-info gap-2 p-4">
               <Calendar className="w-4 h-4" />
               <span>
                 {new Date().toLocaleDateString("en-US", {
