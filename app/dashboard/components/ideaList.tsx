@@ -9,6 +9,55 @@ interface IdeaListProps {
   gridCols?: number;
 }
 
+const SkeletonCard = () => (
+  <div className="card bg-base-200 shadow-sm h-full">
+    <div className="card-body p-5">
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="skeleton w-12 h-12 rounded-full bg-base-300"></div>
+            <div className="flex flex-col gap-2">
+              <div className="skeleton h-4 w-32 bg-base-300"></div>
+              <div className="skeleton h-3 w-20 bg-base-300"></div>
+            </div>
+          </div>
+          <div className="skeleton w-8 h-8 rounded-full bg-base-300"></div>
+        </div>
+
+        {/* Divider */}
+        <div className="skeleton h-[1px] w-full bg-base-300"></div>
+
+        {/* Content */}
+        <div className="space-y-2">
+          <div className="skeleton h-4 w-full bg-base-300"></div>
+          <div className="skeleton h-4 w-3/4 bg-base-300"></div>
+          <div className="skeleton h-4 w-1/2 bg-base-300"></div>
+        </div>
+
+        {/* Categories */}
+        <div className="flex gap-2">
+          <div className="skeleton h-6 w-16 rounded-full bg-base-300"></div>
+          <div className="skeleton h-6 w-20 rounded-full bg-base-300"></div>
+          <div className="skeleton h-6 w-14 rounded-full bg-base-300"></div>
+        </div>
+
+        {/* Bottom row */}
+        <div className="flex justify-between items-center mt-auto pt-4">
+          <div className="flex items-center gap-2">
+            <div className="skeleton w-8 h-8 rounded-full bg-base-300"></div>
+            <div className="skeleton w-8 h-4 bg-base-300"></div>
+            <div className="skeleton w-8 h-8 rounded-full bg-base-300"></div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="skeleton w-16 h-8 rounded-xl bg-base-300"></div>
+            <div className="skeleton w-16 h-8 rounded-xl bg-base-300"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 const containerVariants = {
   hidden: { opacity: 1 },
   show: {
@@ -88,21 +137,9 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
     setLatest(null);
   };
 
-  if (isLoading) {
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="flex justify-center items-center py-8"
-      >
-        <span className="loading loading-spinner loading-lg"></span>
-      </motion.div>
-    );
-  }
-
   return (
     <div className="space-y-6 pb-24 w-full">
-      {/* Header with tabs and filters */}
+      {/* Header with tabs and filters - Always visible */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -168,8 +205,25 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
         )}
       </motion.div>
 
-      {/* Ideas Grid */}
-      {displayedIdeas.length === 0 ? (
+      {/* Ideas Grid with Loading State */}
+      {isLoading ? (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className={gridClass}
+        >
+          {[1, 2, 3, 4, 5, 6].map((index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <SkeletonCard />
+            </motion.div>
+          ))}
+        </motion.div>
+      ) : displayedIdeas.length === 0 ? (
         <motion.div
           variants={itemVariants}
           className="flex justify-center items-center py-8"
