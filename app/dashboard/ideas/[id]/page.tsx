@@ -278,7 +278,7 @@ const IdeaDetail = () => {
       }
     };
     loadIdea();
-  }, [id, getIdea, loadingStage, getToSubmit]);
+  }, [id, getIdea, loadingStage, getToSubmit, pendingIdeas]);
 
   // Add a separate effect to update pending status when pendingIdeas changes
   useEffect(() => {
