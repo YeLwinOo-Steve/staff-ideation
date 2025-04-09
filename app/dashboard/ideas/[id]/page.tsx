@@ -261,19 +261,21 @@ const IdeaDetail = () => {
     const loadIdea = async () => {
       if (id && loadingStage === "initial") {
         setLoadingStage("idea");
-        
+
         // First load the idea
         await getIdea(Number(id));
-        
+
         // Then load pending ideas if needed and check status
         if (pendingIdeas.length === 0) {
           await getToSubmit();
         }
 
         // Now check the pending status after both operations are complete
-        const isPendingIdea = pendingIdeas.some((idea) => idea.id === Number(id));
+        const isPendingIdea = pendingIdeas.some(
+          (idea) => idea.id === Number(id),
+        );
         setIsPending(isPendingIdea);
-        
+
         setLoadingStage("comments");
       }
     };

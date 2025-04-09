@@ -15,4 +15,4 @@ export function ThemeWrapper() {
   }, [setTheme]);
 
   return null;
-} 
+}
