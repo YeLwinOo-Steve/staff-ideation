@@ -160,12 +160,12 @@ const NavBar = () => {
             </li>
             <li>
               <Link
-                href="/dashboard/category"
-                className={`${pathname === "/dashboard/category" ? "active" : ""} flex items-center gap-2`}
+                href="/dashboard/categories"
+                className={`${pathname === "/dashboard/categories" ? "active" : ""} flex items-center gap-2`}
                 suppressHydrationWarning
               >
                 <Blocks size={16} />
-                Category
+                Categories
               </Link>
             </li>
             <li>
@@ -317,12 +317,12 @@ const NavBar = () => {
                   <div className="divider my-0.5 sm:my-1"></div>
 
                   <Link
-                    href="/dashboard/category"
+                    href="/dashboard/categories"
                     className="flex items-center gap-2 sm:gap-3 py-1 px-3 sm:px-4 hover:bg-base-200 rounded-xl transition-colors"
-                    onClick={() => handleNavigation("/dashboard/category")}
+                    onClick={() => handleNavigation("/dashboard/categories")}
                   >
                     <Blocks className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                    <span className="text-base sm:text-lg">Category</span>
+                    <span className="text-base sm:text-lg">Categories</span>
                   </Link>
 
                   <div className="divider my-0.5 sm:my-1"></div>
@@ -400,7 +400,7 @@ const NavBar = () => {
         )}
       </AnimatePresence>
 
-      <LogoutDialog 
+      <LogoutDialog
         isOpen={showLogoutDialog}
         onClose={() => setShowLogoutDialog(false)}
       />
