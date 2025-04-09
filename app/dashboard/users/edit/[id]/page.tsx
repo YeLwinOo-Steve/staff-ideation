@@ -239,25 +239,27 @@ const EditUser = () => {
       <div className="bg-base-100 p-6">
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Header */}
-          <div className="flex items-center justify-between">
-            <motion.button
-              className="btn gap-2 text-md"
-              onClick={() => router.back()}
-              whileHover={{ x: -4 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <ChevronLeft className="w-5 h-5" />
-              <span>Edit User Profile</span>
-            </motion.button>
-            <motion.button
-              className="btn btn-error gap-2"
-              onClick={() => setIsResetPasswordModalOpen(true)}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <KeyRound className="w-4 h-4" />
-              Reset Password
-            </motion.button>
+          <div className="lg:sticky md:sticky top-[5rem] z-30 bg-base-100 pb-4">
+            <div className="flex items-center justify-between">
+              <motion.button
+                className="btn gap-2 text-md"
+                onClick={() => router.back()}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <ChevronLeft className="w-5 h-5" />
+                <span>Edit User Profile</span>
+              </motion.button>
+              <motion.button
+                className="btn btn-error gap-2"
+                onClick={() => setIsResetPasswordModalOpen(true)}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <KeyRound className="w-4 h-4" />
+                Reset Password
+              </motion.button>
+            </div>
           </div>
 
           {/* Main Content */}
@@ -267,7 +269,7 @@ const EditUser = () => {
                 <div className="flex flex-col lg:flex-row gap-8">
                   {/* Left Column - Photo Upload */}
                   <div className="w-full lg:w-1/3">
-                    <div className="sticky top-6 max-w-sm mx-auto lg:max-w-full">
+                    <div className="sticky top-48 z-[31] max-w-sm mx-auto lg:max-w-full">
                       <UserPhotoUpload
                         initialPhoto={
                           fetchedUser?.photo &&
@@ -290,6 +292,9 @@ const EditUser = () => {
                           </p>
                         </div>
                       )}
+                      <div className="text-center mt-4">
+                        Upload Profile Image
+                      </div>
                     </div>
                   </div>
 

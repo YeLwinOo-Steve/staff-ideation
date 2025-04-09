@@ -59,7 +59,7 @@ export default function UserPhotoUpload({
   }, [onPhotoChange]);
 
   return (
-    <div className="space-y-4 max-w-32 max-h-32">
+    <div className="space-y-4 max-w-32 max-h-32 mx-auto">
       {/* Photo Preview */}
       {preview ? (
         <div className="relative group">
