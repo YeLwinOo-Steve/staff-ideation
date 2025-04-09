@@ -49,7 +49,7 @@ const buttonVariants = {
 };
 
 export default function IdeaCard({ idea }: IdeaCardProps) {
-  const { submitIdea, error } = useApiStore();
+  const { submitIdea, error, createVote } = useApiStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showSuccessToast, showErrorToast } = useToast();
   const [showReportDialog, setShowReportDialog] = useState(false);
@@ -57,30 +57,36 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
     ? formatDistanceToNow(new Date(idea.time), { addSuffix: true })
     : "";
 
-  const [userVote, setUserVote] = useState<number>(idea.user_vote_value || 0);
-  const [voteCount, setVoteCount] = useState<number>(
+  const [isVoting, setIsVoting] = useState(false);
+  const [voteCountLocal, setVoteCountLocal] = useState(
     idea.total_vote_value || 0,
   );
+  const [userVoteLocal, setUserVoteLocal] = useState(idea.user_vote_value || 0);
+
   // If anonymous, don't show user details
   const isAnonymous = idea.is_anonymous || idea.user_name === "Anonymous";
   const userName = isAnonymous ? "Anonymous" : idea.user_name || "Unknown";
 
-  const handleVote = (value: number, e: React.MouseEvent) => {
+  const handleVote = async (e: React.MouseEvent, value: number) => {
     e.preventDefault();
     e.stopPropagation();
+    if (isVoting) return;
 
-    let newVoteValue;
-    if (userVote === value) {
-      newVoteValue = 0;
-    } else {
-      newVoteValue = value;
+    try {
+      setIsVoting(true);
+
+      setVoteCountLocal((prev) => prev + (value - userVoteLocal));
+      setUserVoteLocal(value);
+
+      await createVote(idea.id, value);
+    } catch (e) {
+      console.error("Failed to update vote", e);
+      setVoteCountLocal(idea.total_vote_value || 0);
+      setUserVoteLocal(idea.user_vote_value || 0);
+      showErrorToast(error || "Failed to update vote");
+    } finally {
+      setIsVoting(false);
     }
-
-    const voteDelta = newVoteValue - userVote;
-    setVoteCount((prevCount) => prevCount + voteDelta);
-    setUserVote(newVoteValue);
-
-    // TODO (Ye): API call to update vote
   };
 
   const handleSubmit = async (e: React.MouseEvent) => {
@@ -225,16 +231,17 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
                     whileTap="tap"
                     whileHover="hover"
                     className={`btn btn-circle btn-sm ${
-                      userVote === 1
+                      userVoteLocal === 1
                         ? "bg-primary text-primary-content border-0"
                         : "bg-primary/10 hover:bg-primary border-0"
                     }`}
-                    onClick={(e) => handleVote(1, e)}
+                    onClick={(e) => handleVote(e, 1)}
+                    disabled={isVoting}
                   >
                     <ThumbsUp className="w-4 h-4" />
                   </motion.button>
 
-                  <AnimatedNumber value={voteCount} />
+                  <AnimatedNumber value={voteCountLocal} />
 
                   <motion.button
                     variants={buttonVariants}
@@ -242,11 +249,12 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
                     whileTap="tap"
                     whileHover="hover"
                     className={`btn btn-circle btn-sm ${
-                      userVote === -1
+                      userVoteLocal === -1
                         ? "bg-error text-error-content border-0"
                         : "bg-error/10 hover:bg-error border-0"
                     }`}
-                    onClick={(e) => handleVote(-1, e)}
+                    onClick={(e) => handleVote(e, -1)}
+                    disabled={isVoting}
                   >
                     <ThumbsDown className="w-4 h-4" />
                   </motion.button>

@@ -178,8 +178,9 @@ const IdeaDetail = () => {
   } = useApiStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPending, setIsPending] = useState(false);
-  const [userVote, setUserVote] = useState<number>(0);
-  const [voteCount, setVoteCount] = useState<number>(0);
+  const [isVoting, setIsVoting] = useState(false);
+  const [userVoteLocal, setUserVoteLocal] = useState<number>(0);
+  const [voteCountLocal, setVoteCountLocal] = useState<number>(0);
   const [newComment, setNewComment] = useState("");
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [isAnonymousComment, setIsAnonymousComment] = useState(false);
@@ -187,15 +188,33 @@ const IdeaDetail = () => {
   const [showReportDialog, setShowReportDialog] = useState(false);
   const { showSuccessToast, showErrorToast } = useToast();
 
-  const handleVote = (value: number, e: React.MouseEvent) => {
+  useEffect(() => {
+    if (idea) {
+      setUserVoteLocal(idea.user_vote_value || 0);
+      setVoteCountLocal(idea.total_vote_value || 0);
+    }
+  }, [idea]);
+
+  const handleVote = async (value: number, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (isVoting) return;
 
-    const newVoteValue = userVote === value ? 0 : value;
-    const voteDelta = newVoteValue - userVote;
-    setVoteCount((prevCount) => prevCount + voteDelta);
-    setUserVote(newVoteValue);
-    handleVoteSubmit();
+    try {
+      setIsVoting(true);
+
+      setVoteCountLocal((prev) => prev + (value - userVoteLocal));
+      setUserVoteLocal(value);
+
+      await createVote(Number(id), value);
+    } catch (e) {
+      console.error("Failed to update vote", e);
+      setVoteCountLocal(idea?.total_vote_value || 0);
+      setUserVoteLocal(idea?.user_vote_value || 0);
+      showErrorToast(error || "Failed to update vote");
+    } finally {
+      setIsVoting(false);
+    }
   };
 
   const handleSubmit = async (e: React.MouseEvent) => {
@@ -213,11 +232,6 @@ const IdeaDetail = () => {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handleVoteSubmit = async () => {
-    if (!userVote) return;
-    await createVote(Number(id), userVote);
   };
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
@@ -470,16 +484,17 @@ const IdeaDetail = () => {
                 whileTap="tap"
                 whileHover="hover"
                 className={`btn btn-circle btn-md ${
-                  userVote === 1
+                  userVoteLocal === 1
                     ? "bg-primary text-primary-content border-0"
                     : "bg-primary/10 hover:bg-primary border-0"
                 }`}
                 onClick={(e) => handleVote(1, e)}
+                disabled={isVoting}
               >
                 <ThumbsUp className="w-6 h-6" />
               </motion.button>
 
-              <AnimatedNumber value={voteCount} />
+              <AnimatedNumber value={voteCountLocal} />
 
               <motion.button
                 variants={buttonVariants}
@@ -487,11 +502,12 @@ const IdeaDetail = () => {
                 whileTap="tap"
                 whileHover="hover"
                 className={`btn btn-circle btn-md ${
-                  userVote === -1
+                  userVoteLocal === -1
                     ? "bg-error text-error-content border-0"
                     : "bg-error/10 hover:bg-error border-0"
                 }`}
                 onClick={(e) => handleVote(-1, e)}
+                disabled={isVoting}
               >
                 <ThumbsDown className="w-6 h-6" />
               </motion.button>
