@@ -37,7 +37,7 @@ jest.mock("@/api/repository", () => ({
     create: () => Promise.resolve({ data: { data: mockCategory } }),
   },
   systemSettingApi: {
-    getAll: () => Promise.resolve({ data: [mockSystemSetting] }),
+    getAll: () => Promise.resolve({ data: { data: [mockSystemSetting] } }),
     update: () => Promise.resolve({ data: mockSystemSetting }),
   },
 }));

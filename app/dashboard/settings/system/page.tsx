@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useApiStore } from "@/store/apiStore";
 import { useToast } from "@/components/toast";
 import { motion } from "framer-motion";
 import { DatePicker, DatePickerProps } from "antd";
 import { Dayjs } from "dayjs";
-import { Sliders } from "lucide-react";
+import { Sliders, Calendar, CheckCircle2, School } from "lucide-react";
+import { format } from "date-fns";
 
 const containerVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -33,16 +34,38 @@ const formVariants = {
   },
 };
 
+const itemVariants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.9,
+    y: 10,
+  },
+  show: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: "easeOut",
+    },
+  },
+};
+
 export default function SystemSettingsPage() {
   const { RangePicker } = DatePicker;
   const [activeTab, setActiveTab] = useState<"all" | "create">("all");
-  const { createSystemSetting, error } = useApiStore();
+  const { createSystemSetting, fetchSystemSettings, systemSettings, error } =
+    useApiStore();
   const { showSuccessToast, showErrorToast } = useToast();
   const [formData, setFormData] = useState({
     idea_closure_date: "",
     final_closure_date: "",
     academic_year: "",
   });
+
+  useEffect(() => {
+    fetchSystemSettings();
+  }, [fetchSystemSettings]);
 
   const isFormValid = () => {
     return (
@@ -94,6 +117,7 @@ export default function SystemSettingsPage() {
         final_closure_date: "",
         academic_year: "",
       });
+      fetchSystemSettings(); // Refresh the list
     } catch (e) {
       console.log("system settings error", e);
       showErrorToast(error || "Failed to create system settings");
@@ -111,6 +135,7 @@ export default function SystemSettingsPage() {
         <Sliders className="w-10 h-10 text-primary" />
         <h2 className="text-2xl font-bold">System Settings</h2>
       </div>
+
       {/* Mobile Tabs */}
       <div className="lg:hidden tabs tabs-boxed mb-6 tabs-lg">
         <button
@@ -131,18 +156,96 @@ export default function SystemSettingsPage() {
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Left side - All Settings */}
         <motion.div
-          className={`flex-1 ${activeTab === "create" ? "hidden lg:block" : ""}`}
+          className={`flex-1 ${activeTab === "create" ? "hidden lg:block" : ""} overflow-auto`}
           variants={containerVariants}
         >
           <div className="prose">
             <h2 className="text-2xl font-bold mb-6">All</h2>
           </div>
-          {/* Existing settings list will go here */}
+          <div className="grid grid-cols-1 gap-6">
+            {Array.isArray(systemSettings) && systemSettings.length > 0 ? (
+              systemSettings.map((setting) => (
+                <motion.div
+                  key={setting.id}
+                  variants={itemVariants}
+                  className="card bg-base-200 shadow-sm hover:shadow-sm duration-100"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.2 }}
+                  layout
+                >
+                  <div className="card-body p-5">
+                    <div className="flex flex-col gap-4">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                          <div className="bg-primary/10 p-3 rounded-xl">
+                            <School className="w-5 h-5 text-primary" />
+                          </div>
+                          <h3 className="card-title text-lg">
+                            {setting.academic_year}
+                          </h3>
+                        </div>
+                        {setting.status === 1 && (
+                          <div className="badge badge-success gap-2">
+                            <CheckCircle2 className="w-3 h-3" />
+                            Active
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="divider divider-primary before:h-[1px] after:h-[1px] my-0"></div>
+
+                      <div className="grid gap-3">
+                        <div className="flex items-center gap-3 bg-info/5 p-3 rounded-xl">
+                          <div className="bg-info/10 p-2 rounded-lg">
+                            <Calendar className="w-6 h-6 text-info" />
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-xs opacity-70">
+                              Idea Closure
+                            </span>
+                            <span className="text-sm font-medium">
+                              {format(
+                                new Date(setting.idea_closure_date),
+                                "PPP",
+                              )}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 bg-info/5 p-3 rounded-xl">
+                          <div className="bg-info/10 p-2 rounded-lg">
+                            <Calendar className="w-6 h-6 text-info" />
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-xs opacity-70">
+                              Final Closure
+                            </span>
+                            <span className="text-sm font-medium">
+                              {format(
+                                new Date(setting.final_closure_date),
+                                "PPP",
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-base-content/70">
+                No system settings found
+              </div>
+            )}
+          </div>
         </motion.div>
+
         <div className="divider divider-horizontal"></div>
+
         {/* Right side - Create Form */}
         <motion.div
-          className={`flex-1 ${activeTab === "all" ? "hidden lg:block" : ""}`}
+          className={`flex-1 ${activeTab === "all" ? "hidden lg:block" : ""} lg:sticky lg:top-24`}
           variants={formVariants}
         >
           <div className="prose">
@@ -196,7 +299,9 @@ export default function SystemSettingsPage() {
                 onChange={onAcademicYearChange}
               />
             </div>
+
             <div className="divider divider-horizontal"></div>
+
             {/* Submit Button */}
             <motion.button
               type="submit"

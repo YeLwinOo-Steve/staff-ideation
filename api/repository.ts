@@ -65,7 +65,7 @@ export const categoryApi = {
 };
 
 export const systemSettingApi = {
-  getAll: () => apiClient.get<SystemSetting[]>("/system-setting"),
+  getAll: () => apiClient.get<{ data: SystemSetting[] }>("/system-setting"),
   create: (data: Partial<SystemSetting>) =>
     apiClient.post<SystemSetting>("/system-setting", data),
   update: (id: number, data: Partial<SystemSetting>) =>

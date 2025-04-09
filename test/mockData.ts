@@ -51,5 +51,6 @@ export const mockSystemSetting = {
   idea_closure_date: "2024-03-01",
   final_closure_date: "2024-03-15",
   academic_year: "2024",
-  status: true,
+  status: 1,
+  total_ideas: 10,
 };

@@ -102,7 +102,7 @@ interface ApiState {
   createSystemSetting: (data: Partial<SystemSetting>) => Promise<void>;
   updateSystemSetting: (
     id: number,
-    data: Partial<SystemSetting>
+    data: Partial<SystemSetting>,
   ) => Promise<void>;
 
   // Error handling
@@ -536,7 +536,8 @@ export const useApiStore = create<ApiState>((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await api.systemSettingApi.getAll();
-      set({ systemSettings: response.data });
+      console.log("response", response.data.data);
+      set({ systemSettings: response.data.data });
     } catch (error) {
       const message = handleError(error, "Failed to fetch system settings");
       set({ error: message });
@@ -605,13 +606,13 @@ export const useApiStore = create<ApiState>((set, get) => ({
 
       const remainingPages = Array.from(
         { length: lastPage - 1 },
-        (_, i) => i + 2
+        (_, i) => i + 2,
       );
       await Promise.all(
         remainingPages.map(async (page) => {
           const pageResponse = await api.userApi.getAll(page);
           allUsers = [...allUsers, ...pageResponse.data.data];
-        })
+        }),
       );
 
       set({ allUsers });
