@@ -266,7 +266,7 @@ const EditUser = () => {
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
                 <div className="flex flex-col lg:flex-row gap-8">
                   {/* Left Column - Photo Upload */}
-                  <div className="lg:w-1/3">
+                  <div className="lg:w-1/4">
                     <div className="sticky top-6">
                       <UserPhotoUpload
                         initialPhoto={

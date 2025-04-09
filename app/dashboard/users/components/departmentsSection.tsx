@@ -31,8 +31,8 @@ export default function DepartmentsSection({
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
-        <div className="bg-info/10 p-3 rounded-xl">
-          <Building2 className="w-5 h-5 text-info" />
+        <div className="bg-primary/10 p-3 rounded-xl">
+          <Building2 className="w-5 h-5 text-primary" />
         </div>
         <div>
           <h3 className="text-lg font-medium">Department</h3>
@@ -55,7 +55,7 @@ export default function DepartmentsSection({
             className={`relative flex items-center gap-3 p-4 rounded-xl cursor-pointer transition-all
               ${
                 selectedDepartments.includes(dept.id.toString())
-                  ? "bg-info/10 border-2 border-info"
+                  ? "bg-primary/10 border-2 border-primary"
                   : "bg-base-200/50 hover:bg-base-200 border-2 border-transparent"
               }`}
             whileHover={{ scale: 1.02 }}
@@ -72,14 +72,14 @@ export default function DepartmentsSection({
             <div
               className={`p-1 rounded-lg ${
                 selectedDepartments.includes(dept.id.toString())
-                  ? "bg-info/20"
+                  ? "bg-primary/20"
                   : "bg-base-300/50"
               }`}
             >
               <Building2
                 className={`w-5 h-5 ${
                   selectedDepartments.includes(dept.id.toString())
-                    ? "text-info"
+                    ? "text-primary"
                     : "opacity-50"
                 }`}
               />
@@ -89,7 +89,7 @@ export default function DepartmentsSection({
             </div>
             {selectedDepartments.includes(dept.id.toString()) && (
               <motion.div
-                className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-info"
+                className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-primary"
                 layoutId="department-selected"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}

@@ -41,7 +41,7 @@ export default function RolesSection({
         {filteredRoles.map((role) => (
           <motion.label
             key={role.id}
-            className={`relative flex items-center gap-3 p-4 rounded-xl cursor-pointer transition-all
+            className={`relative flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all
               ${
                 selectedRoles.includes(role.id.toString())
                   ? "bg-primary/10 border-2 border-primary"
