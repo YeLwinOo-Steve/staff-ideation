@@ -36,7 +36,7 @@ export default function FilePreview({
       }
       return acceptedFiles;
     },
-    [currentFiles.length, showErrorToast]
+    [currentFiles.length, showErrorToast],
   );
 
   const {
