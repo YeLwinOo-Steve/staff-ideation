@@ -32,7 +32,7 @@ export default function ReportDialog({
     } catch (error) {
       if (axios.isAxiosError(error)) {
         showErrorToast(
-          error.response?.data?.message || "Failed to report idea"
+          error.response?.data?.message || "Failed to report idea",
         );
       } else {
         showErrorToast("An unexpected error occurred");

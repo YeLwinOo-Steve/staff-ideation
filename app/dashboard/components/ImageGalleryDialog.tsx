@@ -113,4 +113,4 @@ export default function ImageGalleryDialog({
       </motion.div>
     </AnimatePresence>
   );
-} 
+}

@@ -42,7 +42,9 @@ const IdeaCreatePage = () => {
   });
   const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
+  const [uploadProgress, setUploadProgress] = useState<{
+    [key: string]: number;
+  }>({});
 
   useEffect(() => {
     fetchCategories();
@@ -88,7 +90,7 @@ const IdeaCreatePage = () => {
       ideaFormData.append("content", formData.content);
       ideaFormData.append("is_anonymous", formData.isAnonymous ? "1" : "0");
       ideaFormData.append("category", selectedCategories.join(","));
-      
+
       if (uploadedFileUrls.length > 0) {
         ideaFormData.append("document", JSON.stringify(uploadedFileUrls));
       }
@@ -117,10 +119,7 @@ const IdeaCreatePage = () => {
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      <button
-        className="btn btn-md mb-6"
-        onClick={() => router.back()}
-      >
+      <button className="btn btn-md mb-6" onClick={() => router.back()}>
         <ChevronLeft size={24} />
         <h1 className="font-bold">Back to ideas</h1>
       </button>

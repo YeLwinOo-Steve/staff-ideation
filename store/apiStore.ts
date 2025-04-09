@@ -100,7 +100,7 @@ interface ApiState {
   fetchSystemSettings: () => Promise<void>;
   updateSystemSetting: (
     id: number,
-    data: Partial<SystemSetting>
+    data: Partial<SystemSetting>,
   ) => Promise<void>;
 
   // Error handling
@@ -589,13 +589,13 @@ export const useApiStore = create<ApiState>((set, get) => ({
 
       const remainingPages = Array.from(
         { length: lastPage - 1 },
-        (_, i) => i + 2
+        (_, i) => i + 2,
       );
       await Promise.all(
         remainingPages.map(async (page) => {
           const pageResponse = await api.userApi.getAll(page);
           allUsers = [...allUsers, ...pageResponse.data.data];
-        })
+        }),
       );
 
       set({ allUsers });

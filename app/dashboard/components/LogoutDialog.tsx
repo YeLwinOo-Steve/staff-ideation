@@ -15,9 +15,9 @@ export default function LogoutDialog({ isOpen, onClose }: LogoutDialogProps) {
   const handleLogout = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     // TODO: Add your logout logic here (e.g. clear tokens, etc)
-    
+
     // Navigate to login page
     router.push("/login");
   };
@@ -47,7 +47,9 @@ export default function LogoutDialog({ isOpen, onClose }: LogoutDialogProps) {
             </div>
             <div className="flex flex-col">
               <h3 className="text-xl font-bold">Confirm Logout</h3>
-              <p className="text-sm text-base-content/70">You are about to sign out</p>
+              <p className="text-sm text-base-content/70">
+                You are about to sign out
+              </p>
             </div>
           </div>
 
@@ -59,7 +61,8 @@ export default function LogoutDialog({ isOpen, onClose }: LogoutDialogProps) {
               <div className="space-y-1">
                 <p className="font-medium">Are you sure you want to logout?</p>
                 <p className="text-sm opacity-70">
-                  You will need to sign in again to access your account and settings.
+                  You will need to sign in again to access your account and
+                  settings.
                 </p>
               </div>
             </div>
@@ -93,4 +96,4 @@ export default function LogoutDialog({ isOpen, onClose }: LogoutDialogProps) {
       </motion.div>
     </motion.div>
   );
-} 
+}
