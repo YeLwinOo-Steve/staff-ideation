@@ -19,7 +19,10 @@ interface FilePreviewProps {
   uploadProgress?: { [key: string]: number };
 }
 
-export default function FilePreview({ setFiles, uploadProgress = {} }: FilePreviewProps) {
+export default function FilePreview({
+  setFiles,
+  uploadProgress = {},
+}: FilePreviewProps) {
   const { showErrorToast } = useToast();
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length + files.length > MAX_FILES) {
@@ -29,7 +32,12 @@ export default function FilePreview({ setFiles, uploadProgress = {} }: FilePrevi
     return acceptedFiles;
   }, []);
 
-  const { files, getRootProps, getInputProps, setFiles: setDropzoneFiles } = useFileDropzoneUtil({ onDrop });
+  const {
+    files,
+    getRootProps,
+    getInputProps,
+    setFiles: setDropzoneFiles,
+  } = useFileDropzoneUtil({ onDrop });
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(-1);
   const [previewFiles, setPreviewFiles] = useState<FileWithPreview[]>([]);
   const [mounted, setMounted] = useState(false);
@@ -43,16 +51,18 @@ export default function FilePreview({ setFiles, uploadProgress = {} }: FilePrevi
 
     setFiles(files);
     // Create preview URLs for images only on client side
-    const imageFiles = files.filter(file => file.type.startsWith('image/')).map(file => {
-      return Object.assign(file, {
-        preview: URL.createObjectURL(file)
-      }) as FileWithPreview;
-    });
+    const imageFiles = files
+      .filter((file) => file.type.startsWith("image/"))
+      .map((file) => {
+        return Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        }) as FileWithPreview;
+      });
     setPreviewFiles(imageFiles);
 
     // Cleanup preview URLs when component unmounts or files change
     return () => {
-      previewFiles.forEach(file => URL.revokeObjectURL(file.preview));
+      previewFiles.forEach((file) => URL.revokeObjectURL(file.preview));
     };
   }, [files, setFiles, mounted]);
 
@@ -61,7 +71,7 @@ export default function FilePreview({ setFiles, uploadProgress = {} }: FilePrevi
   const removeFile = (e: React.MouseEvent, fileName: string) => {
     e.preventDefault();
     e.stopPropagation();
-    const newFiles = files.filter(file => file.name !== fileName);
+    const newFiles = files.filter((file) => file.name !== fileName);
     setDropzoneFiles(newFiles);
   };
 
@@ -74,7 +84,13 @@ export default function FilePreview({ setFiles, uploadProgress = {} }: FilePrevi
     }
   };
 
-  const ImagePreview = ({ file, previewFile }: { file: File, previewFile: FileWithPreview }) => {
+  const ImagePreview = ({
+    file,
+    previewFile,
+  }: {
+    file: File;
+    previewFile: FileWithPreview;
+  }) => {
     if (!mounted) {
       return (
         <div className="w-full h-full flex items-center justify-center bg-base-200">
@@ -99,7 +115,7 @@ export default function FilePreview({ setFiles, uploadProgress = {} }: FilePrevi
 
   const getFilePreview = (file: File) => {
     if (isImage(file)) {
-      const previewFile = previewFiles.find(pf => pf.name === file.name);
+      const previewFile = previewFiles.find((pf) => pf.name === file.name);
       if (!previewFile) {
         return (
           <div className="w-full h-full flex items-center justify-center">
@@ -107,7 +123,7 @@ export default function FilePreview({ setFiles, uploadProgress = {} }: FilePrevi
           </div>
         );
       }
-      
+
       return <ImagePreview file={file} previewFile={previewFile} />;
     }
 
@@ -121,10 +137,12 @@ export default function FilePreview({ setFiles, uploadProgress = {} }: FilePrevi
   return (
     <div className="space-y-4">
       <div
-        {...(files.length >= MAX_FILES ? {} : getRootProps({
-          className:
-            "border-2 border-dashed border-base-200 rounded-xl p-8 cursor-pointer hover:border-primary/50 hover:bg-base-200/30 transition-colors",
-        }))}
+        {...(files.length >= MAX_FILES
+          ? {}
+          : getRootProps({
+              className:
+                "border-2 border-dashed border-base-200 rounded-xl p-8 cursor-pointer hover:border-primary/50 hover:bg-base-200/30 transition-colors",
+            }))}
         className={`border-2 border-dashed rounded-xl p-8 ${
           files.length >= MAX_FILES
             ? "border-base-200/40 bg-base-200/10 cursor-not-allowed"
@@ -133,14 +151,25 @@ export default function FilePreview({ setFiles, uploadProgress = {} }: FilePrevi
       >
         {files.length < MAX_FILES && <input {...getInputProps()} />}
         <div className="flex flex-col items-center gap-3">
-          <div className={`p-4 rounded-xl ${files.length >= MAX_FILES ? 'bg-base-200/40' : 'bg-base-200'}`}>
-            <FilePlus2 size={32} className={`${files.length >= MAX_FILES ? 'text-base-content/30' : 'text-base-content/60'}`} />
+          <div
+            className={`p-4 rounded-xl ${files.length >= MAX_FILES ? "bg-base-200/40" : "bg-base-200"}`}
+          >
+            <FilePlus2
+              size={32}
+              className={`${files.length >= MAX_FILES ? "text-base-content/30" : "text-base-content/60"}`}
+            />
           </div>
           <div className="text-center">
-            <p className={`font-medium ${files.length >= MAX_FILES ? 'text-base-content/40' : ''}`}>
-              {files.length >= MAX_FILES ? 'Maximum files reached' : 'Drop files here or click to select'}
+            <p
+              className={`font-medium ${files.length >= MAX_FILES ? "text-base-content/40" : ""}`}
+            >
+              {files.length >= MAX_FILES
+                ? "Maximum files reached"
+                : "Drop files here or click to select"}
             </p>
-            <p className={`text-sm mt-1 ${files.length >= MAX_FILES ? 'text-base-content/30' : 'text-base-content/60'}`}>
+            <p
+              className={`text-sm mt-1 ${files.length >= MAX_FILES ? "text-base-content/30" : "text-base-content/60"}`}
+            >
               Supports images and documents (max {MAX_FILES} files)
             </p>
           </div>
@@ -175,6 +204,11 @@ export default function FilePreview({ setFiles, uploadProgress = {} }: FilePrevi
                   <X className="w-4 h-4" />
                 </motion.button>
 
+                <div className="absolute bottom-2 left-2 right-2">
+                  <p className="text-xs truncate px-2 py-1 rounded-lg bg-base-100/50 backdrop-blur-sm">
+                    {file.name}
+                  </p>
+                </div>
                 {uploadProgress[file.name] !== undefined && (
                   <div className="absolute inset-x-4 bottom-4">
                     <div className="w-full bg-base-100/50 rounded-full h-1.5">
@@ -185,12 +219,6 @@ export default function FilePreview({ setFiles, uploadProgress = {} }: FilePrevi
                     </div>
                   </div>
                 )}
-
-                <div className="absolute bottom-2 left-2 right-2">
-                  <p className="text-xs truncate px-2 py-1 rounded-lg bg-base-100/50 backdrop-blur-sm">
-                    {file.name}
-                  </p>
-                </div>
               </motion.div>
             ))}
           </AnimatePresence>
@@ -199,7 +227,10 @@ export default function FilePreview({ setFiles, uploadProgress = {} }: FilePrevi
 
       {mounted && selectedImageIndex !== -1 && (
         <ImageGalleryDialog
-          images={previewFiles.map(file => ({ url: file.preview, name: file.name }))}
+          images={previewFiles.map((file) => ({
+            url: file.preview,
+            name: file.name,
+          }))}
           initialIndex={selectedImageIndex}
           isOpen={selectedImageIndex !== -1}
           onClose={() => setSelectedImageIndex(-1)}
