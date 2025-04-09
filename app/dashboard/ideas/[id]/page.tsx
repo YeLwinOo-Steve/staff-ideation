@@ -11,6 +11,7 @@ import {
   Send,
   X,
   Trash2Icon,
+  Flag,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useApiStore } from "@/store/apiStore";
@@ -21,6 +22,7 @@ import JSZip from "jszip";
 import { AnimatedNumber } from "../../components/animatedNumber";
 import { useToast } from "@/components/toast";
 import { AxiosError } from "axios";
+import ReportDialog from "../../components/ReportDialog";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -176,6 +178,7 @@ const IdeaDetail = () => {
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [isAnonymousComment, setIsAnonymousComment] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showReportDialog, setShowReportDialog] = useState(false);
   const { showSuccessToast, showErrorToast } = useToast();
 
   const handleVote = (value: number, e: React.MouseEvent) => {
@@ -339,7 +342,25 @@ const IdeaDetail = () => {
             variants={itemVariants}
             className="bg-base-200 p-6 rounded-lg mb-6"
           >
-            <h1 className="font-bold text-2xl mb-4">{idea.title}</h1>
+            <div className="flex justify-between items-start">
+              <h1 className="font-bold text-2xl mb-4">{idea.title}</h1>
+              <div className="flex items-center gap-2">
+                <motion.button
+                  className="btn btn-circle btn-sm bg-error/10 hover:bg-error border-0"
+                  variants={buttonVariants}
+                  initial="initial"
+                  whileTap="tap"
+                  whileHover="hover"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowReportDialog(true);
+                  }}
+                >
+                  <Flag className="w-4 h-4 text-error" />
+                </motion.button>
+              </div>
+            </div>
             <div className="flex justify-between items-center flex-wrap">
               <div className="flex items-center gap-3">
                 <div className="avatar placeholder">
@@ -528,7 +549,12 @@ const IdeaDetail = () => {
           </motion.div>
         </div>
       </motion.div>
-
+      {/* Report Dialog */}
+      <ReportDialog
+        idea={idea}
+        isOpen={showReportDialog}
+        onClose={() => setShowReportDialog(false)}
+      />
       {/* Delete Confirmation Dialog */}
       {showDeleteDialog && (
         <motion.div

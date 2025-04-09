@@ -101,18 +101,6 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
     }
   };
 
-  const handleReport = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    try {
-      showSuccessToast("Idea reported successfully");
-      setShowReportDialog(false);
-    } catch (e) {
-      console.error("Failed to report idea", e);
-      showErrorToast("Failed to report idea");
-    }
-  };
-
   return (
     <>
       <motion.div
