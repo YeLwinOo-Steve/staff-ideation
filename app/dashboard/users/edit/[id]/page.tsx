@@ -411,7 +411,7 @@ const EditUser = () => {
                   </p>
                   <ul className="text-sm text-base-content/70 list-disc list-inside space-y-1">
                     <li>Generate a new temporary password</li>
-                    <li>Send it to the user's email address</li>
+                    <li>Send it to the user&apos;s email address</li>
                   </ul>
                   <p className="text-sm bg-error/5 text-error p-3 rounded-lg">
                     This action cannot be undone.

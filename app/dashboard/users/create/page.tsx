@@ -9,7 +9,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft } from "lucide-react";
 import { userFormSchema } from "@/schema/validations";
 import { z } from "zod";
-import NavBar from "../../components/navBar";
 import UserPhotoUpload from "../../components/userPhotoUpload";
 import UserDetailsSection from "../components/userDetailsSection";
 import RolesSection from "../components/roleSection";

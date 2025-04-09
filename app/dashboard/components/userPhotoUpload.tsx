@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import Image from "next/image";
-import { Camera, Upload, X } from "lucide-react";
+import { Upload, X } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface UserPhotoUploadProps {
