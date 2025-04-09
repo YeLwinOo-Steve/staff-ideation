@@ -236,7 +236,7 @@ const EditUser = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-base-100 p-6">
+      <div className="bg-base-100 p-6">
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Header */}
           <div className="flex items-center justify-between">
@@ -266,8 +266,8 @@ const EditUser = () => {
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
                 <div className="flex flex-col lg:flex-row gap-8">
                   {/* Left Column - Photo Upload */}
-                  <div className="lg:w-1/4">
-                    <div className="sticky top-6">
+                  <div className="w-full lg:w-1/3">
+                    <div className="sticky top-6 max-w-sm mx-auto lg:max-w-full">
                       <UserPhotoUpload
                         initialPhoto={
                           fetchedUser?.photo &&
