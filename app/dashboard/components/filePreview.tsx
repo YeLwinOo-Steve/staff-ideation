@@ -142,7 +142,7 @@ export default function FilePreview({ setFiles, uploadProgress = {} }: FilePrevi
 
       {files.length > 0 && (
         <motion.div
-          className="grid grid-cols-8 md:grid-cols-8 sm:grid-cols-6 gap-4"
+          className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-8 sm:grid-cols-3 gap-4"
           layout
         >
           <AnimatePresence>
@@ -160,7 +160,7 @@ export default function FilePreview({ setFiles, uploadProgress = {} }: FilePrevi
                 </div>
 
                 <motion.button
-                  className="absolute -top-2 -right-2 btn btn-circle btn-error btn-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute -top-2 -right-2 btn btn-circle btn-error btn-sm opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity"
                   onClick={(e) => removeFile(e, file.name)}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
