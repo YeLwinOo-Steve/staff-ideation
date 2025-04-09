@@ -101,6 +101,15 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
     }
   };
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Only allow click propagation if the click was directly on the card
+    // and not on any interactive elements
+    if (e.target === e.currentTarget) {
+      return;
+    }
+    e.stopPropagation();
+  };
+
   return (
     <>
       <motion.div
@@ -109,11 +118,12 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
         whileHover={{ scale: 1.02 }}
         transition={{ duration: 0.2 }}
         layout
+        onClick={handleCardClick}
       >
-        <div className="card-body p-5 flex flex-col h-full">
+        <div className="card-body p-5 flex flex-col h-full" onClick={handleCardClick}>
           <div className="flex flex-col gap-4 flex-1">
             <div className="flex justify-between items-center">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
                 <div className="bg-primary/10 p-3 rounded-xl mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
                   {isAnonymous ? (
                     <EyeOff className="w-4 h-4" />
@@ -136,7 +146,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                 <motion.button
                   className="btn btn-circle btn-sm bg-error/10 hover:bg-error border-0"
                   variants={buttonVariants}
@@ -161,7 +171,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
 
             {/* Categories */}
             {idea.category && idea.category.length > 0 && (
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2" onClick={(e) => e.stopPropagation()}>
                 {idea.category.map((cat, index) => (
                   <div
                     key={index}
@@ -175,7 +185,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
           </div>
 
           {/* Bottom row with voting, comments and attachments */}
-          <div className="flex items-center justify-between mt-auto pt-4">
+          <div className="flex items-center justify-between mt-auto pt-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center gap-2">
               {idea.isPending ? (
                 <motion.button
@@ -250,7 +260,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
         </div>
       </motion.div>
 
-      <ReportDialog 
+      <ReportDialog
         idea={idea}
         isOpen={showReportDialog}
         onClose={() => setShowReportDialog(false)}

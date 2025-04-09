@@ -58,6 +58,7 @@ const IdeaCreatePage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     if (!formData.agreeToTerms) {
       showErrorToast("You must agree to the terms of use and privacy policy");
       return;
