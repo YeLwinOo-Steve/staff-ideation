@@ -1,45 +1,44 @@
 import axios from "axios";
 
-interface UploadProgressCallback {
-  (fileName: string, progress: number): void;
-}
-
-export const uploadToCloudinary = async (
+export async function uploadToCloudinary(
   file: File,
-  onProgress: UploadProgressCallback,
-) => {
+  onProgress?: (progress: number) => void
+): Promise<string> {
   const formData = new FormData();
   formData.append("file", file);
   formData.append(
     "upload_preset",
-    `${process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}`,
+    `${process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}`
   );
-  formData.append("resource_type", "auto");
 
   try {
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_CLOUDINARY_BASE_URL}/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`,
       formData,
       {
-        onUploadProgress: (progressEvent) => {
-          const progress = Math.round(
-            (progressEvent.loaded * 100) / (progressEvent.total ?? 0),
-          );
-          onProgress(file.name, progress);
+        headers: {
+          "Content-Type": "multipart/form-data",
         },
-      },
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total && onProgress) {
+            const progress = (progressEvent.loaded / progressEvent.total) * 100;
+            onProgress(progress);
+          }
+        },
+      }
     );
+
     return response.data.secure_url;
   } catch (error) {
-    console.error("Upload failed:", error);
+    console.error("Error uploading to Cloudinary:", error);
     throw error;
   }
-};
+}
 
 export const handleUpload = async (
   files: File[],
-  onProgress: UploadProgressCallback,
-  setIsUploading: (value: boolean) => void,
+  onProgress: (progress: number) => void,
+  setIsUploading: (value: boolean) => void
 ) => {
   setIsUploading(true);
   try {
@@ -48,7 +47,7 @@ export const handleUpload = async (
         const cloudinaryUrl = await uploadToCloudinary(file, onProgress);
         console.log("Uploaded:", file.name, cloudinaryUrl);
         return cloudinaryUrl;
-      }),
+      })
     );
   } catch (error) {
     console.error("Upload failed:", error);

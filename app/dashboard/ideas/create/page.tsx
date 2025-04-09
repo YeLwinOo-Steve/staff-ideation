@@ -11,6 +11,7 @@ import { useToast } from "@/components/toast";
 import CategoryChip from "../../components/categoryChip";
 import Image from "next/image";
 import Link from "next/link";
+import { uploadToCloudinary } from "@/util/uploadCloudinary";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -41,6 +42,7 @@ const IdeaCreatePage = () => {
   });
   const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
 
   useEffect(() => {
     fetchCategories();
@@ -61,22 +63,40 @@ const IdeaCreatePage = () => {
       return;
     }
 
-    if (isSubmitting) return; // Prevent double submission
+    if (isSubmitting) return;
     setIsSubmitting(true);
 
     try {
+      // First, upload files to Cloudinary if any
+      let uploadedFileUrls: string[] = [];
+      if (files.length > 0) {
+        const uploadPromises = files.map(async (file) => {
+          const result = await uploadToCloudinary(file, (progress) => {
+            setUploadProgress((prev) => ({
+              ...prev,
+              [file.name]: Math.round(progress),
+            }));
+          });
+          return result;
+        });
+
+        uploadedFileUrls = await Promise.all(uploadPromises);
+      }
+
+      // Then create the idea with the uploaded file URLs
       const ideaFormData = new FormData();
       ideaFormData.append("title", formData.title);
       ideaFormData.append("content", formData.content);
       ideaFormData.append("is_anonymous", formData.isAnonymous ? "1" : "0");
       ideaFormData.append("category", selectedCategories.join(","));
-      files.forEach((file) => {
-        ideaFormData.append("files[]", file);
-      });
+      
+      if (uploadedFileUrls.length > 0) {
+        ideaFormData.append("document", JSON.stringify(uploadedFileUrls));
+      }
 
       await createIdea(ideaFormData);
 
-      // Reset form state before navigation
+      // Reset form state
       setFormData({
         title: "",
         content: "",
@@ -85,10 +105,10 @@ const IdeaCreatePage = () => {
       });
       setSelectedCategories([]);
       setFiles([]);
+      setUploadProgress({});
       setIsSubmitting(false);
 
       showSuccessToast("Idea created successfully");
-      // Navigate after state is reset
       router.push("/dashboard");
     } catch (e) {
       setIsSubmitting(false);
@@ -198,7 +218,7 @@ const IdeaCreatePage = () => {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <FilePreview setFiles={setFiles} />
+            <FilePreview setFiles={setFiles} uploadProgress={uploadProgress} />
           </motion.div>
 
           <motion.div variants={itemVariants} className="space-y-4 pt-4">
