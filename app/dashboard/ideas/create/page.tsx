@@ -67,7 +67,6 @@ const IdeaCreatePage = () => {
     setIsSubmitting(true);
 
     try {
-      // First, upload files to Cloudinary if any
       let uploadedFileUrls: string[] = [];
       if (files.length > 0) {
         const uploadPromises = files.map(async (file) => {
@@ -83,7 +82,6 @@ const IdeaCreatePage = () => {
         uploadedFileUrls = await Promise.all(uploadPromises);
       }
 
-      // Then create the idea with the uploaded file URLs
       const ideaFormData = new FormData();
       ideaFormData.append("title", formData.title);
       ideaFormData.append("content", formData.content);
@@ -96,7 +94,6 @@ const IdeaCreatePage = () => {
 
       await createIdea(ideaFormData);
 
-      // Reset form state
       setFormData({
         title: "",
         content: "",

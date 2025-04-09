@@ -20,11 +20,15 @@ export default function ImageGalleryDialog({
 }: ImageGalleryDialogProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
-  const handleNext = () => {
+  const handleNext = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     setCurrentIndex((prev) => (prev + 1) % images.length);
   };
 
-  const handlePrev = () => {
+  const handlePrev = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
@@ -41,7 +45,11 @@ export default function ImageGalleryDialog({
       >
         <motion.button
           className="absolute top-4 right-4 btn btn-circle btn-ghost text-white"
-          onClick={onClose}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onClose();
+          }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
@@ -66,6 +74,7 @@ export default function ImageGalleryDialog({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -100 }}
               className="relative w-full h-full flex items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
             >
               <Image
                 src={images[currentIndex].url}
@@ -73,6 +82,7 @@ export default function ImageGalleryDialog({
                 className="object-contain max-h-[80vh]"
                 width={1200}
                 height={800}
+                onClick={(e) => e.stopPropagation()}
               />
             </motion.div>
           </div>
@@ -92,7 +102,11 @@ export default function ImageGalleryDialog({
               className={`w-2 h-2 rounded-full transition-all ${
                 index === currentIndex ? "bg-white w-4" : "bg-white/50"
               }`}
-              onClick={() => setCurrentIndex(index)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setCurrentIndex(index);
+              }}
             />
           ))}
         </div>
