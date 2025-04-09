@@ -23,6 +23,8 @@ import {
   X,
 } from "lucide-react";
 
+import LogoutDialog from "./LogoutDialog";
+
 const menuVariants = {
   closed: {
     opacity: 0,
@@ -67,6 +69,7 @@ const NavBar = () => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -226,9 +229,7 @@ const NavBar = () => {
                   <div className="divider my-1"></div>
                   <li>
                     <a
-                      onClick={() => {
-                        /* handle logout */
-                      }}
+                      onClick={() => setShowLogoutDialog(true)}
                       className="flex items-center gap-2 text-error hover:bg-error/10"
                     >
                       <LogOut size={16} />
@@ -386,10 +387,10 @@ const NavBar = () => {
                   <div className="divider my-0.5 sm:my-1"></div>
 
                   <button
-                    onClick={() => {}}
-                    className="flex items-center gap-2 sm:gap-3 py-2 px-3 sm:px-4 w-full hover:bg-error/10 bg-error text-white rounded-lg"
+                    onClick={() => setShowLogoutDialog(true)}
+                    className="flex items-center gap-2 sm:gap-3 py-2 px-3 sm:px-4 w-full hover:bg-error/10 text-error rounded-lg"
                   >
-                    <LogOut className="w-4 h-8 sm:w-5 sm:h-8" />
+                    <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
                     <span className="text-base sm:text-lg">Logout</span>
                   </button>
                 </motion.div>
@@ -398,6 +399,11 @@ const NavBar = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <LogoutDialog 
+        isOpen={showLogoutDialog}
+        onClose={() => setShowLogoutDialog(false)}
+      />
     </>
   );
 };

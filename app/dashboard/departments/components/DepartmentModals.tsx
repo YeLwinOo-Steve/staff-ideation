@@ -146,7 +146,7 @@ export function DepartmentModals({
 
           <div className="bg-base-200/30 p-4 flex justify-end gap-2">
             <motion.button
-              className="btn btn-ghost"
+              className="btn btn-ghost btn-sm"
               onClick={onEditModalClose}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -154,7 +154,7 @@ export function DepartmentModals({
               Cancel
             </motion.button>
             <motion.button
-              className="btn btn-primary"
+              className="btn btn-primary btn-sm"
               onClick={selectedDepartment ? onEditSubmit : onCreateDepartment}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -249,7 +249,7 @@ export function DepartmentModals({
 
           <div className="bg-base-200/30 p-4 flex justify-end gap-2">
             <motion.button
-              className="btn btn-ghost"
+              className="btn btn-ghost btn-sm"
               onClick={onDeleteModalClose}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -257,7 +257,7 @@ export function DepartmentModals({
               Cancel
             </motion.button>
             <motion.button
-              className="btn btn-error"
+              className="btn btn-error btn-sm"
               onClick={onDeleteConfirm}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
