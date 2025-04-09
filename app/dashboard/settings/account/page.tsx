@@ -1,19 +1,11 @@
 "use client";
 
-import {
-  LogOutIcon,
-  Mail,
-  Building2,
-  UserCircle2,
-  Shield,
-  ChevronLeft,
-} from "lucide-react";
+import { LogOutIcon, Mail, Building2, UserCircle2, Shield } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { motion } from "framer-motion";
 import LogoutDialog from "@/app/dashboard/components/LogoutDialog";
-import { useRouter } from "next/navigation";
 import { getInitials } from "@/util/getInitials";
 
 const containerVariants = {
@@ -32,7 +24,6 @@ const itemVariants = {
 };
 
 const AccountPage = () => {
-  const router = useRouter();
   const { user } = useAuthStore();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
 
