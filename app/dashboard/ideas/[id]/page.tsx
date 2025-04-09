@@ -94,7 +94,7 @@ const ZipDownloadBtn = () => {
           const errorMessage =
             err instanceof Error ? err.message : "An unknown error occurred";
           throw new Error(
-            `Error downloading file ${index + 1}: ${errorMessage}`,
+            `Error downloading file ${index + 1}: ${errorMessage}`
           );
         }
       }
@@ -303,11 +303,11 @@ const IdeaDetail = () => {
               variants={itemVariants}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="btn btn-outline btn-md"
+              className="btn btn-md"
               onClick={() => router.back()}
             >
               <ChevronLeft size={20} />
-              <span className="font-bold">Back to ideas</span>
+              <span className="font-bold">Idea Details</span>
             </motion.button>
             <div className="flex gap-2">
               <motion.button
@@ -353,9 +353,9 @@ const IdeaDetail = () => {
                   <span className="font-semibold text-md">
                     {idea.is_anonymous ? "Anonymous User" : idea.user_name}
                   </span>
-                  {idea.updated_at && (
+                  {idea.time && (
                     <span className="text-xs opacity-70">
-                      {formatDistanceToNow(new Date(idea.updated_at), {
+                      {formatDistanceToNow(new Date(idea.time), {
                         addSuffix: true,
                       })}
                     </span>
