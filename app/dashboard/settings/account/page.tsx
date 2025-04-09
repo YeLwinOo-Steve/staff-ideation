@@ -7,7 +7,7 @@ import { useAuthStore } from "@/store/authStore";
 import { motion } from "framer-motion";
 import LogoutDialog from "@/app/dashboard/components/LogoutDialog";
 import { getInitials } from "@/util/getInitials";
-
+import { User } from "lucide-react";
 const containerVariants = {
   hidden: { opacity: 0 },
   show: {
@@ -32,7 +32,10 @@ const AccountPage = () => {
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <div className="flex items-center justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-bold">Account</h1>
+        <div className="flex items-center gap-2">
+          <User className="w-8 h-8 text-primary" />
+          <h1 className="text-2xl font-bold">Account</h1>
+        </div>
         <motion.button
           variants={itemVariants}
           whileHover={{ scale: 1.02 }}
