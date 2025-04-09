@@ -14,6 +14,7 @@ import axios, { AxiosError } from "axios";
 // Helper function to extract error message
 const handleError = (error: unknown, defaultMessage: string): string => {
   if (axios.isAxiosError(error)) {
+    console.log("error response", error.response?.data?.message);
     return error.response?.data?.message || defaultMessage;
   }
 
@@ -98,9 +99,10 @@ interface ApiState {
 
   // System Settings
   fetchSystemSettings: () => Promise<void>;
+  createSystemSetting: (data: Partial<SystemSetting>) => Promise<void>;
   updateSystemSetting: (
     id: number,
-    data: Partial<SystemSetting>,
+    data: Partial<SystemSetting>
   ) => Promise<void>;
 
   // Error handling
@@ -544,6 +546,20 @@ export const useApiStore = create<ApiState>((set, get) => ({
     }
   },
 
+  createSystemSetting: async (data) => {
+    try {
+      set({ isLoading: true });
+      await api.systemSettingApi.create(data);
+      get().fetchSystemSettings();
+    } catch (error) {
+      const message = handleError(error, "Failed to create system setting");
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
   updateSystemSetting: async (id, data) => {
     try {
       set({ isLoading: true });
@@ -589,13 +605,13 @@ export const useApiStore = create<ApiState>((set, get) => ({
 
       const remainingPages = Array.from(
         { length: lastPage - 1 },
-        (_, i) => i + 2,
+        (_, i) => i + 2
       );
       await Promise.all(
         remainingPages.map(async (page) => {
           const pageResponse = await api.userApi.getAll(page);
           allUsers = [...allUsers, ...pageResponse.data.data];
-        }),
+        })
       );
 
       set({ allUsers });

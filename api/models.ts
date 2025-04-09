@@ -67,7 +67,8 @@ export interface SystemSetting {
   idea_closure_date: string;
   final_closure_date: string;
   academic_year: string;
-  status: boolean;
+  status: number;
+  total_ideas?: number;
 }
 
 export interface Comment {
