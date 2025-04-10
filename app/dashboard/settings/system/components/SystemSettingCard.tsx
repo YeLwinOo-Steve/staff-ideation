@@ -44,7 +44,9 @@ export function SystemSettingCard({
       variants={itemVariants}
       initial="hidden"
       animate="visible"
-      className="card border border-primary shadow-sm hover:shadow-sm duration-100"
+      className={`card ${
+        setting.status === 1 ? "bg-primary/5" : ""
+      } border border-primary shadow-sm hover:shadow-sm duration-100`}
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
       layout
@@ -87,7 +89,7 @@ export function SystemSettingCard({
                 </span>
               </div>
             </div>
-            <div className="flex items-center justify-between mx-8">
+            <div className="flex items-center justify-end gap-8 mt-4">
               <motion.button
                 className="btn btn-circle btn-sm bg-primary/50 hover:bg-primary border-0"
                 onClick={(e) => onUpdate(e, setting)}

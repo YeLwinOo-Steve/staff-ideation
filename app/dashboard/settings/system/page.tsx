@@ -213,7 +213,7 @@ export default function SystemSettingsPage() {
               {systemSettings.length}
             </span>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 sm:grid-cols-1 gap-3 m-2">
+          <div className="grid grid-cols-1 gap-3 m-2">
             {Array.isArray(systemSettings) && systemSettings.length > 0 ? (
               systemSettings.map((setting) => (
                 <SystemSettingCard
