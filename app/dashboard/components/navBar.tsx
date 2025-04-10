@@ -94,7 +94,7 @@ const NavBar = () => {
       <div className="navbar bg-base-100 z-50">
         <div className="flex-1">
           <Image
-            src={theme === "dark" ? "/dark/logo.png" : "/logo.png"}
+            src={theme === "abyss" ? "/dark/logo.png" : "/logo.png"}
             alt="EWSD"
             width={64}
             height={64}
@@ -116,7 +116,7 @@ const NavBar = () => {
       >
         <div className="flex-1">
           <Image
-            src={theme === "dark" ? "/dark/logo.png" : "/logo.png"}
+            src={theme === "abyss" ? "/dark/logo.png" : "/logo.png"}
             alt="EWSD"
             width={64}
             height={64}

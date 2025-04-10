@@ -5,6 +5,7 @@ import {
   PencilIcon,
   Trash2Icon,
   DownloadIcon,
+  LightbulbIcon,
 } from "lucide-react";
 import { format } from "date-fns";
 import { SystemSetting } from "@/api/models";
@@ -46,7 +47,7 @@ export function SystemSettingCard({
       animate="visible"
       className={`card ${
         setting.status === 1 ? "bg-primary/5" : ""
-      } border border-primary shadow-sm hover:shadow-sm duration-100`}
+      } border border-primary shadow-sm hover:shadow-sm duration-100 m-2`}
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
       layout
@@ -62,6 +63,12 @@ export function SystemSettingCard({
                 <Sliders className="w-5 h-5 text-primary" />
               </div>
               <h3 className="card-title text-lg">{setting.academic_year}</h3>
+            </div>
+            <div className="flex items-center bg-primary/10 py-1 px-3 rounded-xl gap-2">
+              <LightbulbIcon className="w-4 h-4 text-primary" />
+              <span className="text-md font-bold text-primary">
+                {setting.total_ideas ?? 0}
+              </span>
             </div>
           </div>
 
