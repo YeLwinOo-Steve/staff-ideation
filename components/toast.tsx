@@ -36,7 +36,7 @@ export const Toast = ({ messages, duration = 2000, onClose }: ToastProps) => {
         ))}
       </AnimatePresence>
     </div>,
-    document.body,
+    document.body
   );
 };
 
@@ -100,6 +100,7 @@ const ToastMessage = ({
 };
 
 import { createContext, useContext, useCallback, ReactNode } from "react";
+import { useApiStore } from "@/store/apiStore";
 
 interface ToastContextProps {
   showToast: (message: string, type: ToastType) => void;
@@ -120,12 +121,14 @@ export const ToastProvider = ({
   children,
   duration = 2000,
 }: ToastProviderProps) => {
+  const { clearError } = useApiStore();
   const [toasts, setToasts] = useState<
     Array<{ id: string; message: string; type: ToastType }>
   >([]);
 
   const removeToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
+    clearError();
   }, []);
 
   const showToast = useCallback((message: string, type: ToastType) => {
@@ -135,22 +138,22 @@ export const ToastProvider = ({
 
   const showSuccessToast = useCallback(
     (message: string) => showToast(message, "success"),
-    [showToast],
+    [showToast]
   );
 
   const showErrorToast = useCallback(
     (message: string) => showToast(message, "error"),
-    [showToast],
+    [showToast]
   );
 
   const showInfoToast = useCallback(
     (message: string) => showToast(message, "info"),
-    [showToast],
+    [showToast]
   );
 
   const showWarningToast = useCallback(
     (message: string) => showToast(message, "warning"),
-    [showToast],
+    [showToast]
   );
 
   return (

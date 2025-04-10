@@ -342,7 +342,7 @@ const NavBar = () => {
                       handleNavigation("/dashboard/settings/system")
                     }
                   >
-                    <Sliders className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <Sliders className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                     <span className="text-sm sm:text-base">System</span>
                   </Link>
 
