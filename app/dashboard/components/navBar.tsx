@@ -69,7 +69,7 @@ const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
-  const { setTheme, resolvedTheme } = useTheme();
+  const { setTheme, resolvedTheme, theme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -94,7 +94,7 @@ const NavBar = () => {
       <div className="navbar bg-base-100 z-50">
         <div className="flex-1">
           <Image
-            src="/logo.png"
+            src={theme === "dark" ? "/dark/logo.png" : "/logo.png"}
             alt="EWSD"
             width={64}
             height={64}
@@ -116,7 +116,7 @@ const NavBar = () => {
       >
         <div className="flex-1">
           <Image
-            src="/logo.png"
+            src={resolvedTheme === "abyss" ? "/dark/logo.png" : "/logo.png"}
             alt="EWSD"
             width={64}
             height={64}

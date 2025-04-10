@@ -13,7 +13,7 @@ interface CategoryCardProps {
 
 const cardVariants = {
   hidden: {
-    opacity: 0,
+    opacity: 1,
     scale: 0.9,
     y: 10,
   },
