@@ -44,7 +44,7 @@ export function SystemSettingCard({
       variants={itemVariants}
       initial="hidden"
       animate="visible"
-      className="card bg-base-200 shadow-sm hover:shadow-sm duration-100"
+      className="card border border-primary shadow-sm hover:shadow-sm duration-100"
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
       layout
@@ -87,7 +87,7 @@ export function SystemSettingCard({
                 </span>
               </div>
             </div>
-            <div className="flex items-center justify-end gap-2">
+            <div className="flex items-center justify-between mx-8">
               <motion.button
                 className="btn btn-circle btn-sm bg-primary/10 hover:bg-primary border-0"
                 onClick={(e) => onUpdate(e, setting)}
@@ -99,19 +99,9 @@ export function SystemSettingCard({
               >
                 <PencilIcon className="w-4 h-4 text-primary group-hover:text-white" />
               </motion.button>
+
               <motion.button
-                className="btn btn-circle btn-sm bg-error/10 hover:bg-error border-0"
-                onClick={(e) => onDelete(e, setting)}
-                whileHover={{
-                  scale: 1.1,
-                  backgroundColor: "hsl(var(--er))",
-                }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <Trash2Icon className="w-4 h-4 text-error group-hover:text-white" />
-              </motion.button>
-              <motion.button
-                className="btn btn-circle btn-sm bg-success/10 hover:bg-success border-0"
+                className="btn btn-circle btn-sm bg-success/50 hover:bg-success border-0"
                 onClick={async (e) => {
                   e.preventDefault();
                   await onDownload(e, setting);
@@ -122,7 +112,18 @@ export function SystemSettingCard({
                 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <DownloadIcon className="w-4 h-4 text-success group-hover:text-white" />
+                <DownloadIcon className="w-4 h-4 text-primary group-hover:text-white" />
+              </motion.button>
+              <motion.button
+                className="btn btn-circle btn-sm bg-error/50 hover:bg-error border-0"
+                onClick={(e) => onDelete(e, setting)}
+                whileHover={{
+                  scale: 1.1,
+                  backgroundColor: "hsl(var(--er))",
+                }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <Trash2Icon className="w-4 h-4 text-error group-hover:text-white" />
               </motion.button>
             </div>
           </div>

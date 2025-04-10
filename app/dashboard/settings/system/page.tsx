@@ -148,6 +148,11 @@ export default function SystemSettingsPage() {
     try {
       const blob = await getCSV(setting.id);
 
+      if (!blob) {
+        showErrorToast("Failed to download system settings");
+        return;
+      }
+
       // Create a URL for the blob
       const url = window.URL.createObjectURL(blob);
 
@@ -155,13 +160,10 @@ export default function SystemSettingsPage() {
       const link = document.createElement("a");
       link.href = url;
       link.download = `system-setting-${setting.academic_year}.csv`;
-
-      // Append link to body, click it, and remove it
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
 
-      // Clean up the URL
       window.URL.revokeObjectURL(url);
       showSuccessToast("System settings downloaded successfully!");
     } catch (e) {
@@ -194,7 +196,7 @@ export default function SystemSettingsPage() {
           className={`tab ${activeTab === "create" ? "tab-active" : ""}`}
           onClick={() => setActiveTab("create")}
         >
-          Create Settings
+          New Settings
         </button>
       </div>
 
@@ -207,11 +209,11 @@ export default function SystemSettingsPage() {
         >
           <div className="flex items-center mb-6">
             <h2 className="text-2xl font-bold">All</h2>
-            <span className="text-sm text-base-content/70 badge badge-info p-3 ml-2">
+            <span className="text-sm text-white badge badge-primary p-3 ml-2">
               {systemSettings.length}
             </span>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-2 sm:grid-cols-1 gap-3">
+          <div className="grid grid-cols-1 lg:grid-cols-2 sm:grid-cols-1 gap-3 m-2">
             {Array.isArray(systemSettings) && systemSettings.length > 0 ? (
               systemSettings.map((setting) => (
                 <SystemSettingCard
