@@ -10,7 +10,6 @@ import Link from "next/link";
 import {
   Lightbulb,
   Blocks,
-  FileArchive,
   Settings,
   Users,
   Building2,
