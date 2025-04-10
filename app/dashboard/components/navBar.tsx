@@ -168,7 +168,7 @@ const NavBar = () => {
                 Categories
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link
                 href="/dashboard/reports"
                 className={`${pathname === "/dashboard/reports" ? "active" : ""} flex items-center gap-2`}
@@ -177,7 +177,7 @@ const NavBar = () => {
                 <FileArchive size={16} />
                 Reports
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link
                 href="/dashboard/settings/system"
@@ -327,14 +327,14 @@ const NavBar = () => {
 
                   <div className="divider my-0.5 sm:my-1"></div>
 
-                  <Link
+                  {/* <Link
                     href="/dashboard/reports"
                     className="flex items-center gap-2 sm:gap-3 py-1 px-3 sm:px-4 hover:bg-base-200 rounded-xl transition-colors"
                     onClick={() => handleNavigation("/dashboard/reports")}
                   >
                     <FileArchive className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                     <span className="text-base sm:text-lg">Reports</span>
-                  </Link>
+                  </Link> */}
                   <div className="divider my-0.5 sm:my-1"></div>
                   <Link
                     href="/dashboard/settings/system"
