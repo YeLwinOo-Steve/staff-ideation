@@ -11,7 +11,7 @@ import { SystemSettingCard } from "./components/SystemSettingCard";
 import { SystemSetting } from "@/api/models";
 
 const containerVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 10 },
   visible: {
     opacity: 1,
     y: 0,
@@ -23,7 +23,7 @@ const containerVariants = {
 };
 
 const formVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 10 },
   visible: {
     opacity: 1,
     y: 0,
@@ -173,12 +173,7 @@ export default function SystemSettingsPage() {
   };
 
   return (
-    <motion.div
-      className="container mx-auto p-6"
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-    >
+    <motion.div className="container mx-auto p-6" variants={containerVariants}>
       <div className="flex items-center gap-2 mb-8">
         <Sliders className="w-10 h-10 text-primary" />
         <h2 className="text-2xl font-bold">System Settings</h2>
@@ -238,6 +233,8 @@ export default function SystemSettingsPage() {
         <motion.div
           className={`flex-1 ${activeTab === "all" ? "hidden lg:block" : ""} lg:sticky lg:top-24`}
           variants={formVariants}
+          initial="hidden"
+          animate="visible"
         >
           <div className="prose">
             <h2 className="text-2xl font-bold mb-6">New</h2>
