@@ -96,7 +96,7 @@ const ZipDownloadBtn = () => {
           const errorMessage =
             err instanceof Error ? err.message : "An unknown error occurred";
           throw new Error(
-            `Error downloading file ${index + 1}: ${errorMessage}`,
+            `Error downloading file ${index + 1}: ${errorMessage}`
           );
         }
       }
@@ -286,7 +286,7 @@ const IdeaDetail = () => {
 
         // Now check the pending status after both operations are complete
         const isPendingIdea = pendingIdeas.some(
-          (idea) => idea.id === Number(id),
+          (idea) => idea.id === Number(id)
         );
         setIsPending(isPendingIdea);
 
@@ -426,7 +426,7 @@ const IdeaDetail = () => {
               <h1 className="font-bold text-2xl mb-4">{idea.title}</h1>
               <div className="flex items-center gap-2">
                 <motion.button
-                  className="btn btn-circle btn-sm bg-error/10 hover:bg-error border-0"
+                  className="btn btn-circle btn-sm bg-warning/50 hover:bg-warning border-0"
                   variants={buttonVariants}
                   initial="initial"
                   whileTap="tap"
@@ -437,7 +437,7 @@ const IdeaDetail = () => {
                     setShowReportDialog(true);
                   }}
                 >
-                  <Flag className="w-4 h-4 text-error" />
+                  <Flag className="w-4 h-4 group-hover:text-warning" />
                 </motion.button>
               </div>
             </div>
