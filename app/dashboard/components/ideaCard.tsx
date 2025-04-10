@@ -121,8 +121,8 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
         className="card border border-primary shadow-sm hover:shadow-sm duration-100 h-full"
         whileHover={{ scale: 1.02 }}
         transition={{ duration: 0.2 }}
-        layout
         onClick={handleCardClick}
+        layout
       >
         <div
           className="card-body p-5 flex flex-col h-full"

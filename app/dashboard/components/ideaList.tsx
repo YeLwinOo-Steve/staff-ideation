@@ -72,13 +72,15 @@ const containerVariants = {
 const itemVariants = {
   hidden: {
     opacity: 0,
-    y: 20,
+    scale: 0.9,
+    y: 10,
   },
   show: {
     opacity: 1,
+    scale: 1,
     y: 0,
     transition: {
-      duration: 0.2,
+      duration: 0.4,
       ease: "easeOut",
     },
   },
@@ -210,7 +212,7 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
           animate={{ opacity: 1 }}
           className={gridClass}
         >
-          {[1, 2, 3, 4, 5, 6].map((index) => (
+          {[...Array(6)].map((index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
@@ -236,15 +238,20 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
           className={gridClass}
         >
           {displayedIdeas.map((idea) => (
-            <Link
+            <motion.div
               key={idea.id}
-              href={`/dashboard/ideas/${idea.id}`}
+              variants={itemVariants}
               className="h-full"
+              layout
             >
-              <motion.div variants={itemVariants} className="h-full" layout>
+              <Link
+                key={idea.id}
+                href={`/dashboard/ideas/${idea.id}`}
+                className="h-full"
+              >
                 <IdeaCard idea={idea} />
-              </motion.div>
-            </Link>
+              </Link>
+            </motion.div>
           ))}
         </motion.div>
       )}
@@ -271,7 +278,7 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
                     setPage(index + 1);
                   }}
                 />
-              ),
+              )
             )}
           </div>
         </motion.div>
