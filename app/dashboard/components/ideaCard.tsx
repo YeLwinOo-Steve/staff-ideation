@@ -161,7 +161,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
                 onClick={(e) => e.stopPropagation()}
               >
                 <motion.button
-                  className="btn btn-circle btn-sm bg-error hover:bg-error border-0"
+                  className="btn btn-circle btn-sm bg-warning/50 hover:bg-warning border-0"
                   variants={buttonVariants}
                   initial="initial"
                   whileTap="tap"
@@ -172,7 +172,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
                     setShowReportDialog(true);
                   }}
                 >
-                  <Flag className="w-4 h-4 text-white" />
+                  <Flag className="w-4 h-4 group-hover:text-warning" />
                 </motion.button>
               </div>
             </div>
