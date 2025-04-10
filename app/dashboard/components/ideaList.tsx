@@ -208,16 +208,17 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
       {/* Ideas Grid with Loading State */}
       {isLoading ? (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
           className={gridClass}
         >
           {[...Array(6)].map((index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+              variants={itemVariants}
+              className="h-full"
+              layout
             >
               <SkeletonCard />
             </motion.div>
@@ -226,7 +227,7 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
       ) : displayedIdeas.length === 0 ? (
         <motion.div
           variants={itemVariants}
-          className="flex justify-center items-center py-8"
+          className="flex justify-center items-center py-8 h-full w-full"
         >
           <div>No ideas found.</div>
         </motion.div>
