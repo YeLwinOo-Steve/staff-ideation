@@ -70,7 +70,7 @@ const IdeaCreatePage = () => {
     setIsSubmitting(true);
 
     try {
-      let uploadedFileUrls: string[] = [];
+      let uploadedFileUrls: { file_name: string; file_path: string }[] = [];
       if (files.length > 0) {
         const uploadPromises = files.map(async (file) => {
           const result = await uploadToCloudinary(file, (progress) => {
@@ -79,7 +79,10 @@ const IdeaCreatePage = () => {
               [file.name]: Math.round(progress),
             }));
           });
-          return result;
+          return {
+            file_name: file.name,
+            file_path: result,
+          };
         });
 
         uploadedFileUrls = await Promise.all(uploadPromises);
