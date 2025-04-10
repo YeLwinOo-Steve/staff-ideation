@@ -41,7 +41,7 @@ export default function SystemSettingsPage() {
   const [activeTab, setActiveTab] = useState<"all" | "create">("all");
   const [isEditing, setIsEditing] = useState(false);
   const [selectedSetting, setSelectedSetting] = useState<SystemSetting | null>(
-    null
+    null,
   );
   const {
     createSystemSetting,
