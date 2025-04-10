@@ -11,13 +11,13 @@ interface CategoryCardProps {
   onDelete: (category: Category) => void;
 }
 
-const itemVariants = {
+const cardVariants = {
   hidden: {
     opacity: 0,
     scale: 0.9,
     y: 10,
   },
-  show: {
+  visible: {
     opacity: 1,
     scale: 1,
     y: 0,
@@ -26,16 +26,19 @@ const itemVariants = {
       ease: "easeOut",
     },
   },
+  exit: {
+    opacity: 0,
+    y: -20,
+    transition: {
+      duration: 0.3,
+    },
+  },
 };
 
-export function CategoryCard({
-  category,
-  onEdit,
-  onDelete,
-}: CategoryCardProps) {
+export function CategoryCard({ category, onEdit, onDelete }: CategoryCardProps) {
   return (
     <motion.div
-      variants={itemVariants}
+      variants={cardVariants}
       className="card border border-primary shadow-sm hover:shadow-md duration-300"
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
