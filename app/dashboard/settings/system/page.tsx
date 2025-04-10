@@ -146,6 +146,10 @@ export default function SystemSettingsPage() {
     e.preventDefault();
     e.stopPropagation();
     try {
+      if (setting.status === 1) {
+        showErrorToast("Cannot download active system settings");
+        return;
+      }
       const blob = await getCSV(setting.id);
 
       if (!blob) {
