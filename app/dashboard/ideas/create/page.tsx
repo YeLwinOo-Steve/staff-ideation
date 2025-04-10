@@ -92,7 +92,9 @@ const IdeaCreatePage = () => {
       ideaFormData.append("category", selectedCategories.join(","));
 
       if (uploadedFileUrls.length > 0) {
-        ideaFormData.append("document", JSON.stringify(uploadedFileUrls));
+        uploadedFileUrls.forEach((url) => {
+          ideaFormData.append("document[]", url);
+        });
       }
 
       await createIdea(ideaFormData);

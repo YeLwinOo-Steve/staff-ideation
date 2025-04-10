@@ -45,6 +45,7 @@ export default function SystemSettingsPage() {
     deleteSystemSetting,
     systemSettings,
     error,
+    getCSV,
   } = useApiStore();
   const { showSuccessToast, showErrorToast } = useToast();
   const [formData, setFormData] = useState({
@@ -145,9 +146,7 @@ export default function SystemSettingsPage() {
     e.preventDefault();
     e.stopPropagation();
     try {
-      // Use fetch to get the CSV data
-      const response = await fetch(`/api/system-settings/${setting.id}/csv`);
-      const blob = await response.blob();
+      const blob = await getCSV(setting.id);
 
       // Create a URL for the blob
       const url = window.URL.createObjectURL(blob);

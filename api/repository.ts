@@ -71,7 +71,7 @@ export const systemSettingApi = {
   update: (id: number, data: Partial<SystemSetting>) =>
     apiClient.put<SystemSetting>(`/system-setting/${id}`, data),
   delete: (id: number) => apiClient.delete(`/system-setting/${id}`),
-  getCSV: (id: number) => apiClient.get<void>(`/system-setting/getCSV/${id}`),
+  getCSV: (id: number) => apiClient.get<string>(`/system-setting/getCSV/${id}`),
 };
 
 export const commentApi = {

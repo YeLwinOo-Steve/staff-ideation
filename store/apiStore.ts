@@ -105,7 +105,7 @@ interface ApiState {
     data: Partial<SystemSetting>,
   ) => Promise<void>;
   deleteSystemSetting: (id: number) => Promise<void>;
-  getCSV: (id: number) => Promise<void>;
+  getCSV: (id: number) => Promise<Blob>;
 
   // Error handling
   setError: (error: string | null) => void;
@@ -593,7 +593,8 @@ export const useApiStore = create<ApiState>((set, get) => ({
   getCSV: async (id) => {
     try {
       const response = await api.systemSettingApi.getCSV(id);
-      // return new Blob([response.data], { type: 'text/csv' });
+      // The response data is already a CSV string
+      return new Blob([response.data], { type: "text/csv" });
     } catch (error) {
       const message = handleError(error, "Failed to get CSV");
       set({ error: message });
