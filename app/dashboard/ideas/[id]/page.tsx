@@ -96,7 +96,7 @@ const ZipDownloadBtn = () => {
           const errorMessage =
             err instanceof Error ? err.message : "An unknown error occurred";
           throw new Error(
-            `Error downloading file ${index + 1}: ${errorMessage}`
+            `Error downloading file ${index + 1}: ${errorMessage}`,
           );
         }
       }
@@ -286,7 +286,7 @@ const IdeaDetail = () => {
 
         // Now check the pending status after both operations are complete
         const isPendingIdea = pendingIdeas.some(
-          (idea) => idea.id === Number(id)
+          (idea) => idea.id === Number(id),
         );
         setIsPending(isPendingIdea);
 
