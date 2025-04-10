@@ -212,7 +212,7 @@ export default function SystemSettingsPage() {
 
   return (
     <motion.div
-      className="container mx-auto p-6"
+      className="container mx-auto p-6 max-w-7xl space-y-6"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
