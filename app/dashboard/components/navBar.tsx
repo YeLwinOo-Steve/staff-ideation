@@ -116,7 +116,7 @@ const NavBar = () => {
       >
         <div className="flex-1">
           <Image
-            src={resolvedTheme === "abyss" ? "/dark/logo.png" : "/logo.png"}
+            src={theme === "dark" ? "/dark/logo.png" : "/logo.png"}
             alt="EWSD"
             width={64}
             height={64}

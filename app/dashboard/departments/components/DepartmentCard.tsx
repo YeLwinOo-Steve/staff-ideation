@@ -37,7 +37,7 @@ export function DepartmentCard({
   return (
     <motion.div
       variants={itemVariants}
-      className="card border border-primary shadow-sm hover:shadow-sm duration-100"
+      className="card bg-base-200 shadow-sm hover:shadow-sm duration-100"
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
       layout

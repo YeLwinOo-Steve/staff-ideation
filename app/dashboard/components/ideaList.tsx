@@ -9,6 +9,55 @@ interface IdeaListProps {
   gridCols?: number;
 }
 
+const SkeletonCard = () => (
+  <div className="card bg-base-200 shadow-sm h-full">
+    <div className="card-body p-5">
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="skeleton w-12 h-12 rounded-full bg-base-300"></div>
+            <div className="flex flex-col gap-2">
+              <div className="skeleton h-4 w-32 bg-base-300"></div>
+              <div className="skeleton h-3 w-20 bg-base-300"></div>
+            </div>
+          </div>
+          <div className="skeleton w-8 h-8 rounded-full bg-base-300"></div>
+        </div>
+
+        {/* Divider */}
+        <div className="skeleton h-[1px] w-full bg-base-300"></div>
+
+        {/* Content */}
+        <div className="space-y-2">
+          <div className="skeleton h-4 w-full bg-base-300"></div>
+          <div className="skeleton h-4 w-3/4 bg-base-300"></div>
+          <div className="skeleton h-4 w-1/2 bg-base-300"></div>
+        </div>
+
+        {/* Categories */}
+        <div className="flex gap-2">
+          <div className="skeleton h-6 w-16 rounded-full bg-base-300"></div>
+          <div className="skeleton h-6 w-20 rounded-full bg-base-300"></div>
+          <div className="skeleton h-6 w-14 rounded-full bg-base-300"></div>
+        </div>
+
+        {/* Bottom row */}
+        <div className="flex justify-between items-center mt-auto pt-4">
+          <div className="flex items-center gap-2">
+            <div className="skeleton w-8 h-8 rounded-full bg-base-300"></div>
+            <div className="skeleton w-8 h-4 bg-base-300"></div>
+            <div className="skeleton w-8 h-8 rounded-full bg-base-300"></div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="skeleton w-16 h-8 rounded-xl bg-base-300"></div>
+            <div className="skeleton w-16 h-8 rounded-xl bg-base-300"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 const containerVariants = {
   hidden: { opacity: 1 },
   show: {
@@ -23,15 +72,13 @@ const containerVariants = {
 const itemVariants = {
   hidden: {
     opacity: 0,
-    scale: 0.9,
-    y: 10,
+    y: 20,
   },
   show: {
     opacity: 1,
-    scale: 1,
     y: 0,
     transition: {
-      duration: 0.4,
+      duration: 0.2,
       ease: "easeOut",
     },
   },
@@ -158,13 +205,26 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
 
       {/* Ideas Grid with Loading State */}
       {isLoading ? (
-        <motion.div className="flex justify-center items-center h-64">
-          <span className="loading loading-spinner loading-lg text-primary"></span>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className={gridClass}
+        >
+          {[1, 2, 3, 4, 5, 6].map((index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <SkeletonCard />
+            </motion.div>
+          ))}
         </motion.div>
       ) : displayedIdeas.length === 0 ? (
         <motion.div
           variants={itemVariants}
-          className="flex justify-center items-center py-8 h-full w-full"
+          className="flex justify-center items-center py-8"
         >
           <div>No ideas found.</div>
         </motion.div>
@@ -176,20 +236,15 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
           className={gridClass}
         >
           {displayedIdeas.map((idea) => (
-            <motion.div
+            <Link
               key={idea.id}
-              variants={itemVariants}
+              href={`/dashboard/ideas/${idea.id}`}
               className="h-full"
-              layout
             >
-              <Link
-                key={idea.id}
-                href={`/dashboard/ideas/${idea.id}`}
-                className="h-full"
-              >
+              <motion.div variants={itemVariants} className="h-full" layout>
                 <IdeaCard idea={idea} />
-              </Link>
-            </motion.div>
+              </motion.div>
+            </Link>
           ))}
         </motion.div>
       )}

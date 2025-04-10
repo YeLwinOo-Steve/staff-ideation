@@ -11,19 +11,6 @@ import { useToast } from "@/components/toast";
 
 type LoginForm = z.infer<typeof loginSchema>;
 
-const formVariants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: 0.2,
-      duration: 0.4,
-      ease: "easeOut",
-    },
-  },
-};
-
 export default function Login() {
   const { showSuccessToast, showErrorToast } = useToast();
   const { login, isLoading, error, clearError } = useAuthStore();
@@ -53,9 +40,9 @@ export default function Login() {
   return (
     <div className="hero min-h-screen bg-base-200">
       <motion.div
-        variants={formVariants}
-        initial="hidden"
-        animate="visible"
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
         className="hero-content flex-col lg:flex-row-reverse"
       >
         <div className="text-center lg:text-left">
