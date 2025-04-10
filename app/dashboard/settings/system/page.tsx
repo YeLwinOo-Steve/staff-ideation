@@ -256,7 +256,7 @@ export default function SystemSettingsPage() {
                 <div className="relative">
                   <DatePicker
                     onChange={onIdeaClosureChange}
-                    className="w-full h-12 bg-base-200 border border-base-300 rounded-lg"
+                    className="w-full h-12 bg-base-200 border border-base-300 rounded-lg [&_.ant-picker-input>input]:text-base-content [&_.ant-picker-input>input::placeholder]:text-base-content/50"
                     placeholder="Pick idea closure date"
                   />
                 </div>
@@ -272,7 +272,7 @@ export default function SystemSettingsPage() {
                 <div className="relative">
                   <DatePicker
                     onChange={onFinalClosureChange}
-                    className="w-full h-12 bg-base-200 border border-base-300 rounded-lg"
+                    className="w-full h-12 bg-base-200 border border-base-300 rounded-lg [&_.ant-picker-input>input]:text-base-content [&_.ant-picker-input>input::placeholder]:text-base-content/50"
                     placeholder="Pick final closure date"
                   />
                 </div>
@@ -286,7 +286,7 @@ export default function SystemSettingsPage() {
               </label>
               <RangePicker
                 picker="year"
-                className="w-full h-12 bg-base-200 border border-base-300 rounded-lg"
+                className="w-full h-12 bg-base-200 border border-base-300 rounded-lg [&_.ant-picker-input>input]:text-base-content [&_.ant-picker-input>input::placeholder]:text-base-content/50"
                 onChange={onAcademicYearChange}
               />
             </div>
