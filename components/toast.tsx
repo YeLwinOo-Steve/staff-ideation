@@ -36,7 +36,7 @@ export const Toast = ({ messages, duration = 2000, onClose }: ToastProps) => {
         ))}
       </AnimatePresence>
     </div>,
-    document.body
+    document.body,
   );
 };
 
@@ -138,22 +138,22 @@ export const ToastProvider = ({
 
   const showSuccessToast = useCallback(
     (message: string) => showToast(message, "success"),
-    [showToast]
+    [showToast],
   );
 
   const showErrorToast = useCallback(
     (message: string) => showToast(message, "error"),
-    [showToast]
+    [showToast],
   );
 
   const showInfoToast = useCallback(
     (message: string) => showToast(message, "info"),
-    [showToast]
+    [showToast],
   );
 
   const showWarningToast = useCallback(
     (message: string) => showToast(message, "warning"),
-    [showToast]
+    [showToast],
   );
 
   return (
