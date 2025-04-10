@@ -102,7 +102,7 @@ interface ApiState {
   createSystemSetting: (data: Partial<SystemSetting>) => Promise<void>;
   updateSystemSetting: (
     id: number,
-    data: Partial<SystemSetting>,
+    data: Partial<SystemSetting>
   ) => Promise<void>;
   deleteSystemSetting: (id: number) => Promise<void>;
   getCSV: (id: number) => Promise<Blob | undefined>;
@@ -506,17 +506,13 @@ export const useApiStore = create<ApiState>((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await api.categoryApi.getAll();
-      set((state) => ({
-        ...state,
-        categories: response.data.data,
-        isLoading: false,
-      }));
+      set({ categories: response.data.data });
     } catch (error) {
       const message = handleError(error, "Failed to fetch categories");
       set({ error: message });
       throw error;
     } finally {
-      set((state) => ({ ...state, isLoading: false }));
+      set({ isLoading: false });
     }
   },
 
@@ -636,13 +632,13 @@ export const useApiStore = create<ApiState>((set, get) => ({
 
       const remainingPages = Array.from(
         { length: lastPage - 1 },
-        (_, i) => i + 2,
+        (_, i) => i + 2
       );
       await Promise.all(
         remainingPages.map(async (page) => {
           const pageResponse = await api.userApi.getAll(page);
           allUsers = [...allUsers, ...pageResponse.data.data];
-        }),
+        })
       );
 
       set({ allUsers });
