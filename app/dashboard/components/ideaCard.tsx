@@ -118,7 +118,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
     <>
       <motion.div
         variants={itemVariants}
-        className="card bg-base-200 shadow-sm hover:shadow-sm duration-100 h-full"
+        className="card border border-primary shadow-sm hover:shadow-sm duration-100 h-full"
         whileHover={{ scale: 1.02 }}
         transition={{ duration: 0.2 }}
         layout
@@ -161,7 +161,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
                 onClick={(e) => e.stopPropagation()}
               >
                 <motion.button
-                  className="btn btn-circle btn-sm bg-error/10 hover:bg-error border-0"
+                  className="btn btn-circle btn-sm bg-error hover:bg-error border-0"
                   variants={buttonVariants}
                   initial="initial"
                   whileTap="tap"
@@ -172,7 +172,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
                     setShowReportDialog(true);
                   }}
                 >
-                  <Flag className="w-4 h-4 text-error" />
+                  <Flag className="w-4 h-4 text-white" />
                 </motion.button>
               </div>
             </div>
@@ -233,7 +233,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
                     className={`btn btn-circle btn-sm ${
                       userVoteLocal === 1
                         ? "bg-primary text-primary-content border-0"
-                        : "bg-primary/10 hover:bg-primary border-0"
+                        : "bg-primary/50 hover:bg-primary border-0"
                     }`}
                     onClick={(e) => handleVote(e, 1)}
                     disabled={isVoting}
@@ -251,7 +251,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
                     className={`btn btn-circle btn-sm ${
                       userVoteLocal === -1
                         ? "bg-error text-error-content border-0"
-                        : "bg-error/10 hover:bg-error border-0"
+                        : "bg-error/50 hover:bg-error border-0"
                     }`}
                     onClick={(e) => handleVote(e, -1)}
                     disabled={isVoting}
@@ -263,16 +263,16 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 bg-base-100 px-3 py-2 rounded-xl">
-                <MessageCircle className="w-4 h-4 text-info" />
-                <span className="text-sm font-medium text-info">
+              <div className="flex items-center gap-2 bg-info/50 px-3 py-2 rounded-xl">
+                <MessageCircle className="w-4 h-4" />
+                <span className="text-sm font-medium">
                   {idea.comments || 0}
                 </span>
               </div>
 
-              <div className="flex items-center gap-2 bg-base-100 px-3 py-2 rounded-xl">
-                <Paperclip className="w-4 h-4 text-success" />
-                <span className="text-sm font-medium text-success">
+              <div className="flex items-center gap-2 bg-success/50 px-3 py-2 rounded-xl">
+                <Paperclip className="w-4 h-4" />
+                <span className="text-sm font-medium">
                   {idea.files?.length || 0}
                 </span>
               </div>

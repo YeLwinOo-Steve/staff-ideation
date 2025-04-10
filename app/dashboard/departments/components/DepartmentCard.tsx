@@ -55,26 +55,24 @@ export function DepartmentCard({
             </div>
             <div className="flex gap-2">
               <motion.button
-                className="btn btn-circle btn-sm bg-primary/10 hover:bg-primary border-0"
+                className="btn btn-circle btn-sm bg-primary/50 hover:bg-primary border-0"
                 onClick={() => onEdit(department)}
                 whileHover={{
                   scale: 1.1,
-                  backgroundColor: "hsl(var(--p))",
                 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <PencilIcon className="w-4 h-4 text-primary group-hover:text-white" />
+                <PencilIcon className="w-4 h-4 text-white group-hover:text-white" />
               </motion.button>
               <motion.button
-                className="btn btn-circle btn-sm bg-error/10 hover:bg-error border-0"
+                className="btn btn-circle btn-sm bg-error hover:bg-error border-0"
                 onClick={() => onDelete(department)}
                 whileHover={{
                   scale: 1.1,
-                  backgroundColor: "hsl(var(--er))",
                 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <Trash2Icon className="w-4 h-4 text-error group-hover:text-white" />
+                <Trash2Icon className="w-4 h-4 text-white group-hover:text-error" />
               </motion.button>
             </div>
           </div>

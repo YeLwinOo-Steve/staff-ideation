@@ -160,7 +160,7 @@ const UsersPage = () => {
                         className={`flex gap-2 ${authUser?.id === user.id || authUser?.roles.includes("admin") ? "hidden" : ""}`}
                       >
                         <button
-                          className="btn btn-sm btn-ghost"
+                          className="btn btn-sm btn-primary/10 hover:bg-primary border-0"
                           onClick={() =>
                             router.push(`/dashboard/users/edit/${user.id}`)
                           }

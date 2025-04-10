@@ -36,7 +36,7 @@ export function CategoryCard({
   return (
     <motion.div
       variants={itemVariants}
-      className="card bg-base-200 shadow-sm hover:shadow-md duration-300 border border-base-200"
+      className="card border border-primary shadow-sm hover:shadow-md duration-300"
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
       layout
@@ -52,26 +52,24 @@ export function CategoryCard({
             </div>
             <div className="flex gap-2">
               <motion.button
-                className="btn btn-circle btn-sm bg-primary/10 hover:bg-primary border-0"
+                className="btn btn-circle btn-sm bg-primary/50 hover:bg-primary border-0"
                 onClick={() => onEdit(category)}
                 whileHover={{
                   scale: 1.1,
-                  backgroundColor: "hsl(var(--p))",
                 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <PencilIcon className="w-4 h-4 text-primary group-hover:text-white" />
+                <PencilIcon className="w-4 h-4 text-white group-hover:text-white" />
               </motion.button>
               <motion.button
-                className="btn btn-circle btn-sm bg-error/10 hover:bg-error border-0"
+                className="btn btn-circle btn-sm bg-error hover:bg-error border-0"
                 onClick={() => onDelete(category)}
                 whileHover={{
                   scale: 1.1,
-                  backgroundColor: "hsl(var(--er))",
                 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <Trash2Icon className="w-4 h-4 text-error group-hover:text-white" />
+                <Trash2Icon className="w-4 h-4 text-white group-hover:text-error" />
               </motion.button>
             </div>
           </div>

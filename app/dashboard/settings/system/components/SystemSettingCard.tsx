@@ -89,41 +89,38 @@ export function SystemSettingCard({
             </div>
             <div className="flex items-center justify-between mx-8">
               <motion.button
-                className="btn btn-circle btn-sm bg-primary/10 hover:bg-primary border-0"
+                className="btn btn-circle btn-sm bg-primary/50 hover:bg-primary border-0"
                 onClick={(e) => onUpdate(e, setting)}
                 whileHover={{
                   scale: 1.1,
-                  backgroundColor: "hsl(var(--p))",
                 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <PencilIcon className="w-4 h-4 text-primary group-hover:text-white" />
+                <PencilIcon className="w-4 h-4 text-white group-hover:text-white" />
               </motion.button>
 
               <motion.button
-                className="btn btn-circle btn-sm bg-success/50 hover:bg-success border-0"
+                className="btn btn-circle btn-sm bg-primary/50 hover:bg-primary border-0"
                 onClick={async (e) => {
                   e.preventDefault();
                   await onDownload(e, setting);
                 }}
                 whileHover={{
                   scale: 1.1,
-                  backgroundColor: "hsl(var(--su))",
                 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <DownloadIcon className="w-4 h-4 text-primary group-hover:text-white" />
+                <DownloadIcon className="w-4 h-4 text-white group-hover:text-white" />
               </motion.button>
               <motion.button
-                className="btn btn-circle btn-sm bg-error/50 hover:bg-error border-0"
+                className="btn btn-circle btn-sm bg-error hover:bg-error border-0"
                 onClick={(e) => onDelete(e, setting)}
                 whileHover={{
                   scale: 1.1,
-                  backgroundColor: "hsl(var(--er))",
                 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <Trash2Icon className="w-4 h-4 text-error group-hover:text-white" />
+                <Trash2Icon className="w-4 h-4 text-white group-hover:text-error" />
               </motion.button>
             </div>
           </div>

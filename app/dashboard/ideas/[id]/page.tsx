@@ -486,7 +486,7 @@ const IdeaDetail = () => {
                 className={`btn btn-circle btn-md ${
                   userVoteLocal === 1
                     ? "bg-primary text-primary-content border-0"
-                    : "bg-primary/10 hover:bg-primary border-0"
+                    : "bg-primary/50 hover:bg-primary border-0"
                 }`}
                 onClick={(e) => handleVote(1, e)}
                 disabled={isVoting}
@@ -504,7 +504,7 @@ const IdeaDetail = () => {
                 className={`btn btn-circle btn-md ${
                   userVoteLocal === -1
                     ? "bg-error text-error-content border-0"
-                    : "bg-error/10 hover:bg-error border-0"
+                    : "bg-error/50 hover:bg-error border-0"
                 }`}
                 onClick={(e) => handleVote(-1, e)}
                 disabled={isVoting}
