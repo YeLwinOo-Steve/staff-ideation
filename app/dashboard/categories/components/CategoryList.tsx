@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { Category } from "@/api/models";
 import { CategoryCard } from "./CategoryCard";
-import { CategorySkeleton } from "./CategorySkeleton";
 
 interface CategoryListProps {
   categories: Category[];
@@ -46,6 +45,14 @@ export function CategoryList({
   onEdit,
   onDelete,
 }: CategoryListProps) {
+  if (isLoading) {
+    return (
+      <motion.div className="flex justify-center items-center h-64">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div
       variants={containerVariants}
@@ -53,30 +60,20 @@ export function CategoryList({
       animate="show"
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
     >
-      {isLoading ? (
-        <>
-          {[...Array(6)].map((_, index) => (
-            <CategorySkeleton key={`skeleton-${index}`} />
-          ))}
-        </>
-      ) : (
-        <>
-          {categories.map((category) => (
-            <motion.div
-              key={category.id}
-              variants={itemVariants}
-              className="h-full"
-              layout
-            >
-              <CategoryCard
-                category={category}
-                onEdit={onEdit}
-                onDelete={onDelete}
-              />
-            </motion.div>
-          ))}
-        </>
-      )}
+      {categories.map((category) => (
+        <motion.div
+          key={category.id}
+          variants={itemVariants}
+          className="h-full"
+          layout
+        >
+          <CategoryCard
+            category={category}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        </motion.div>
+      ))}
     </motion.div>
   );
 }
