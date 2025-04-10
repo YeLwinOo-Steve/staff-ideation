@@ -184,7 +184,7 @@ export default function SystemSettingsPage() {
       </div>
 
       {/* Mobile Tabs */}
-      <div className="lg:hidden tabs tabs-boxed mb-6 tabs-lg">
+      <div className="lg:hidden tabs tabs-boxed mb-6 tabs-md">
         <button
           className={`tab ${activeTab === "all" ? "tab-active" : ""}`}
           onClick={() => setActiveTab("all")}
