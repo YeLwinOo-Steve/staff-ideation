@@ -53,30 +53,30 @@ export function CategoryList({
       animate="show"
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
     >
-        {isLoading ? (
-          <>
-            {[...Array(6)].map((_, index) => (
-              <CategorySkeleton key={`skeleton-${index}`} />
-            ))}
-          </>
-        ) : (
-          <>
-            {categories.map((category) => (
-              <motion.div
-                key={category.id}
-                variants={itemVariants}
-                className="h-full"
-                layout
-              >
-                <CategoryCard
-                  category={category}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                />
-              </motion.div>
-            ))}
-          </>
-        )}
+      {isLoading ? (
+        <>
+          {[...Array(6)].map((_, index) => (
+            <CategorySkeleton key={`skeleton-${index}`} />
+          ))}
+        </>
+      ) : (
+        <>
+          {categories.map((category) => (
+            <motion.div
+              key={category.id}
+              variants={itemVariants}
+              className="h-full"
+              layout
+            >
+              <CategoryCard
+                category={category}
+                onEdit={onEdit}
+                onDelete={onDelete}
+              />
+            </motion.div>
+          ))}
+        </>
+      )}
     </motion.div>
   );
 }
