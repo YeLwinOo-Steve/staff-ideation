@@ -35,7 +35,11 @@ const cardVariants = {
   },
 };
 
-export function CategoryCard({ category, onEdit, onDelete }: CategoryCardProps) {
+export function CategoryCard({
+  category,
+  onEdit,
+  onDelete,
+}: CategoryCardProps) {
   return (
     <motion.div
       variants={cardVariants}

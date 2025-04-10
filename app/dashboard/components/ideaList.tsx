@@ -234,7 +234,6 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
           initial="hidden"
           animate="show"
           className={gridClass}
-          
         >
           {displayedIdeas.map((idea) => (
             <Link
