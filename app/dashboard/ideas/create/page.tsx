@@ -54,7 +54,7 @@ const IdeaCreatePage = () => {
     setSelectedCategories((prev) =>
       prev.includes(categoryId)
         ? prev.filter((id) => id !== categoryId)
-        : [...prev, categoryId],
+        : [...prev, categoryId]
     );
   };
 
@@ -91,11 +91,7 @@ const IdeaCreatePage = () => {
       ideaFormData.append("is_anonymous", formData.isAnonymous ? "1" : "0");
       ideaFormData.append("category", selectedCategories.join(","));
 
-      if (uploadedFileUrls.length > 0) {
-        uploadedFileUrls.forEach((url) => {
-          ideaFormData.append("document[]", url);
-        });
-      }
+      ideaFormData.append("document", JSON.stringify(uploadedFileUrls));
 
       await createIdea(ideaFormData);
 
