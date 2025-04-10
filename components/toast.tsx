@@ -126,10 +126,13 @@ export const ToastProvider = ({
     Array<{ id: string; message: string; type: ToastType }>
   >([]);
 
-  const removeToast = useCallback((id: string) => {
-    setToasts((prev) => prev.filter((toast) => toast.id !== id));
-    clearError();
-  }, []);
+  const removeToast = useCallback(
+    (id: string) => {
+      setToasts((prev) => prev.filter((toast) => toast.id !== id));
+      clearError();
+    },
+    [clearError],
+  );
 
   const showToast = useCallback((message: string, type: ToastType) => {
     const id = Date.now().toString();
