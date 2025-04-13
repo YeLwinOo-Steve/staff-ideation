@@ -219,6 +219,7 @@ const NavBar = () => {
                     <Link
                       href="/dashboard/settings/account"
                       className={`flex items-center gap-2 ${pathname === "/dashboard/settings/account" ? "active" : ""}`}
+                      onClick={() => setIsSettingsOpen(false)}
                       suppressHydrationWarning
                     >
                       <UserCircle size={16} />
@@ -227,7 +228,10 @@ const NavBar = () => {
                   </li>
                   <li>
                     <a
-                      onClick={handleThemeSwitch}
+                      onClick={() => {
+                        handleThemeSwitch();
+                        setIsSettingsOpen(false);
+                      }}
                       className="flex items-center gap-2"
                       suppressHydrationWarning
                     >
@@ -238,7 +242,10 @@ const NavBar = () => {
                   <div className="divider my-1"></div>
                   <li>
                     <a
-                      onClick={() => setShowLogoutDialog(true)}
+                      onClick={() => {
+                        setShowLogoutDialog(true);
+                        setIsSettingsOpen(false);
+                      }}
                       className="flex items-center gap-2 text-error hover:bg-error/10"
                     >
                       <LogOut size={16} />
