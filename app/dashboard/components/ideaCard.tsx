@@ -59,7 +59,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
 
   const [isVoting, setIsVoting] = useState(false);
   const [voteCountLocal, setVoteCountLocal] = useState(
-    idea.total_vote_value || 0
+    idea.total_vote_value || 0,
   );
   const [userVoteLocal, setUserVoteLocal] = useState(idea.user_vote_value || 0);
 

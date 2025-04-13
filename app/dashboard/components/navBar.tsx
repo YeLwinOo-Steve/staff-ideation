@@ -77,7 +77,10 @@ const NavBar = () => {
     setMounted(true);
 
     function handleClickOutside(event: MouseEvent) {
-      if (detailsRef.current && !detailsRef.current.contains(event.target as Node)) {
+      if (
+        detailsRef.current &&
+        !detailsRef.current.contains(event.target as Node)
+      ) {
         setIsSettingsOpen(false);
       }
     }
@@ -198,7 +201,11 @@ const NavBar = () => {
               </Link>
             </li>
             <li>
-              <details ref={detailsRef} open={isSettingsOpen} suppressHydrationWarning>
+              <details
+                ref={detailsRef}
+                open={isSettingsOpen}
+                suppressHydrationWarning
+              >
                 <summary
                   onClick={(e) => {
                     e.preventDefault();
