@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
@@ -71,9 +71,19 @@ const NavBar = () => {
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const { setTheme, resolvedTheme, theme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const detailsRef = useRef<HTMLDetailsElement>(null);
 
   useEffect(() => {
     setMounted(true);
+
+    function handleClickOutside(event: MouseEvent) {
+      if (detailsRef.current && !detailsRef.current.contains(event.target as Node)) {
+        setIsSettingsOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Theme handling
@@ -188,7 +198,7 @@ const NavBar = () => {
               </Link>
             </li>
             <li>
-              <details open={isSettingsOpen} suppressHydrationWarning>
+              <details ref={detailsRef} open={isSettingsOpen} suppressHydrationWarning>
                 <summary
                   onClick={(e) => {
                     e.preventDefault();
