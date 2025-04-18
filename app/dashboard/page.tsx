@@ -9,7 +9,6 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { PlusIcon, AlertCircle } from "lucide-react";
 import { hasPermission } from "@/app/lib/utils";
-import { Lightbulb } from "lucide-react";
 
 const containerVariants = {
   hidden: { opacity: 0 },
