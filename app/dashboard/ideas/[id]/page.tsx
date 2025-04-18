@@ -25,7 +25,7 @@ import { useToast } from "@/components/toast";
 import { AxiosError } from "axios";
 import ReportDialog from "../../components/ReportDialog";
 import { useAuthStore } from "@/store/authStore";
-import { hasPermission } from "@/app/lib/utils";
+import { hasPermission, hasAnyRole } from "@/app/lib/utils";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -112,7 +112,7 @@ const ZipDownloadBtn = () => {
           const errorMessage =
             err instanceof Error ? err.message : "An unknown error occurred";
           throw new Error(
-            `Error downloading file ${index + 1}: ${errorMessage}`,
+            `Error downloading file ${index + 1}: ${errorMessage}`
           );
         }
       }
@@ -205,6 +205,13 @@ const IdeaDetail = () => {
   const { showSuccessToast, showErrorToast } = useToast();
   const user = useAuthStore((state) => state.user);
   const canComment = hasPermission(user, "create comment");
+  const isCreator = user?.email === idea?.user_email;
+  const canDelete = isCreator || hasAnyRole(user, [
+    "Administrator",
+    "admin",
+    "QA Manager",
+    "QA Coordinators",
+  ]);
 
   useEffect(() => {
     if (idea) {
@@ -282,7 +289,9 @@ const IdeaDetail = () => {
     try {
       await deleteIdea(Number(id));
       showSuccessToast("Idea deleted successfully");
-      router.back();
+      setTimeout(() => {
+        router.back();
+      }, 1000);
     } catch (e) {
       console.error("Error deleting idea:", e);
       showErrorToast("Failed to delete idea");
@@ -304,7 +313,7 @@ const IdeaDetail = () => {
 
         // Now check the pending status after both operations are complete
         const isPendingIdea = pendingIdeas.some(
-          (idea) => idea.id === Number(id),
+          (idea) => idea.id === Number(id)
         );
         setIsPending(isPendingIdea);
 
@@ -409,25 +418,29 @@ const IdeaDetail = () => {
                 </motion.button>
               ) : (
                 <>
-                  <motion.button
-                    variants={buttonVariants}
-                    whileHover="hover"
-                    whileTap="tap"
-                    className="btn btn-md btn-primary"
-                  >
-                    <Pencil size={16} />
-                    <span className="font-bold">Edit</span>
-                  </motion.button>
-                  <motion.button
-                    variants={buttonVariants}
-                    whileHover="hover"
-                    whileTap="tap"
-                    className="btn btn-md btn-error"
-                    onClick={() => setShowDeleteDialog(true)}
-                  >
-                    <Trash size={16} />
-                    <span className="font-bold">Delete</span>
-                  </motion.button>
+                  {isCreator && (
+                    <motion.button
+                      variants={buttonVariants}
+                      whileHover="hover"
+                      whileTap="tap"
+                      className="btn btn-md btn-primary"
+                    >
+                      <Pencil size={16} />
+                      <span className="font-bold">Edit</span>
+                    </motion.button>
+                  )}
+                  {canDelete && (
+                    <motion.button
+                      variants={buttonVariants}
+                      whileHover="hover"
+                      whileTap="tap"
+                      className="btn btn-md btn-error"
+                      onClick={() => setShowDeleteDialog(true)}
+                    >
+                      <Trash size={16} />
+                      <span className="font-bold">Delete</span>
+                    </motion.button>
+                  )}
                 </>
               )}
             </div>
