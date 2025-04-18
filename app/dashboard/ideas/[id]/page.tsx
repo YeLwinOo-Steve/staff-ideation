@@ -12,6 +12,7 @@ import {
   X,
   Trash2Icon,
   Flag,
+  AlertCircle,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useApiStore } from "@/store/apiStore";
@@ -23,6 +24,8 @@ import { AnimatedNumber } from "../../components/animatedNumber";
 import { useToast } from "@/components/toast";
 import { AxiosError } from "axios";
 import ReportDialog from "../../components/ReportDialog";
+import { useAuthStore } from "@/store/authStore";
+import { hasPermission } from "@/app/lib/utils";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -65,6 +68,19 @@ const listContainerVariants = {
 };
 
 const zip = new JSZip();
+
+const bannerVariants = {
+  hidden: { opacity: 0, y: -20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+      damping: 15,
+    },
+  },
+};
 
 const ZipDownloadBtn = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -187,6 +203,8 @@ const IdeaDetail = () => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
   const { showSuccessToast, showErrorToast } = useToast();
+  const user = useAuthStore((state) => state.user);
+  const canComment = hasPermission(user, "create comment");
 
   useEffect(() => {
     if (idea) {
@@ -530,59 +548,78 @@ const IdeaDetail = () => {
             </motion.h2>
 
             {/* New Comment Form */}
-            <motion.form
-              variants={itemVariants}
-              onSubmit={handleCommentSubmit}
-              className="flex flex-col gap-4 bg-base-200 p-4 rounded-lg"
-            >
-              <textarea
-                className="textarea textarea-bordered w-full"
-                placeholder="Write your comment..."
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                rows={3}
-              />
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-sm checkbox-primary"
-                    checked={isAnonymousComment}
-                    onChange={(e) => setIsAnonymousComment(e.target.checked)}
-                  />
-                  <span className="text-sm opacity-75">
-                    Comment anonymously
-                  </span>
-                </label>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    className="btn btn-ghost btn-sm"
-                    onClick={() => {
-                      setNewComment("");
-                      setIsAnonymousComment(false);
-                    }}
-                    disabled={isSubmittingComment || !newComment.trim()}
-                  >
-                    <X size={16} />
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="btn btn-primary btn-sm"
-                    disabled={isSubmittingComment || !newComment.trim()}
-                    onClick={handleCommentSubmit}
-                  >
-                    {isSubmittingComment ? (
-                      <span className="loading loading-spinner loading-sm" />
-                    ) : (
-                      <Send size={16} />
-                    )}
-                    Comment
-                  </button>
+            {canComment ? (
+              <motion.form
+                variants={itemVariants}
+                onSubmit={handleCommentSubmit}
+                className="flex flex-col gap-4 bg-base-200 p-4 rounded-lg"
+              >
+                <textarea
+                  className="textarea textarea-bordered w-full"
+                  placeholder="Write your comment..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  rows={3}
+                />
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="checkbox checkbox-sm checkbox-primary"
+                      checked={isAnonymousComment}
+                      onChange={(e) => setIsAnonymousComment(e.target.checked)}
+                    />
+                    <span className="text-sm opacity-75">
+                      Comment anonymously
+                    </span>
+                  </label>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-sm"
+                      onClick={() => {
+                        setNewComment("");
+                        setIsAnonymousComment(false);
+                      }}
+                      disabled={isSubmittingComment || !newComment.trim()}
+                    >
+                      <X size={16} />
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="btn btn-primary btn-sm"
+                      disabled={isSubmittingComment || !newComment.trim()}
+                      onClick={handleCommentSubmit}
+                    >
+                      {isSubmittingComment ? (
+                        <span className="loading loading-spinner loading-sm" />
+                      ) : (
+                        <Send size={16} />
+                      )}
+                      Comment
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </motion.form>
+              </motion.form>
+            ) : (
+              <motion.div
+                variants={bannerVariants}
+                className="flex items-center gap-3 bg-info text-base-content rounded-lg p-4 w-full"
+              >
+                <AlertCircle className="w-5 h-5 shrink-0" />
+                <div className="space-y-1">
+                  <p className="text-md">
+                    No permission to{" "}
+                    <span className="font-bold">Create Comments</span>
+                  </p>
+                  <p className="text-sm opacity-70">
+                    Please contact your administrator or department coordinator
+                    to request comment creation permission for this platform.
+                  </p>
+                </div>
+              </motion.div>
+            )}
 
             {/* Comments List */}
             {comments.length === 0 ? (

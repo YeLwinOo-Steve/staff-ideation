@@ -7,7 +7,9 @@ import IdeaList from "./components/ideaList";
 import { useApiStore } from "@/store/apiStore";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, AlertCircle } from "lucide-react";
+import { hasPermission } from "@/app/lib/utils";
+import { Lightbulb } from "lucide-react";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -16,6 +18,19 @@ const containerVariants = {
     transition: {
       staggerChildren: 0.1,
       delayChildren: 0.2,
+    },
+  },
+};
+
+const bannerVariants = {
+  hidden: { opacity: 0, y: -20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+      damping: 15,
     },
   },
 };
@@ -66,27 +81,43 @@ export default function Dashboard() {
     total,
   ]);
 
+  const canCreateIdea = hasPermission(user, "create idea");
+
   return (
     <motion.div
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="p-6 max-w-7xl mx-auto"
+      className="p-6 space-y-6"
     >
       <div className="mb-8">
         <div className="flex flex-wrap justify-between items-center">
           <h1 className="text-2xl font-bold">
             Welcome, {user?.name.split(" ")[0]}!
           </h1>
-          <Link
-            href="/dashboard/ideas/create"
-            className="btn btn-primary btn-md"
-          >
-            <PlusIcon className="w-4 h-4" />
-            Create New Idea
-          </Link>
+          {canCreateIdea ? (
+            <Link
+              href="/dashboard/ideas/create"
+              className="btn btn-primary btn-md"
+            >
+              <PlusIcon className="w-4 h-4" />
+              Create New Idea
+            </Link>
+          ) : (
+            <motion.div
+              variants={bannerVariants}
+              className="inline-flex items-center gap-2 text-info-content bg-info rounded-lg py-1.5 px-3"
+            >
+              <AlertCircle className="w-4 h-4" />
+              <span className="text-sm">
+                No permission to <span className="font-bold">Create Ideas</span>
+              </span>
+            </motion.div>
+          )}
         </div>
+      </div>
 
+      <div className="mb-8">
         <div className="flex flex-wrap gap-4 my-4">
           <div className="stats shadow">
             <div className="stat">

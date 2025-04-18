@@ -16,7 +16,7 @@ export default function LogoutDialog({ isOpen, onClose }: LogoutDialogProps) {
     e.preventDefault();
     e.stopPropagation();
 
-    // TODO: Add your logout logic here (e.g. clear tokens, etc)
+    // TODO: Add logout logic here (e.g. clear tokens, etc)
 
     // Navigate to login page
     router.push("/login");
