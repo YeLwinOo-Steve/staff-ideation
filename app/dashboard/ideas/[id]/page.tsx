@@ -496,7 +496,7 @@ const IdeaDetail = () => {
                   )}
                 </div>
               </div>
-              <ZipDownloadBtn />
+              {idea.files && idea.files.length > 0 && <ZipDownloadBtn />}
             </div>
           </motion.div>
 
