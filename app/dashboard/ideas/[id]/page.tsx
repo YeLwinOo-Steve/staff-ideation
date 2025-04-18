@@ -25,7 +25,7 @@ import { useToast } from "@/components/toast";
 import { AxiosError } from "axios";
 import ReportDialog from "../../components/ReportDialog";
 import { useAuthStore } from "@/store/authStore";
-import { hasPermission, hasAnyRole } from "@/app/lib/utils";
+import { hasPermission } from "@/app/lib/utils";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -209,14 +209,7 @@ const IdeaDetail = () => {
   const user = apiUser || authUser;
   const canComment = hasPermission(user, "create comment");
   const isCreator = user?.email === idea?.user_email;
-  const canDelete =
-    isCreator ||
-    hasAnyRole(user, [
-      "Administrator",
-      "admin",
-      "QA Manager",
-      "QA Coordinators",
-    ]);
+  const canDelete = isCreator || hasPermission(user, "remove idea");
   const canDeleteComments = hasPermission(user, "remove comments");
 
   useEffect(() => {
