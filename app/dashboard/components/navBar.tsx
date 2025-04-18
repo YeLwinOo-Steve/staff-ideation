@@ -171,7 +171,7 @@ const NavBar = () => {
                 </Link>
               </li>
             )}
-            {hasPermission(user, "category") && (
+            {hasPermission(user, "manage category") && (
               <li>
                 <Link
                   href="/dashboard/categories"

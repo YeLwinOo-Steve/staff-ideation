@@ -112,7 +112,7 @@ const ZipDownloadBtn = () => {
           const errorMessage =
             err instanceof Error ? err.message : "An unknown error occurred";
           throw new Error(
-            `Error downloading file ${index + 1}: ${errorMessage}`
+            `Error downloading file ${index + 1}: ${errorMessage}`,
           );
         }
       }
@@ -206,12 +206,14 @@ const IdeaDetail = () => {
   const user = useAuthStore((state) => state.user);
   const canComment = hasPermission(user, "create comment");
   const isCreator = user?.email === idea?.user_email;
-  const canDelete = isCreator || hasAnyRole(user, [
-    "Administrator",
-    "admin",
-    "QA Manager",
-    "QA Coordinators",
-  ]);
+  const canDelete =
+    isCreator ||
+    hasAnyRole(user, [
+      "Administrator",
+      "admin",
+      "QA Manager",
+      "QA Coordinators",
+    ]);
 
   useEffect(() => {
     if (idea) {
@@ -313,7 +315,7 @@ const IdeaDetail = () => {
 
         // Now check the pending status after both operations are complete
         const isPendingIdea = pendingIdeas.some(
-          (idea) => idea.id === Number(id)
+          (idea) => idea.id === Number(id),
         );
         setIsPending(isPendingIdea);
 
