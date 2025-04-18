@@ -13,6 +13,8 @@ import {
   User2,
   History,
   ChevronLeft,
+  ClipboardList,
+  Clock,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -131,59 +133,83 @@ const LogsPage = () => {
         </div>
 
         <motion.div variants={containerVariants} className="space-y-6 mt-8">
-          {logs.map((log, index) => (
+          {logs.length === 0 ? (
             <motion.div
-              key={index}
               variants={itemVariants}
-              className="bg-base-100 rounded-2xl p-6 shadow-sm border border-base-200 hover:shadow-md transition-shadow"
+              className="flex flex-col items-center justify-center py-16 px-4"
             >
-              <div className="flex items-start gap-4">
-                <div className="avatar">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center ring-2 ring-base-200">
-                    {log.photo ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={log.photo}
-                        alt={log.user}
-                        className="rounded-full"
-                      />
-                    ) : (
-                      <span className="text-xl font-bold text-primary">
-                        {log.user.charAt(0)}
-                      </span>
-                    )}
-                  </div>
+              <div className="relative mb-6">
+                <div className="absolute inset-0 animate-ping bg-primary/20 rounded-full" />
+                <div className="relative bg-primary/10 p-6 rounded-full">
+                  <ClipboardList className="w-12 h-12 text-primary" />
                 </div>
-                <div className="flex-1 space-y-3">
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-lg">{log.user}</span>
-                    <span className="text-sm text-base-content/60">
-                      {log.email}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm">
-                    <div className="badge badge-ghost gap-1 py-3">
-                      {getActivityIcon(log.type)}
-                      {log.type.replace("_", " ")}
-                    </div>
-                    <span
-                      className={`px-3 py-1 rounded-lg font-medium ${getActionColor(log.action)}`}
-                    >
-                      {log.action}
-                    </span>
-                  </div>
-                  <div className="bg-base-200/50 rounded-lg p-3 text-base-content/80">
-                    {log.activity}
-                  </div>
-                  <div className="text-xs text-base-content/50 font-medium">
-                    {formatDistanceToNow(new Date(log.time), {
-                      addSuffix: true,
-                    })}
-                  </div>
+                <div className="absolute -right-2 -top-2 bg-base-100 rounded-full p-2">
+                  <Clock className="w-5 h-5 text-primary animate-pulse" />
                 </div>
               </div>
+              <h3 className="text-xl font-bold text-center m-2">
+                No Activity Logs Yet
+              </h3>
+              <p className="text-base-content/60 text-center max-w-sm">
+                This user hasn't performed any actions that would generate
+                activity logs. New activities will appear here as they occur.
+              </p>
             </motion.div>
-          ))}
+          ) : (
+            logs.map((log, index) => (
+              <motion.div
+                key={index}
+                variants={itemVariants}
+                className="bg-base-100 rounded-2xl p-6 shadow-sm border border-base-200 hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="avatar">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center ring-2 ring-base-200">
+                      {log.photo ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={log.photo}
+                          alt={log.user}
+                          className="rounded-full"
+                        />
+                      ) : (
+                        <span className="text-xl font-bold text-primary">
+                          {log.user.charAt(0)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex-1 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-lg">{log.user}</span>
+                      <span className="text-sm text-base-content/60">
+                        {log.email}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3 text-sm">
+                      <div className="badge badge-ghost gap-1 py-3">
+                        {getActivityIcon(log.type)}
+                        {log.type.replace("_", " ")}
+                      </div>
+                      <span
+                        className={`px-3 py-1 rounded-lg font-medium ${getActionColor(log.action)}`}
+                      >
+                        {log.action}
+                      </span>
+                    </div>
+                    <div className="bg-base-200/50 rounded-lg p-3 text-base-content/80">
+                      {log.activity}
+                    </div>
+                    <div className="text-xs text-base-content/50 font-medium">
+                      {formatDistanceToNow(new Date(log.time), {
+                        addSuffix: true,
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))
+          )}
         </motion.div>
       </div>
 
