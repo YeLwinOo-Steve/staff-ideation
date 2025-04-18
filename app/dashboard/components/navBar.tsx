@@ -153,16 +153,18 @@ const NavBar = () => {
                 Home
               </Link>
             </li>
-            <li>
-              <Link
-                href="/dashboard/users"
-                className={`${pathname === "/dashboard/users" ? "active" : ""} flex items-center gap-2`}
-                suppressHydrationWarning
-              >
-                <Users size={16} />
-                Users
-              </Link>
-            </li>
+            {hasPermission(user, "user") && (
+              <li>
+                <Link
+                  href="/dashboard/users"
+                  className={`${pathname === "/dashboard/users" ? "active" : ""} flex items-center gap-2`}
+                  suppressHydrationWarning
+                >
+                  <Users size={16} />
+                  Users
+                </Link>
+              </li>
+            )}
             <li>
               <Link
                 href="/dashboard/departments"
@@ -322,16 +324,20 @@ const NavBar = () => {
 
                   <div className="divider my-0.5 sm:my-1"></div>
 
-                  <Link
-                    href="/dashboard/users"
-                    className="flex items-center gap-2 sm:gap-3 py-1 px-3 sm:px-4 hover:bg-base-200 rounded-xl transition-colors"
-                    onClick={() => handleNavigation("/dashboard/users")}
-                  >
-                    <Users className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                    <span className="text-base sm:text-lg">Users</span>
-                  </Link>
+                  {hasPermission(user, "user") && (
+                    <>
+                      <Link
+                        href="/dashboard/users"
+                        className="flex items-center gap-2 sm:gap-3 py-1 px-3 sm:px-4 hover:bg-base-200 rounded-xl transition-colors"
+                        onClick={() => handleNavigation("/dashboard/users")}
+                      >
+                        <Users className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                        <span className="text-base sm:text-lg">Users</span>
+                      </Link>
 
-                  <div className="divider my-0.5 sm:my-1"></div>
+                      <div className="divider my-0.5 sm:my-1"></div>
+                    </>
+                  )}
 
                   <Link
                     href="/dashboard/departments"

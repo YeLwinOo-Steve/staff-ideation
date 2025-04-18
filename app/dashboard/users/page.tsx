@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { hasPermission } from "@/app/lib/utils";
 
 const UsersPage = () => {
   const { user: authUser } = useAuthStore();
@@ -55,6 +56,8 @@ const UsersPage = () => {
     },
   };
 
+  const user = useAuthStore((state) => state.user);
+
   return (
     <div className="p-6 min-h-screen pb-24 relative mx-auto max-w-7xl space-y-6">
       <div className="flex justify-between items-center mb-4">
@@ -63,13 +66,15 @@ const UsersPage = () => {
           <h1 className="text-2xl font-bold">Users </h1>
           <span className="badge badge-outline badge-lg">{total}</span>
         </div>
-        <button
-          className="btn btn-primary"
-          onClick={() => router.push("/dashboard/users/create")}
-        >
-          <PlusIcon className="w-4 h-4" />
-          Add New User
-        </button>
+        {hasPermission(user, "create user") && (
+          <button
+            className="btn btn-primary"
+            onClick={() => router.push("/dashboard/users/create")}
+          >
+            <PlusIcon className="w-4 h-4" />
+            Add New User
+          </button>
+        )}
       </div>
 
       {loading ? (
@@ -85,7 +90,7 @@ const UsersPage = () => {
                 <th>Name</th>
                 <th>Role</th>
                 <th>Department</th>
-                <th>Actions</th>
+                {hasPermission(authUser, "update user") && <th>Actions</th>}
               </tr>
             </thead>
             <motion.tbody
@@ -95,7 +100,10 @@ const UsersPage = () => {
             >
               {users.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-4">
+                  <td
+                    colSpan={hasPermission(authUser, "update user") ? 5 : 4}
+                    className="text-center py-4"
+                  >
                     No users found
                   </td>
                 </tr>
@@ -155,21 +163,25 @@ const UsersPage = () => {
                         ? user.department
                         : "No Department"}
                     </td>
-                    <td>
-                      <div
-                        className={`flex gap-2 ${authUser?.id === user.id || authUser?.roles.includes("admin") ? "hidden" : ""}`}
-                      >
-                        <button
-                          className="btn btn-sm btn-primary/10 hover:bg-primary border-0"
-                          onClick={() =>
-                            router.push(`/dashboard/users/edit/${user.id}`)
-                          }
+                    {hasPermission(authUser, "update user") && (
+                      <td>
+                        <div
+                          className={`flex gap-2 ${
+                            authUser?.id === user.id ? "hidden" : ""
+                          }`}
                         >
-                          <PencilIcon className="w-4 h-4" />
-                          <span className="text-xs">Edit</span>
-                        </button>
-                      </div>
-                    </td>
+                          <button
+                            className="btn btn-sm btn-primary/10 hover:bg-primary border-0"
+                            onClick={() =>
+                              router.push(`/dashboard/users/edit/${user.id}`)
+                            }
+                          >
+                            <PencilIcon className="w-4 h-4" />
+                            <span className="text-xs">Edit</span>
+                          </button>
+                        </div>
+                      </td>
+                    )}
                   </motion.tr>
                 ))
               )}

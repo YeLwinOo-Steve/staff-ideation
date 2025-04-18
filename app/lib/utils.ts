@@ -1,7 +1,16 @@
 import { User } from "@/api/models";
 
 /**
+ * Normalize a string to handle both singular and plural forms
+ * Removes trailing 's' and converts to lowercase
+ */
+function normalizePermission(permission: string): string {
+  return permission.toLowerCase().replace(/s$/, '');
+}
+
+/**
  * Check if user has a specific permission
+ * Handles both singular and plural forms (e.g., "user" matches "Users")
  */
 export function hasPermission(
   user: User | null,
@@ -9,10 +18,9 @@ export function hasPermission(
 ): boolean {
   if (!user?.permissions) return false;
 
-  // Convert both the required permission and user permissions to lowercase for case-insensitive comparison
-  const normalizedRequiredPermission = requiredPermission.toLowerCase();
+  const normalizedRequired = normalizePermission(requiredPermission);
   return user.permissions.some((permission) =>
-    permission.toLowerCase().includes(normalizedRequiredPermission)
+    normalizePermission(permission).includes(normalizedRequired)
   );
 }
 
