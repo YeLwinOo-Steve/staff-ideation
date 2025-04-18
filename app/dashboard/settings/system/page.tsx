@@ -333,7 +333,7 @@ export default function SystemSettingsPage() {
               </label>
               <RangePicker
                 picker="year"
-                className="w-full h-12 bg-base-200 border border-base-300 rounded-lg"
+                className="w-full h-12 bg-base-200 border border-base-300 rounded-lg [&_.ant-picker-input>input]:text-base-content [&_.ant-picker-input>input::placeholder]:text-base-content/50"
                 onChange={onAcademicYearChange}
                 value={
                   formData.academic_year
