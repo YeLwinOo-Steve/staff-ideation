@@ -93,6 +93,16 @@ export interface Vote {
   vote_value: number;
 }
 
+export interface UserLog {
+  user: string;
+  email: string;
+  photo: string | null;
+  type: "system_setting" | "idea" | "category" | "department" | "user";
+  action: "create" | "update" | "delete" | "submit";
+  activity: string;
+  time: string;
+}
+
 export interface PaginationLinks {
   first: string;
   last: string;

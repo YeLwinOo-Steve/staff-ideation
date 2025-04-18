@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { PencilIcon, PlusIcon, Users } from "lucide-react";
+import { PencilIcon, PlusIcon, Users, History } from "lucide-react";
 import { useApiStore } from "@/store/apiStore";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
@@ -19,6 +19,9 @@ const UsersPage = () => {
   } = useApiStore();
 
   const router = useRouter();
+  const canViewLogs =
+    hasPermission(authUser, "view user log") ||
+    hasPermission(authUser, "view user logs");
 
   useEffect(() => {
     fetchUsers();
@@ -91,6 +94,7 @@ const UsersPage = () => {
                 <th>Role</th>
                 <th>Department</th>
                 {hasPermission(authUser, "update user") && <th>Actions</th>}
+                {canViewLogs && <th>Logs</th>}
               </tr>
             </thead>
             <motion.tbody
@@ -101,7 +105,11 @@ const UsersPage = () => {
               {users.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={hasPermission(authUser, "update user") ? 5 : 4}
+                    colSpan={
+                      (hasPermission(authUser, "update user") ? 1 : 0) +
+                      (canViewLogs ? 1 : 0) +
+                      4
+                    }
                     className="text-center py-4"
                   >
                     No users found
@@ -180,6 +188,19 @@ const UsersPage = () => {
                             <span className="text-xs">Edit</span>
                           </button>
                         </div>
+                      </td>
+                    )}
+                    {canViewLogs && (
+                      <td>
+                        <button
+                          className="btn btn-sm btn-info/10 hover:bg-info border-0"
+                          onClick={() =>
+                            router.push(`/dashboard/users/logs/${user.id}`)
+                          }
+                        >
+                          <History className="w-4 h-4" />
+                          <span className="text-xs">Logs</span>
+                        </button>
                       </td>
                     )}
                   </motion.tr>

@@ -9,6 +9,7 @@ import {
   Vote,
   PaginatedResponse,
   Role,
+  UserLog,
 } from "@/api/models";
 
 export const departmentApi = {
@@ -89,4 +90,11 @@ export const voteApi = {
   update: (id: number, data: Partial<Vote>) =>
     apiClient.put<Vote>(`/votes/${id}`, data),
   delete: (id: number) => apiClient.delete(`/votes/${id}`),
+};
+
+export const userLogApi = {
+  getUserLogs: (id: number, page: number = 1) =>
+    apiClient.get<PaginatedResponse<UserLog>>(`/user-log/${id}`, {
+      params: { page },
+    }),
 };

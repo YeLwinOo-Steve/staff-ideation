@@ -7,6 +7,7 @@ import {
   SystemSetting,
   Role,
   Comment,
+  UserLog,
 } from "@/api/models";
 import * as api from "@/api/repository";
 import axios, { AxiosError } from "axios";
@@ -63,7 +64,13 @@ interface ApiState {
     total: number;
     loading: boolean;
   };
-
+  userLogPagination: {
+    data: UserLog[];
+    currentPage: number;
+    lastPage: number;
+    total: number;
+    loading: boolean;
+  };
   fetchRoles: () => Promise<void>;
   // Departments
   fetchDepartments: (options?: { isCache?: boolean }) => Promise<void>;
@@ -108,6 +115,8 @@ interface ApiState {
   deleteSystemSetting: (id: number) => Promise<void>;
   getCSV: (id: number) => Promise<Blob | undefined>;
 
+  // User Logs
+  fetchUserLogs: (id: number, page: number) => Promise<void>;
   // Error handling
   setError: (error: string | null) => void;
   clearError: () => void;
@@ -146,6 +155,13 @@ export const useApiStore = create<ApiState>((set, get) => ({
     loading: false,
   },
   userPagination: {
+    data: [],
+    currentPage: 1,
+    lastPage: 1,
+    total: 0,
+    loading: false,
+  },
+  userLogPagination: {
     data: [],
     currentPage: 1,
     lastPage: 1,
@@ -617,6 +633,43 @@ export const useApiStore = create<ApiState>((set, get) => ({
       const message = handleError(error, "Failed to create vote");
       set({ error: message });
       throw error;
+    }
+  },
+
+  fetchUserLogs: async (id: number, page = 1) => {
+    try {
+      set((state) => ({
+        ...state,
+        userLogPagination: {
+          ...state.userLogPagination,
+          loading: true,
+        },
+      }));
+
+      const response = await api.userLogApi.getUserLogs(id, page);
+
+      set((state) => ({
+        ...state,
+        userLogPagination: {
+          data: response.data.data,
+          currentPage: response.data.meta.current_page,
+          lastPage: response.data.meta.last_page,
+          total: response.data.meta.total,
+          loading: false,
+        },
+      }));
+    } catch (error) {
+      const message = handleError(error, "Failed to fetch user logs");
+      set({ error: message });
+      throw error;
+    } finally {
+      set((state) => ({
+        ...state,
+        userLogPagination: {
+          ...state.userLogPagination,
+          loading: false,
+        },
+      }));
     }
   },
 
