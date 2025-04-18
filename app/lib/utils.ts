@@ -5,7 +5,7 @@ import { User } from "@/api/models";
  * Removes trailing 's' and converts to lowercase
  */
 function normalizePermission(permission: string): string {
-  return permission.toLowerCase().replace(/s$/, '');
+  return permission.toLowerCase().replace(/s$/, "");
 }
 
 /**
@@ -14,13 +14,13 @@ function normalizePermission(permission: string): string {
  */
 export function hasPermission(
   user: User | null,
-  requiredPermission: string
+  requiredPermission: string,
 ): boolean {
   if (!user?.permissions) return false;
 
   const normalizedRequired = normalizePermission(requiredPermission);
   return user.permissions.some((permission) =>
-    normalizePermission(permission).includes(normalizedRequired)
+    normalizePermission(permission).includes(normalizedRequired),
   );
 }
 
@@ -29,10 +29,10 @@ export function hasPermission(
  */
 export function hasAnyPermission(
   user: User | null,
-  requiredPermissions: string[]
+  requiredPermissions: string[],
 ): boolean {
   return requiredPermissions.some((permission) =>
-    hasPermission(user, permission)
+    hasPermission(user, permission),
   );
 }
 
@@ -41,10 +41,10 @@ export function hasAnyPermission(
  */
 export function hasAllPermissions(
   user: User | null,
-  requiredPermissions: string[]
+  requiredPermissions: string[],
 ): boolean {
   return requiredPermissions.every((permission) =>
-    hasPermission(user, permission)
+    hasPermission(user, permission),
   );
 }
 
@@ -56,6 +56,6 @@ export function hasRole(user: User | null, role: string): boolean {
 
   const normalizedRole = role.toLowerCase();
   return user.roles.some(
-    (userRole) => userRole.toLowerCase() === normalizedRole
+    (userRole) => userRole.toLowerCase() === normalizedRole,
   );
 }
