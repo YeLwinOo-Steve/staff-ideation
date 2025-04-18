@@ -6,8 +6,9 @@ import { Avatar } from "@/app/components/Avatar";
 
 interface DepartmentCardProps {
   department: Department;
-  onEdit: (dept: Department) => void;
-  onDelete: (dept: Department) => void;
+  onEditClick: (dept: Department) => void;
+  onDeleteClick: (dept: Department) => void;
+  showActions?: boolean;
   qaCoordinator?: User | null;
 }
 
@@ -30,8 +31,9 @@ const itemVariants = {
 
 export function DepartmentCard({
   department,
-  onEdit,
-  onDelete,
+  onEditClick,
+  onDeleteClick,
+  showActions,
   qaCoordinator,
 }: DepartmentCardProps) {
   return (
@@ -53,28 +55,30 @@ export function DepartmentCard({
                 {department.department_name}
               </h3>
             </div>
-            <div className="flex gap-2">
-              <motion.button
-                className="btn btn-circle btn-sm bg-primary/50 hover:bg-primary border-0"
-                onClick={() => onEdit(department)}
-                whileHover={{
-                  scale: 1.1,
-                }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <PencilIcon className="w-4 h-4 text-white group-hover:text-white" />
-              </motion.button>
-              <motion.button
-                className="btn btn-circle btn-sm bg-error hover:bg-error border-0"
-                onClick={() => onDelete(department)}
-                whileHover={{
-                  scale: 1.1,
-                }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <Trash2Icon className="w-4 h-4 text-white group-hover:text-error" />
-              </motion.button>
-            </div>
+            {showActions && (
+              <div className="flex gap-2">
+                <motion.button
+                  className="btn btn-circle btn-sm bg-primary/50 hover:bg-primary border-0"
+                  onClick={() => onEditClick(department)}
+                  whileHover={{
+                    scale: 1.1,
+                  }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <PencilIcon className="w-4 h-4 text-white group-hover:text-white" />
+                </motion.button>
+                <motion.button
+                  className="btn btn-circle btn-sm bg-error hover:bg-error border-0"
+                  onClick={() => onDeleteClick(department)}
+                  whileHover={{
+                    scale: 1.1,
+                  }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <Trash2Icon className="w-4 h-4 text-white group-hover:text-error" />
+                </motion.button>
+              </div>
+            )}
           </div>
 
           <div className="divider divider-primary before:h-[1px] after:h-[1px] my-0"></div>

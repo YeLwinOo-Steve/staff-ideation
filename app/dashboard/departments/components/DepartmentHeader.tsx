@@ -1,8 +1,9 @@
-import { Building2, PlusIcon } from "lucide-react";
+import { Building2, Plus } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface DepartmentHeaderProps {
   onAddClick: () => void;
+  showAddButton: boolean;
 }
 
 const itemVariants = {
@@ -22,23 +23,28 @@ const itemVariants = {
   },
 };
 
-export function DepartmentHeader({ onAddClick }: DepartmentHeaderProps) {
+export function DepartmentHeader({
+  onAddClick,
+  showAddButton,
+}: DepartmentHeaderProps) {
   return (
     <div className="flex justify-between flex-wrap items-center gap-4 mb-8">
       <motion.div variants={itemVariants} className="flex items-center gap-3">
         <Building2 className="w-8 h-8 text-primary" />
         <h1 className="text-2xl font-bold">Departments</h1>
       </motion.div>
-      <motion.button
-        variants={itemVariants}
-        className="btn btn-primary ml-auto"
-        onClick={onAddClick}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        <PlusIcon className="w-5 h-5" />
-        Add Department
-      </motion.button>
+      {showAddButton && (
+        <motion.button
+          variants={itemVariants}
+          className="btn btn-primary ml-auto"
+          onClick={onAddClick}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <Plus className="w-5 h-5" />
+          Add Department
+        </motion.button>
+      )}
     </div>
   );
 }

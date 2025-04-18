@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { Department, User } from "@/api/models";
 import { useApiStore } from "@/store/apiStore";
+import { useAuthStore } from "@/store/authStore";
 import { DepartmentHeader } from "./components/DepartmentHeader";
 import { DepartmentList } from "./components/DepartmentList";
 import { DepartmentModals } from "./components/DepartmentModals";
+import { hasAnyRole } from "../../lib/utils";
 
 export default function DepartmentsPage() {
   // State
@@ -31,7 +33,14 @@ export default function DepartmentsPage() {
     deleteDepartment,
     isLoading: isLoadingDepartments,
     isLoadingAllUsers,
+    user: apiUser,
   } = useApiStore();
+
+  const { user: authUser } = useAuthStore();
+  const user = apiUser || authUser;
+
+  // Check if user has admin permissions
+  const hasActions = hasAnyRole(user, ["admin", "administrator"]);
 
   // Effects
   useEffect(() => {
@@ -109,14 +118,18 @@ export default function DepartmentsPage() {
 
   return (
     <div className="container mx-auto p-6 max-w-7xl space-y-6">
-      <DepartmentHeader onAddClick={handleAddClick} />
+      <DepartmentHeader
+        onAddClick={handleAddClick}
+        showAddButton={hasActions || false}
+      />
 
       <DepartmentList
         departments={departments}
         allUsers={allUsers}
         isLoading={isLoadingDepartments}
-        onEdit={handleEditClick}
-        onDelete={handleDeleteClick}
+        onEditClick={handleEditClick}
+        onDeleteClick={handleDeleteClick}
+        hasAdminPermissions={hasActions}
       />
 
       <DepartmentModals

@@ -4,8 +4,9 @@ import { DepartmentCard } from "./DepartmentCard";
 
 interface DepartmentListProps {
   departments: Department[];
-  onEdit: (dept: Department) => void;
-  onDelete: (dept: Department) => void;
+  onEditClick: (department: Department) => void;
+  onDeleteClick: (department: Department) => void;
+  hasAdminPermissions?: boolean;
   allUsers: User[];
   isLoading: boolean;
 }
@@ -40,8 +41,9 @@ const itemVariants = {
 
 export function DepartmentList({
   departments,
-  onEdit,
-  onDelete,
+  onEditClick,
+  onDeleteClick,
+  hasAdminPermissions,
   allUsers,
   isLoading,
 }: DepartmentListProps) {
@@ -69,8 +71,9 @@ export function DepartmentList({
         >
           <DepartmentCard
             department={department}
-            onEdit={onEdit}
-            onDelete={onDelete}
+            onEditClick={onEditClick}
+            onDeleteClick={onDeleteClick}
+            showActions={hasAdminPermissions}
             qaCoordinator={allUsers.find(
               (u) => u.id === department.QACoordinatorID,
             )}
