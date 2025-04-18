@@ -148,10 +148,10 @@ const LogsPage = () => {
                 </div>
               </div>
               <h3 className="text-xl font-bold text-center m-2">
-                No Activity Logs Yet
+                No Activity Logs Yet!
               </h3>
               <p className="text-base-content/60 text-center max-w-sm">
-                This user hasn't performed any actions that would generate
+                This user hasn&apos;t performed any actions that would generate
                 activity logs. New activities will appear here as they occur.
               </p>
             </motion.div>
