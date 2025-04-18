@@ -10,6 +10,7 @@ import {
 } from "@/api/models";
 import * as api from "@/api/repository";
 import axios, { AxiosError } from "axios";
+import { useAuthStore } from "./authStore";
 
 // Helper function to extract error message
 const handleError = (error: unknown, defaultMessage: string): string => {
@@ -102,7 +103,7 @@ interface ApiState {
   createSystemSetting: (data: Partial<SystemSetting>) => Promise<void>;
   updateSystemSetting: (
     id: number,
-    data: Partial<SystemSetting>,
+    data: Partial<SystemSetting>
   ) => Promise<void>;
   deleteSystemSetting: (id: number) => Promise<void>;
   getCSV: (id: number) => Promise<Blob | undefined>;
@@ -261,6 +262,13 @@ export const useApiStore = create<ApiState>((set, get) => ({
 
   getUser: async (id) => {
     try {
+      // Check if the requested user is the authenticated user
+      const authUser = useAuthStore.getState().user;
+      if (authUser && authUser.id === id) {
+        return authUser;
+      }
+
+      // If not the auth user or no auth user, fetch from API
       set({ isLoading: true });
       const response = await api.userApi.getOne(id);
       set({ user: response.data.data });
@@ -632,13 +640,13 @@ export const useApiStore = create<ApiState>((set, get) => ({
 
       const remainingPages = Array.from(
         { length: lastPage - 1 },
-        (_, i) => i + 2,
+        (_, i) => i + 2
       );
       await Promise.all(
         remainingPages.map(async (page) => {
           const pageResponse = await api.userApi.getAll(page);
           allUsers = [...allUsers, ...pageResponse.data.data];
-        }),
+        })
       );
 
       set({ allUsers });
