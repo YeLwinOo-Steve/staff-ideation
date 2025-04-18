@@ -3,11 +3,8 @@ import IdeaCard from "./ideaCard";
 import { useApiStore } from "@/store/apiStore";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-
-interface IdeaListProps {
-  baseUrl?: string;
-  gridCols?: number;
-}
+import { useAuthStore } from "@/store/authStore";
+import { hasPermission } from "@/app/lib/utils";
 
 const containerVariants = {
   hidden: { opacity: 1 },
@@ -35,7 +32,7 @@ const itemVariants = {
   },
 };
 
-export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
+export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
   const [page, setPage] = useState(1);
   const [latest, setLatest] = useState<boolean | null>(null);
   const [popular, setPopular] = useState<boolean | null>(null);
@@ -52,6 +49,8 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
     fetchUsers,
     getToSubmit,
   } = useApiStore();
+  const user = useAuthStore((state) => state.user);
+  const canSubmitIdea = hasPermission(user, "idea submission");
 
   const displayedIdeas = activeTab === "pending" ? pendingIdeas : ideas;
   const currentPageToShow =
@@ -87,72 +86,56 @@ export default function IdeaList({ gridCols = 3 }: IdeaListProps) {
   };
 
   return (
-    <div className="space-y-6 pb-24 w-full">
-      {/* Header with tabs and filters - Always visible */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-        className="flex flex-col sm:flex-row justify-between items-center gap-4 w-full"
-      >
-        <div className="tabs tabs-boxed">
-          <button
-            className={`tab ${activeTab === "all" ? "tab-active" : ""}`}
-            onClick={() => handleTabChange("all")}
-          >
-            All Ideas
-          </button>
-          <button
-            className={`tab ${activeTab === "pending" ? "tab-active" : ""}`}
-            onClick={() => handleTabChange("pending")}
-          >
-            Pending Ideas
-          </button>
-        </div>
-
-        {activeTab === "all" && (
-          <div className="flex gap-4 justify-center sm:justify-end">
-            <motion.label
-              variants={itemVariants}
-              className="flex items-center gap-2"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+    <div className="w-full max-w-7xl mx-auto space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        {canSubmitIdea ? (
+          <div className="tabs tabs-boxed">
+            <button
+              className={`tab ${activeTab === "all" ? "tab-active" : ""}`}
+              onClick={() => handleTabChange("all")}
             >
-              <input
-                type="radio"
-                name="radio-4"
-                className="radio radio-primary"
-                checked={popular === true}
-                onChange={() => {
-                  setPage(1);
-                  setPopular(true);
-                  setLatest(null);
-                }}
-              />
-              Popular
-            </motion.label>
-            <motion.label
-              variants={itemVariants}
-              className="flex items-center gap-2"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              All Ideas
+            </button>
+            <button
+              className={`tab ${activeTab === "pending" ? "tab-active" : ""}`}
+              onClick={() => handleTabChange("pending")}
             >
-              <input
-                type="radio"
-                name="radio-4"
-                className="radio radio-primary"
-                checked={latest === true}
-                onChange={() => {
-                  setPage(1);
-                  setPopular(false);
-                  setLatest(true);
-                }}
-              />
-              Latest
-            </motion.label>
+              Pending Ideas
+            </button>
           </div>
+        ) : (
+          <h2 className="text-xl font-bold">All Ideas</h2>
         )}
-      </motion.div>
+
+        <div className="flex items-center gap-4">
+          <div className="join">
+            <input
+              type="radio"
+              name="sort"
+              className="join-item btn btn-sm"
+              aria-label="Latest"
+              checked={latest === true}
+              onChange={() => {
+                setPage(1);
+                setPopular(false);
+                setLatest(true);
+              }}
+            />
+            <input
+              type="radio"
+              name="sort"
+              className="join-item btn btn-sm"
+              aria-label="Popular"
+              checked={popular === true}
+              onChange={() => {
+                setPage(1);
+                setPopular(true);
+                setLatest(null);
+              }}
+            />
+          </div>
+        </div>
+      </div>
 
       {/* Ideas Grid with Loading State */}
       {isLoading ? (
