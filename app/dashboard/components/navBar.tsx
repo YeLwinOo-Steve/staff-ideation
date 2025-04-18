@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import Link from "next/link";
+import { useAuthStore } from "@/store/authStore";
+import { hasPermission } from "@/app/lib/utils";
 
 import {
   Lightbulb,
@@ -72,6 +74,7 @@ const NavBar = () => {
   const { setTheme, resolvedTheme, theme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const detailsRef = useRef<HTMLDetailsElement>(null);
+  const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
     setMounted(true);
@@ -190,16 +193,18 @@ const NavBar = () => {
                 Reports
               </Link>
             </li> */}
-            <li>
-              <Link
-                href="/dashboard/settings/system"
-                className={`flex items-center gap-2 ${pathname === "/dashboard/settings/system" ? "active" : ""}`}
-                suppressHydrationWarning
-              >
-                <Sliders size={16} />
-                System
-              </Link>
-            </li>
+            {hasPermission(user, "system setting") && (
+              <li>
+                <Link
+                  href="/dashboard/settings/system"
+                  className={`flex items-center gap-2 ${pathname === "/dashboard/settings/system" ? "active" : ""}`}
+                  suppressHydrationWarning
+                >
+                  <Sliders size={16} />
+                  System
+                </Link>
+              </li>
+            )}
             <li>
               <details
                 ref={detailsRef}
@@ -359,17 +364,18 @@ const NavBar = () => {
                     <span className="text-base sm:text-lg">Reports</span>
                   </Link> */}
                   <div className="divider my-0.5 sm:my-1"></div>
-                  <Link
-                    href="/dashboard/settings/system"
-                    className="flex items-center gap-2 sm:gap-3 py-1 px-2 sm:px-3 hover:bg-base-300 rounded-lg transition-colors"
-                    onClick={() =>
-                      handleNavigation("/dashboard/settings/system")
-                    }
-                  >
-                    <Sliders className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                    <span className="text-sm sm:text-base">System</span>
-                  </Link>
-
+                  {hasPermission(user, "system setting") && (
+                    <Link
+                      href="/dashboard/settings/system"
+                      className="flex items-center gap-2 sm:gap-3 py-1 px-2 sm:px-3 hover:bg-base-300 rounded-lg transition-colors"
+                      onClick={() =>
+                        handleNavigation("/dashboard/settings/system")
+                      }
+                    >
+                      <Sliders className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                      <span className="text-sm sm:text-base">System</span>
+                    </Link>
+                  )}
                   <div className="divider my-0.5 sm:my-1"></div>
 
                   {/* Settings Section */}
