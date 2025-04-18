@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useAuthStore } from "@/store/authStore";
-import { hasPermission } from "@/app/lib/utils";
+import { hasPermission, hasRole, hasAnyRole } from "@/app/lib/utils";
 
 import {
   Lightbulb,
@@ -105,6 +105,12 @@ const NavBar = () => {
     setIsSettingsOpen(false);
   };
 
+  const canManageDepartments = hasAnyRole(user, [
+    "Administrator",
+    "admin",
+    "QA Manager"
+  ]);
+
   if (!mounted) {
     return (
       <div className="navbar bg-base-100 z-50">
@@ -165,26 +171,30 @@ const NavBar = () => {
                 </Link>
               </li>
             )}
-            <li>
-              <Link
-                href="/dashboard/departments"
-                className={`${pathname === "/dashboard/departments" ? "active" : ""} flex items-center gap-2`}
-                suppressHydrationWarning
-              >
-                <Building2 size={16} />
-                Departments
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/dashboard/categories"
-                className={`${pathname === "/dashboard/categories" ? "active" : ""} flex items-center gap-2`}
-                suppressHydrationWarning
-              >
-                <Blocks size={16} />
-                Categories
-              </Link>
-            </li>
+            {hasPermission(user, "category") && (
+              <li>
+                <Link
+                  href="/dashboard/categories"
+                  className={`${pathname === "/dashboard/categories" ? "active" : ""} flex items-center gap-2`}
+                  suppressHydrationWarning
+                >
+                  <Blocks size={16} />
+                  Categories
+                </Link>
+              </li>
+            )}
+            {canManageDepartments && (
+              <li>
+                <Link
+                  href="/dashboard/departments"
+                  className={`${pathname === "/dashboard/departments" ? "active" : ""} flex items-center gap-2`}
+                  suppressHydrationWarning
+                >
+                  <Building2 size={16} />
+                  Departments
+                </Link>
+              </li>
+            )}
             {/* <li>
               <Link
                 href="/dashboard/reports"
@@ -339,25 +349,35 @@ const NavBar = () => {
                     </>
                   )}
 
-                  <Link
-                    href="/dashboard/departments"
-                    className="flex items-center gap-2 sm:gap-3 py-1 px-3 sm:px-4 hover:bg-base-200 rounded-xl transition-colors"
-                    onClick={() => handleNavigation("/dashboard/departments")}
-                  >
-                    <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                    <span className="text-base sm:text-lg">Departments</span>
-                  </Link>
+                  {hasPermission(user, "category") && (
+                    <>
+                      <Link
+                        href="/dashboard/categories"
+                        className="flex items-center gap-2 sm:gap-3 py-1 px-3 sm:px-4 hover:bg-base-200 rounded-xl transition-colors"
+                        onClick={() => handleNavigation("/dashboard/categories")}
+                      >
+                        <Blocks className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                        <span className="text-base sm:text-lg">Categories</span>
+                      </Link>
 
-                  <div className="divider my-0.5 sm:my-1"></div>
+                      <div className="divider my-0.5 sm:my-1"></div>
+                    </>
+                  )}
 
-                  <Link
-                    href="/dashboard/categories"
-                    className="flex items-center gap-2 sm:gap-3 py-1 px-3 sm:px-4 hover:bg-base-200 rounded-xl transition-colors"
-                    onClick={() => handleNavigation("/dashboard/categories")}
-                  >
-                    <Blocks className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                    <span className="text-base sm:text-lg">Categories</span>
-                  </Link>
+                  {canManageDepartments && (
+                    <>
+                      <Link
+                        href="/dashboard/departments"
+                        className="flex items-center gap-2 sm:gap-3 py-1 px-3 sm:px-4 hover:bg-base-200 rounded-xl transition-colors"
+                        onClick={() => handleNavigation("/dashboard/departments")}
+                      >
+                        <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                        <span className="text-base sm:text-lg">Departments</span>
+                      </Link>
+
+                      <div className="divider my-0.5 sm:my-1"></div>
+                    </>
+                  )}
 
                   <div className="divider my-0.5 sm:my-1"></div>
 

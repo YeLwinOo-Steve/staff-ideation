@@ -59,3 +59,13 @@ export function hasRole(user: User | null, role: string): boolean {
     (userRole) => userRole.toLowerCase() === normalizedRole,
   );
 }
+
+/**
+ * Check if user has any of the specified roles
+ * @param user - The user object containing roles and permissions
+ * @param roles - Array of roles to check for (case insensitive)
+ * @returns boolean indicating if user has any of the roles
+ */
+export function hasAnyRole(user: User | null, roles: string[]): boolean {
+  return roles.some((role) => hasRole(user, role));
+}
