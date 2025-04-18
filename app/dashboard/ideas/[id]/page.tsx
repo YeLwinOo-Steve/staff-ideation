@@ -191,6 +191,8 @@ const IdeaDetail = () => {
     submitIdea,
     error,
     getToSubmit,
+    deleteComment,
+    user: apiUser,
   } = useApiStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPending, setIsPending] = useState(false);
@@ -203,7 +205,8 @@ const IdeaDetail = () => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
   const { showSuccessToast, showErrorToast } = useToast();
-  const user = useAuthStore((state) => state.user);
+  const { user: authUser } = useAuthStore();
+  const user = apiUser || authUser;
   const canComment = hasPermission(user, "create comment");
   const isCreator = user?.email === idea?.user_email;
   const canDelete =
@@ -214,6 +217,7 @@ const IdeaDetail = () => {
       "QA Manager",
       "QA Coordinators",
     ]);
+  const canDeleteComments = hasPermission(user, "remove comments");
 
   useEffect(() => {
     if (idea) {
@@ -297,6 +301,20 @@ const IdeaDetail = () => {
     } catch (e) {
       console.error("Error deleting idea:", e);
       showErrorToast("Failed to delete idea");
+    }
+  };
+
+  const handleDeleteComment = async (commentId: number) => {
+    try {
+      await deleteComment(commentId);
+      showSuccessToast("Comment deleted successfully");
+      if (id) {
+        await getIdea(Number(id));
+        await getCommentsForIdea(Number(id));
+      }
+    } catch (error) {
+      console.log("Failed to delete comment", error);
+      showErrorToast("Failed to delete comment");
     }
   };
 
@@ -670,6 +688,20 @@ const IdeaDetail = () => {
                               addSuffix: true,
                             })}
                           </span>
+                        )}
+                      </div>
+                      <div className="ml-auto">
+                        {canDeleteComments && (
+                          <motion.button
+                            className="btn btn-circle btn-sm bg-error/50 hover:bg-error border-0"
+                            onClick={() => handleDeleteComment(comment.id)}
+                            variants={buttonVariants}
+                            initial="initial"
+                            whileTap="tap"
+                            whileHover="hover"
+                          >
+                            <Trash2Icon className="w-4 h-4" />
+                          </motion.button>
                         )}
                       </div>
                     </div>

@@ -96,6 +96,8 @@ interface ApiState {
   // Comments
   getCommentsForIdea: (id: number) => Promise<void>;
   createComment: (data: FormData) => Promise<void>;
+  deleteComment: (id: number) => Promise<void>;
+
   // Categories
   fetchCategories: () => Promise<void>;
   createCategory: (name: string) => Promise<void>;
@@ -521,6 +523,16 @@ export const useApiStore = create<ApiState>((set, get) => ({
       get().getCommentsForIdea(Number(ideaId));
     } catch (error) {
       const message = handleError(error, "Failed to create comment");
+      set({ error: message });
+      throw error;
+    }
+  },
+
+  deleteComment: async (id) => {
+    try {
+      await api.commentApi.delete(id);
+    } catch (error) {
+      const message = handleError(error, "Failed to delete comment");
       set({ error: message });
       throw error;
     }
