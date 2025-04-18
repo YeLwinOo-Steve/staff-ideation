@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useAuthStore } from "@/store/authStore";
-import { hasPermission, hasRole, hasAnyRole } from "@/app/lib/utils";
+import { hasPermission, hasAnyRole } from "@/app/lib/utils";
 
 import {
   Lightbulb,
