@@ -222,7 +222,6 @@ const IdeaDetail = () => {
   const canEdit = hasPermission(user, "update idea") && !isPendingIdea;
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
-  const [isUpdatingCategories, setIsUpdatingCategories] = useState(false);
 
   useEffect(() => {
     if (idea) {
@@ -385,8 +384,11 @@ const IdeaDetail = () => {
     setSelectedCategoryIds(newCategoryIds);
 
     try {
-      setIsUpdatingCategories(true);
       await updateIdeaCategory(Number(id), newCategoryIds.join(","));
+      // Update the idea object locally
+      if (idea) {
+        idea.category = newCategories;
+      }
       showSuccessToast("Categories updated successfully");
     } catch (error) {
       console.log("Failed to update categories", error);
@@ -398,8 +400,6 @@ const IdeaDetail = () => {
         .filter((id): id is number => id !== undefined);
       setSelectedCategoryIds(revertCategoryIds);
       showErrorToast("Failed to update categories");
-    } finally {
-      setIsUpdatingCategories(false);
     }
   };
 
@@ -521,7 +521,6 @@ const IdeaDetail = () => {
                           animate={{ scale: 1, opacity: 1 }}
                           transition={{ delay: index * 0.1 }}
                           onClick={() => handleCategoryToggle(cat.name, cat.id)}
-                          disabled={isUpdatingCategories}
                           className={`badge badge-lg gap-1 px-3 py-3 cursor-pointer transition-all duration-200 ${
                             selectedCategories.includes(cat.name)
                               ? "bg-primary text-primary-content border-primary"
@@ -536,10 +535,6 @@ const IdeaDetail = () => {
                             }`}
                           />
                           {cat.name}
-                          {isUpdatingCategories &&
-                            selectedCategories.includes(cat.name) && (
-                              <span className="loading loading-spinner loading-xs" />
-                            )}
                         </motion.button>
                       ))
                     : Array.isArray(idea.category) &&
