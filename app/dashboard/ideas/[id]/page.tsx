@@ -198,6 +198,9 @@ const IdeaDetail = () => {
     getToSubmit,
     deleteComment,
     user: apiUser,
+    categories,
+    fetchCategories,
+    updateIdeaCategory,
   } = useApiStore();
   const [isVoting, setIsVoting] = useState(false);
   const [userVoteLocal, setUserVoteLocal] = useState<number>(0);
@@ -214,11 +217,12 @@ const IdeaDetail = () => {
   const isCreator = user?.email === idea?.user_email;
   const canDelete = isCreator || hasPermission(user, "remove idea");
   const canDeleteComments = hasPermission(user, "remove comments");
-  console.log("pendingIdeas", pendingIdeas);
   const isPendingIdea =
     pendingIdeas?.find((i) => i.id === Number(id))?.isPending || false;
-  console.log("isPendingIdea", isPendingIdea);
   const canEdit = hasPermission(user, "update idea") && !isPendingIdea;
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
+  const [isUpdatingCategories, setIsUpdatingCategories] = useState(false);
 
   useEffect(() => {
     if (idea) {
@@ -226,6 +230,25 @@ const IdeaDetail = () => {
       setVoteCountLocal(idea.total_vote_value || 0);
     }
   }, [idea]);
+
+  useEffect(() => {
+    if (idea?.category) {
+      setSelectedCategories(
+        Array.isArray(idea.category) ? idea.category : [idea.category],
+      );
+      // Set initial category IDs
+      const categoryIds = (
+        Array.isArray(idea.category) ? idea.category : [idea.category]
+      )
+        .map((catName) => categories.find((c) => c.name === catName)?.id)
+        .filter((id): id is number => id !== undefined);
+      setSelectedCategoryIds(categoryIds);
+    }
+  }, [idea, categories]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   useEffect(() => {
     const loadIdea = async () => {
@@ -346,6 +369,40 @@ const IdeaDetail = () => {
     }
   };
 
+  const handleCategoryToggle = async (
+    categoryName: string,
+    categoryId: number,
+  ) => {
+    const newCategories = selectedCategories.includes(categoryName)
+      ? selectedCategories.filter((cat) => cat !== categoryName)
+      : [...selectedCategories, categoryName];
+
+    const newCategoryIds = selectedCategoryIds.includes(categoryId)
+      ? selectedCategoryIds.filter((id) => id !== categoryId)
+      : [...selectedCategoryIds, categoryId];
+
+    setSelectedCategories(newCategories);
+    setSelectedCategoryIds(newCategoryIds);
+
+    try {
+      setIsUpdatingCategories(true);
+      await updateIdeaCategory(Number(id), newCategoryIds.join(","));
+      showSuccessToast("Categories updated successfully");
+    } catch (error) {
+      console.log("Failed to update categories", error);
+      setSelectedCategories(Array.isArray(idea?.category) ? idea.category : []);
+      const revertCategoryIds = (
+        Array.isArray(idea?.category) ? idea.category : []
+      )
+        .map((catName) => categories.find((c) => c.name === catName)?.id)
+        .filter((id): id is number => id !== undefined);
+      setSelectedCategoryIds(revertCategoryIds);
+      showErrorToast("Failed to update categories");
+    } finally {
+      setIsUpdatingCategories(false);
+    }
+  };
+
   if (loadingStage !== "complete" || isLoading) {
     return (
       <div className="bg-base-100 min-h-screen">
@@ -455,9 +512,37 @@ const IdeaDetail = () => {
             <div className="flex justify-between items-start">
               <div className="space-y-3">
                 <h1 className="font-bold text-2xl">{idea.title}</h1>
-                {idea.category && (
-                  <div className="flex flex-wrap gap-2 pb-4">
-                    {Array.isArray(idea.category) ? (
+                <div className="flex flex-wrap gap-2 pb-4">
+                  {isPendingIdea
+                    ? categories.map((cat, index) => (
+                        <motion.button
+                          key={cat.id}
+                          initial={{ scale: 0.8, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ delay: index * 0.1 }}
+                          onClick={() => handleCategoryToggle(cat.name, cat.id)}
+                          disabled={isUpdatingCategories}
+                          className={`badge badge-lg gap-1 px-3 py-3 cursor-pointer transition-all duration-200 ${
+                            selectedCategories.includes(cat.name)
+                              ? "bg-primary text-primary-content border-primary"
+                              : "bg-base-200 hover:bg-base-300 border-base-300"
+                          }`}
+                        >
+                          <div
+                            className={`w-2 h-2 rounded-full ${
+                              selectedCategories.includes(cat.name)
+                                ? "bg-primary-content"
+                                : "bg-base-content/40"
+                            }`}
+                          />
+                          {cat.name}
+                          {isUpdatingCategories &&
+                            selectedCategories.includes(cat.name) && (
+                              <span className="loading loading-spinner loading-xs" />
+                            )}
+                        </motion.button>
+                      ))
+                    : Array.isArray(idea.category) &&
                       idea.category.map((cat, index) => (
                         <motion.div
                           key={index}
@@ -469,19 +554,8 @@ const IdeaDetail = () => {
                           <div className="w-2 h-2 rounded-full bg-primary/40" />
                           {cat}
                         </motion.div>
-                      ))
-                    ) : (
-                      <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className="badge badge-lg bg-primary/10 text-primary border-primary/20 gap-1 px-3 py-3"
-                      >
-                        <div className="w-2 h-2 rounded-full bg-primary/40" />
-                        {idea.category}
-                      </motion.div>
-                    )}
-                  </div>
-                )}
+                      ))}
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <motion.button
