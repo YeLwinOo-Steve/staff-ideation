@@ -11,6 +11,7 @@ import { useToast } from "@/components/toast";
 import CategoryChip from "../../../components/categoryChip";
 import Image from "next/image";
 import { uploadToCloudinary } from "@/util/uploadCloudinary";
+import { Document } from "@/api/models";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -31,7 +32,8 @@ const IdeaEditPage = () => {
   const router = useRouter();
   const { id } = useParams();
   const { showSuccessToast, showErrorToast } = useToast();
-  const { fetchCategories, updateIdea, categories, error, getIdea, idea } = useApiStore();
+  const { fetchCategories, updateIdea, categories, error, getIdea, idea } =
+    useApiStore();
   const { user: authUser } = useAuthStore();
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [formData, setFormData] = useState({
@@ -39,7 +41,8 @@ const IdeaEditPage = () => {
     content: "",
     isAnonymous: false,
   });
-  const [files, setFiles] = useState<File[]>([]);
+  const [localFiles, setLocalFiles] = useState<File[]>([]);
+  const [cloudinaryFiles, setCloudinaryFiles] = useState<Document[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{
     [key: string]: number;
@@ -61,7 +64,16 @@ const IdeaEditPage = () => {
         content: idea.content || "",
         isAnonymous: idea.is_anonymous || false,
       });
-      setSelectedCategories(idea.category?.map(cat => categories.find(c => c.name === cat)?.id || 0).filter(id => id !== 0) || []);
+      setSelectedCategories(
+        idea.category
+          ?.map((cat) => categories.find((c) => c.name === cat)?.id || 0)
+          .filter((id) => id !== 0) || [],
+      );
+
+      // Set existing Cloudinary files
+      if (idea.files && idea.files.length > 0) {
+        setCloudinaryFiles(idea.files);
+      }
     }
   }, [idea, categories]);
 
@@ -86,8 +98,10 @@ const IdeaEditPage = () => {
 
     try {
       let uploadedFileUrls: { file_name: string; file_path: string }[] = [];
-      if (files.length > 0) {
-        const uploadPromises = files.map(async (file) => {
+
+      // Upload only new local files
+      if (localFiles.length > 0) {
+        const uploadPromises = localFiles.map(async (file) => {
           const result = await uploadToCloudinary(file, (progress) => {
             setUploadProgress((prev) => ({
               ...prev,
@@ -103,15 +117,15 @@ const IdeaEditPage = () => {
         uploadedFileUrls = await Promise.all(uploadPromises);
       }
 
+      // Combine existing Cloudinary files with newly uploaded files
+      const allFiles = [...cloudinaryFiles, ...uploadedFileUrls];
+
       const ideaFormData = new FormData();
       ideaFormData.append("title", formData.title);
       ideaFormData.append("content", formData.content);
       ideaFormData.append("is_anonymous", formData.isAnonymous ? "1" : "0");
       ideaFormData.append("category", selectedCategories.join(","));
-
-      if (uploadedFileUrls.length > 0) {
-        ideaFormData.append("document", JSON.stringify(uploadedFileUrls));
-      }
+      ideaFormData.append("document", JSON.stringify(allFiles));
 
       await updateIdea(Number(id), ideaFormData);
 
@@ -230,7 +244,16 @@ const IdeaEditPage = () => {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <FilePreview setFiles={setFiles} uploadProgress={uploadProgress} />
+            <FilePreview
+              setFiles={setLocalFiles}
+              uploadProgress={uploadProgress}
+              existingFiles={cloudinaryFiles}
+              onRemoveExistingFile={(file) => {
+                setCloudinaryFiles((prev) =>
+                  prev.filter((f) => f.file_path !== file.file_path),
+                );
+              }}
+            />
           </motion.div>
 
           <motion.div variants={itemVariants} className="space-y-4 pt-4">
@@ -278,4 +301,4 @@ const IdeaEditPage = () => {
   );
 };
 
-export default IdeaEditPage; 
+export default IdeaEditPage;
