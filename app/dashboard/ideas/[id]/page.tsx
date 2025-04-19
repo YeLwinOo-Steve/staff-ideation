@@ -453,7 +453,36 @@ const IdeaDetail = () => {
             className="bg-base-200 p-6 rounded-lg mb-6"
           >
             <div className="flex justify-between items-start">
-              <h1 className="font-bold text-2xl mb-4">{idea.title}</h1>
+              <div className="space-y-3">
+                <h1 className="font-bold text-2xl">{idea.title}</h1>
+                {idea.category && (
+                  <div className="flex flex-wrap gap-2 pb-4">
+                    {Array.isArray(idea.category) ? (
+                      idea.category.map((cat, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ scale: 0.8, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="badge badge-lg bg-primary/10 text-primary border-primary/20 gap-1 px-3 py-3"
+                        >
+                          <div className="w-2 h-2 rounded-full bg-primary/40" />
+                          {cat}
+                        </motion.div>
+                      ))
+                    ) : (
+                      <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="badge badge-lg bg-primary/10 text-primary border-primary/20 gap-1 px-3 py-3"
+                      >
+                        <div className="w-2 h-2 rounded-full bg-primary/40" />
+                        {idea.category}
+                      </motion.div>
+                    )}
+                  </div>
+                )}
+              </div>
               <div className="flex items-center gap-2">
                 <motion.button
                   className="btn btn-circle btn-sm bg-warning/50 hover:bg-warning border-0"
