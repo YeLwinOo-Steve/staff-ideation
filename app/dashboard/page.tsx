@@ -141,9 +141,6 @@ export default function Dashboard() {
         <IdeaList gridCols={3} />
       </div>
 
-      {/* <div className="mt-8">
-          <ZipDownloadBtn />
-        </div> */}
     </motion.div>
   );
 }
