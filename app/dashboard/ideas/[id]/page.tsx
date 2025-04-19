@@ -26,6 +26,7 @@ import { AxiosError } from "axios";
 import ReportDialog from "../../components/ReportDialog";
 import { useAuthStore } from "@/store/authStore";
 import { hasPermission } from "@/app/lib/utils";
+import type { Document } from "@/api/models";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -82,17 +83,19 @@ const bannerVariants = {
   },
 };
 
-const ZipDownloadBtn = () => {
+interface ZipDownloadBtnProps {
+  files: Document[];
+}
+
+const ZipDownloadBtn = ({ files }: ZipDownloadBtnProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<
     "idle" | "downloading" | "zipping" | "error"
   >("idle");
   const [error, setError] = useState<string | null>(null);
 
-  const urls = [
-    "https://i.pinimg.com/736x/7e/f3/00/7ef3009e0efeb251f1d6d16f56ddff64.jpg",
-    "https://i.pinimg.com/236x/ac/0d/b7/ac0db732637f7a08231ea4cd23d411a9.jpg",
-  ];
+  const urls = files.map((file) => file.file_path);
+  console.log("urls", urls);
 
   const downloadZipFile = async () => {
     try {
@@ -102,12 +105,12 @@ const ZipDownloadBtn = () => {
 
       for (const [index, url] of urls.entries()) {
         try {
-          const proxyUrl = "https://api.allorigins.win/raw?url=";
-          const res = await fetch(proxyUrl + encodeURIComponent(url));
+          const res = await fetch(url);
           if (!res.ok) throw new Error(`Failed to download file ${index + 1}`);
 
           const blob = await res.blob();
-          zip.file(`file${index + 1}.${blob.type.split("/")[1]}`, blob);
+          const fileName = url.split("/").pop() || `file${index + 1}`;
+          zip.file(fileName, blob);
         } catch (err) {
           const errorMessage =
             err instanceof Error ? err.message : "An unknown error occurred";
@@ -507,7 +510,9 @@ const IdeaDetail = () => {
                   )}
                 </div>
               </div>
-              {idea.files && idea.files.length > 0 && <ZipDownloadBtn />}
+              {idea.files && idea.files.length > 0 && (
+                <ZipDownloadBtn files={idea.files} />
+              )}
             </div>
           </motion.div>
 

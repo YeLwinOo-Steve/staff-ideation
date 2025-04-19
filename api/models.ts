@@ -40,7 +40,7 @@ export interface Idea {
   user_email?: string;
   user_photo?: string;
   department?: string[] | null;
-  files?: string[];
+  files?: Document[];
   comments?: number;
   total_vote_value?: number;
   user_vote_value?: number;
@@ -51,6 +51,8 @@ export interface Idea {
 }
 
 export interface Document {
+  id?: number;
+  idea_id?: number;
   file_name: string;
   file_path: string;
 }
