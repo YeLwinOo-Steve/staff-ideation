@@ -521,19 +521,12 @@ const IdeaDetail = () => {
                           animate={{ scale: 1, opacity: 1 }}
                           transition={{ delay: index * 0.1 }}
                           onClick={() => handleCategoryToggle(cat.name, cat.id)}
-                          className={`badge badge-lg gap-1 px-3 py-3 cursor-pointer transition-all duration-200 ${
+                          className={`badge badge-lg gap-1 px-6 py-4 cursor-pointer transition-all duration-200 ${
                             selectedCategories.includes(cat.name)
                               ? "bg-primary text-primary-content border-primary"
                               : "bg-base-200 hover:bg-base-300 border-base-300"
                           }`}
                         >
-                          <div
-                            className={`w-2 h-2 rounded-full ${
-                              selectedCategories.includes(cat.name)
-                                ? "bg-primary-content"
-                                : "bg-base-content/40"
-                            }`}
-                          />
                           {cat.name}
                         </motion.button>
                       ))
@@ -544,9 +537,8 @@ const IdeaDetail = () => {
                           initial={{ scale: 0.8, opacity: 0 }}
                           animate={{ scale: 1, opacity: 1 }}
                           transition={{ delay: index * 0.1 }}
-                          className="badge badge-lg bg-primary/10 text-primary border-primary/20 gap-1 px-3 py-3"
+                          className="badge badge-lg bg-primary/10 text-primary border-primary/20 gap-1 px-6 py-4 "
                         >
-                          <div className="w-2 h-2 rounded-full bg-primary/40" />
                           {cat}
                         </motion.div>
                       ))}
