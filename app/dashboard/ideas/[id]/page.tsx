@@ -442,6 +442,7 @@ const IdeaDetail = () => {
                       whileHover="hover"
                       whileTap="tap"
                       className="btn btn-md btn-primary"
+                      onClick={() => router.push(`/dashboard/ideas/${id}/edit`)}
                     >
                       <Pencil size={16} />
                       <span className="font-bold">Edit</span>

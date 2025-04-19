@@ -71,6 +71,8 @@ interface ApiState {
     total: number;
     loading: boolean;
   };
+  updateIdea: (id: number, data: FormData) => Promise<void>;
+  updateIdeaCategory: (id: number, categories: string) => Promise<void>;
   fetchRoles: () => Promise<void>;
   // Departments
   fetchDepartments: (options?: { isCache?: boolean }) => Promise<void>;
@@ -721,6 +723,34 @@ export const useApiStore = create<ApiState>((set, get) => ({
       throw error;
     } finally {
       set({ isLoadingAllUsers: false });
+    }
+  },
+
+  updateIdea: async (id, data) => {
+    try {
+      set({ isLoading: true });
+      await api.ideaApi.update(id, data);
+      await get().getIdea(id);
+    } catch (error) {
+      const message = handleError(error, "Failed to update idea");
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  updateIdeaCategory: async (id, categories) => {
+    try {
+      set({ isLoading: true });
+      await api.ideaApi.updateCategory(id, categories);
+      await get().getIdea(id);
+    } catch (error) {
+      const message = handleError(error, "Failed to update idea categories");
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
     }
   },
 }));
