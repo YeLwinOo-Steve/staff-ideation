@@ -13,6 +13,7 @@ import {
   Trash2Icon,
   Flag,
   AlertCircle,
+  EyeOff,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useApiStore } from "@/store/apiStore";
@@ -27,6 +28,7 @@ import ReportDialog from "../../components/ReportDialog";
 import { useAuthStore } from "@/store/authStore";
 import { hasPermission } from "@/app/lib/utils";
 import type { Document } from "@/api/models";
+import Image from "next/image";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -491,10 +493,22 @@ const IdeaDetail = () => {
             <div className="flex justify-between items-center flex-wrap">
               <div className="flex items-center gap-3">
                 <div className="avatar placeholder">
-                  <div className="bg-primary text-white mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
-                    {idea.is_anonymous
-                      ? "A"
-                      : getInitials(idea.user_name || "")}
+                  <div className="bg-primary/10 rounded-xl mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
+                    {idea.is_anonymous ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : idea.user_photo &&
+                      idea.user_photo.includes("cloudinary") ? (
+                      <Image
+                        src={idea.user_photo}
+                        alt={idea.user_name || ""}
+                        width={48}
+                        height={48}
+                        className="w-full h-full object-cover"
+                        priority
+                      />
+                    ) : (
+                      getInitials(idea.user_name || "")
+                    )}
                   </div>
                 </div>
                 <div className="flex flex-col">
