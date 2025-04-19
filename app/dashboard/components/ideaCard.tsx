@@ -190,12 +190,15 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
                 onClick={(e) => e.stopPropagation()}
               >
                 {idea.category.map((cat, index) => (
-                  <div
+                  <motion.div
                     key={index}
-                    className="badge badge-primary badge-outline text-xs px-3 py-2"
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="badge badge-lg bg-primary/10 text-primary border-primary/20 gap-1 px-4 py-3"
                   >
                     {cat}
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             )}
