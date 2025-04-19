@@ -134,7 +134,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
                 className="flex items-center gap-3"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="bg-primary/10 p-3 rounded-xl mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
+                <div className="bg-primary/10 rounded-xl mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
                   {isAnonymous ? (
                     <EyeOff className="w-4 h-4" />
                   ) : idea.user_photo &&
@@ -142,9 +142,10 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
                     <Image
                       src={idea.user_photo}
                       alt={userName}
-                      width={40}
-                      height={40}
-                      className="object-cover mask mask-squircle"
+                      width={48}
+                      height={48}
+                      className="w-full h-full object-cover"
+                      priority
                     />
                   ) : (
                     getInitials(userName)
