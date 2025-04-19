@@ -199,8 +199,6 @@ const IdeaDetail = () => {
     deleteComment,
     user: apiUser,
   } = useApiStore();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isPending, setIsPending] = useState(false);
   const [isVoting, setIsVoting] = useState(false);
   const [userVoteLocal, setUserVoteLocal] = useState<number>(0);
   const [voteCountLocal, setVoteCountLocal] = useState<number>(0);
@@ -216,6 +214,11 @@ const IdeaDetail = () => {
   const isCreator = user?.email === idea?.user_email;
   const canDelete = isCreator || hasPermission(user, "remove idea");
   const canDeleteComments = hasPermission(user, "remove comments");
+  console.log("pendingIdeas", pendingIdeas);
+  const isPendingIdea =
+    pendingIdeas?.find((i) => i.id === Number(id))?.isPending || false;
+  console.log("isPendingIdea", isPendingIdea);
+  const canEdit = hasPermission(user, "update idea") && !isPendingIdea;
 
   useEffect(() => {
     if (idea) {
@@ -223,6 +226,35 @@ const IdeaDetail = () => {
       setVoteCountLocal(idea.total_vote_value || 0);
     }
   }, [idea]);
+
+  useEffect(() => {
+    const loadIdea = async () => {
+      if (id && loadingStage === "initial") {
+        setLoadingStage("idea");
+
+        // First load the idea
+        await getIdea(Number(id));
+
+        // Then load pending ideas if needed and check status
+        if (pendingIdeas.length === 0) {
+          await getToSubmit();
+        }
+
+        setLoadingStage("comments");
+      }
+    };
+    loadIdea();
+  }, [id, getIdea, loadingStage, getToSubmit, pendingIdeas]);
+
+  useEffect(() => {
+    const loadComments = async () => {
+      if (id && loadingStage === "comments") {
+        await getCommentsForIdea(Number(id));
+        setLoadingStage("complete");
+      }
+    };
+    loadComments();
+  }, [id, getCommentsForIdea, loadingStage]);
 
   const handleVote = async (value: number, e: React.MouseEvent) => {
     e.preventDefault();
@@ -243,23 +275,6 @@ const IdeaDetail = () => {
       showErrorToast(error || "Failed to update vote");
     } finally {
       setIsVoting(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    setIsSubmitting(true);
-    try {
-      await submitIdea(Number(id));
-      setIsPending(false);
-      showSuccessToast("Idea submitted successfully");
-    } catch (e) {
-      console.error("Failed to submit idea", e);
-      showErrorToast(error || "Failed to submit idea");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -316,48 +331,20 @@ const IdeaDetail = () => {
     }
   };
 
-  useEffect(() => {
-    const loadIdea = async () => {
-      if (id && loadingStage === "initial") {
-        setLoadingStage("idea");
-
-        // First load the idea
-        await getIdea(Number(id));
-
-        // Then load pending ideas if needed and check status
-        if (pendingIdeas.length === 0) {
-          await getToSubmit();
-        }
-
-        // Now check the pending status after both operations are complete
-        const isPendingIdea = pendingIdeas.some(
-          (idea) => idea.id === Number(id),
+  const handlePublish = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    try {
+      await submitIdea(Number(id));
+      router.refresh();
+      showSuccessToast("Idea published successfully");
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        showErrorToast(
+          error.response?.data?.message || "Failed to publish idea",
         );
-        setIsPending(isPendingIdea);
-
-        setLoadingStage("comments");
       }
-    };
-    loadIdea();
-  }, [id, getIdea, loadingStage, getToSubmit, pendingIdeas]);
-
-  // Add a separate effect to update pending status when pendingIdeas changes
-  useEffect(() => {
-    if (id && pendingIdeas.length > 0) {
-      const isPendingIdea = pendingIdeas.some((idea) => idea.id === Number(id));
-      setIsPending(isPendingIdea);
     }
-  }, [id, pendingIdeas]);
-
-  useEffect(() => {
-    const loadComments = async () => {
-      if (id && loadingStage === "comments") {
-        await getCommentsForIdea(Number(id));
-        setLoadingStage("complete");
-      }
-    };
-    loadComments();
-  }, [id, getCommentsForIdea, loadingStage]);
+  };
 
   if (loadingStage !== "complete" || isLoading) {
     return (
@@ -416,51 +403,44 @@ const IdeaDetail = () => {
               <ChevronLeft size={20} />
               <span className="font-bold">Idea Details</span>
             </motion.button>
-            <div className="flex gap-2">
-              {isPending ? (
+            <div className="flex gap-2 items-center">
+              {canEdit && (
                 <motion.button
                   variants={buttonVariants}
                   initial="initial"
-                  whileTap="tap"
                   whileHover="hover"
-                  className="btn btn-primary btn-md gap-2"
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
+                  whileTap="tap"
+                  onClick={() => router.push(`/dashboard/ideas/${id}/edit`)}
+                  className="btn btn-sm btn-outline gap-2"
                 >
-                  {isSubmitting ? (
-                    <span className="loading loading-spinner loading-xs" />
-                  ) : (
-                    <Send className="w-4 h-4" />
-                  )}
-                  Submit Idea
+                  <Pencil size={16} />
+                  Edit
                 </motion.button>
-              ) : (
-                <>
-                  {isCreator && (
-                    <motion.button
-                      variants={buttonVariants}
-                      whileHover="hover"
-                      whileTap="tap"
-                      className="btn btn-md btn-primary"
-                      onClick={() => router.push(`/dashboard/ideas/${id}/edit`)}
-                    >
-                      <Pencil size={16} />
-                      <span className="font-bold">Edit</span>
-                    </motion.button>
-                  )}
-                  {canDelete && (
-                    <motion.button
-                      variants={buttonVariants}
-                      whileHover="hover"
-                      whileTap="tap"
-                      className="btn btn-md btn-error"
-                      onClick={() => setShowDeleteDialog(true)}
-                    >
-                      <Trash size={16} />
-                      <span className="font-bold">Delete</span>
-                    </motion.button>
-                  )}
-                </>
+              )}
+              {isPendingIdea && (
+                <motion.button
+                  variants={buttonVariants}
+                  initial="initial"
+                  whileHover="hover"
+                  whileTap="tap"
+                  onClick={handlePublish}
+                  className="btn btn-md btn-primary gap-2"
+                >
+                  <Send size={16} />
+                  Publish Idea
+                </motion.button>
+              )}
+              {canDelete && (
+                <motion.button
+                  variants={buttonVariants}
+                  whileHover="hover"
+                  whileTap="tap"
+                  className="btn btn-md btn-error"
+                  onClick={() => setShowDeleteDialog(true)}
+                >
+                  <Trash size={16} />
+                  <span className="font-bold">Delete</span>
+                </motion.button>
               )}
             </div>
           </div>
