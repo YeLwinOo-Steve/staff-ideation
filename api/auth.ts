@@ -10,6 +10,8 @@ export interface AuthResponse {
 export interface LoginRequest {
   email: string;
   password: string;
+  ip_address: string;
+  browser: string;
 }
 
 export const authApi = {

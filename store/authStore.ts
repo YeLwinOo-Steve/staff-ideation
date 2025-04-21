@@ -9,7 +9,12 @@ interface AuthState {
   token: string | null;
   isLoading: boolean;
   error: string | null;
-  login: (email: string, password: string) => Promise<void | null>;
+  login: (
+    email: string,
+    password: string,
+    ip: string,
+    browser: string
+  ) => Promise<void | null>;
   resetPassword: (id: number) => Promise<boolean>;
   logout: () => Promise<void>;
   clearError: () => void;
@@ -23,10 +28,15 @@ export const useAuthStore = create<AuthState>()(
       isLoading: false,
       error: null,
 
-      login: async (email, password) => {
+      login: async (email, password, ip, browser) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await authApi.login({ email, password });
+          const response = await authApi.login({
+            email,
+            password,
+            ip_address: ip,
+            browser,
+          });
           set({
             user: response.data.data,
             token: response.data.token,
@@ -73,6 +83,6 @@ export const useAuthStore = create<AuthState>()(
     {
       name: "auth-storage",
       partialize: (state) => ({ user: state.user, token: state.token }),
-    },
-  ),
+    }
+  )
 );
