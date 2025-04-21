@@ -140,7 +140,6 @@ export default function Dashboard() {
       <div className="mb-8 flex flex-col items-center">
         <IdeaList gridCols={3} />
       </div>
-
     </motion.div>
   );
 }

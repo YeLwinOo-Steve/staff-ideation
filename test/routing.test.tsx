@@ -4,8 +4,6 @@ import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { ToastProvider } from "@/components/toast";
 import { publicIpv4 } from "public-ip";
 import { detect } from "detect-browser";
-import { useAuthStore } from "@/store/authStore";
-
 jest.mock("next/navigation", () => jest.requireActual("next-router-mock"));
 jest.mock("@/util/sleep", () => ({
   sleep: jest.fn().mockResolvedValue(undefined),
@@ -57,7 +55,7 @@ describe("Login page", () => {
       target: { value: "password" },
     });
 
-    fireEvent.click(screen.getByRole('button'));
+    fireEvent.click(screen.getByRole("button"));
 
     await waitFor(() => {
       expect(mockRouter.pathname).toBe("/login");

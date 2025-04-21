@@ -13,7 +13,7 @@ interface AuthState {
     email: string,
     password: string,
     ip: string,
-    browser: string
+    browser: string,
   ) => Promise<void | null>;
   resetPassword: (id: number) => Promise<boolean>;
   logout: () => Promise<void>;
@@ -83,6 +83,6 @@ export const useAuthStore = create<AuthState>()(
     {
       name: "auth-storage",
       partialize: (state) => ({ user: state.user, token: state.token }),
-    }
-  )
+    },
+  ),
 );

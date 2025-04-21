@@ -30,7 +30,7 @@ describe("Auth Store", () => {
     await expect(
       useAuthStore
         .getState()
-        .login("admin@idea.com", "admin", "127.0.0.1", "Chrome")
+        .login("admin@idea.com", "admin", "127.0.0.1", "Chrome"),
     ).rejects.toThrow("Login failed");
 
     const error = useAuthStore.getState().error;
