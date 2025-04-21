@@ -28,7 +28,9 @@ describe("Auth Store", () => {
     jest.spyOn(authApi, "login").mockRejectedValueOnce(mockLoginError);
 
     await expect(
-      useAuthStore.getState().login("admin@idea.com", "admin"),
+      useAuthStore
+        .getState()
+        .login("admin@idea.com", "admin", "127.0.0.1", "Chrome")
     ).rejects.toThrow("Login failed");
 
     const error = useAuthStore.getState().error;
