@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { publicIpv4 } from "public-ip";
+import { detect } from "detect-browser";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { loginSchema } from "@/schema/validations";
@@ -28,9 +30,15 @@ export default function Login() {
   const onSubmit = async (data: LoginForm) => {
     clearError();
     try {
-      await login(data.email, data.password);
-      router.push("/dashboard");
-      showSuccessToast("Login successful");
+      const ip = await publicIpv4();
+      const browser = detect();
+      if (browser) {
+        await login(data.email, data.password, ip, browser.name);
+        router.push("/dashboard");
+        showSuccessToast("Login successful");
+      } else {
+        showErrorToast("Browser not detected");
+      }
     } catch (e) {
       console.log(e);
       showErrorToast(error || "Login failed");
