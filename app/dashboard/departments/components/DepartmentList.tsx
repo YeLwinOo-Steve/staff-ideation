@@ -75,7 +75,7 @@ export function DepartmentList({
             onDeleteClick={onDeleteClick}
             showActions={hasAdminPermissions}
             qaCoordinator={allUsers.find(
-              (u) => u.id === department.QACoordinatorID,
+              (u) => u.name === department.qa_coordinator_name,
             )}
           />
         </motion.div>
