@@ -2,7 +2,8 @@ import { motion } from "framer-motion";
 import { Building2, PencilIcon, Trash2Icon, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { Department, User } from "@/api/models";
-import { Avatar } from "@/app/components/Avatar";
+import { getInitials } from "@/util/getInitials";
+import Image from "next/image";
 
 interface DepartmentCardProps {
   department: Department;
@@ -85,12 +86,19 @@ export function DepartmentCard({
 
           <div className="grid gap-3">
             <div className="flex items-center gap-3 bg-info/5 p-3 rounded-xl">
-              <div className="bg-info/10 p-2 rounded-lg">
-                <Avatar
-                  src={qaCoordinator?.photo}
-                  alt={qaCoordinator?.name}
-                  className="w-6 h-6 text-info"
-                />
+              <div className="bg-info/10 rounded-xl mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
+                {qaCoordinator?.photo ? (
+                  <Image
+                    src={qaCoordinator?.photo}
+                    alt={qaCoordinator?.name}
+                    width={48}
+                    height={48}
+                    className="w-full h-full object-cover"
+                    priority
+                  />
+                ) : (
+                  getInitials(qaCoordinator?.name || "")
+                )}
               </div>
               <div className="flex flex-col">
                 <span className="text-xs opacity-70">QA Coordinator</span>
@@ -101,7 +109,7 @@ export function DepartmentCard({
             </div>
 
             <div className="flex items-center gap-3 bg-info/5 p-3 rounded-xl">
-              <div className="bg-info/10 p-2 rounded-lg">
+              <div className="bg-info/10 p-2 rounded-xl mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
                 <Clock className="w-6 h-6 text-primary" />
               </div>
               <div className="flex flex-col">

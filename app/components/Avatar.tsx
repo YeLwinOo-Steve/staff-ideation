@@ -14,7 +14,7 @@ export function Avatar({
   src,
   alt,
   fallbackText,
-  className = "w-8 h-8",
+  className = "w-12 h-12",
 }: AvatarProps) {
   const [imageError, setImageError] = useState(false);
 

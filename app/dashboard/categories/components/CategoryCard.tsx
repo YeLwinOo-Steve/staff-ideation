@@ -75,7 +75,7 @@ export function CategoryCard({
 
           <div className="grid gap-3">
             <div className="flex items-center gap-3 bg-info/5 p-3 rounded-xl">
-              <div className="bg-info/10 p-2 rounded-lg">
+              <div className="bg-info/10 p-2 rounded-xl mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
                 <Clock className="w-6 h-6 text-primary" />
               </div>
               <div className="flex flex-col">
@@ -87,7 +87,7 @@ export function CategoryCard({
             </div>
 
             <div className="flex items-center gap-3 bg-info/5 p-3 rounded-xl">
-              <div className="bg-info/10 p-2 rounded-lg">
+              <div className="bg-info/10 p-2 rounded-xl mask mask-squircle w-12 h-12 flex items-center justify-center text-xs font-bold">
                 <Clock className="w-6 h-6 text-primary" />
               </div>
               <div className="flex flex-col">
