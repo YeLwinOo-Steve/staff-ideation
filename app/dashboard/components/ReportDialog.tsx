@@ -6,7 +6,6 @@ import { Idea } from "@/api/models";
 import { useState } from "react";
 import axios from "axios";
 import { useToast } from "@/components/toast";
-import { useRouter } from "next/navigation";
 import { useApiStore } from "@/store/apiStore";
 
 interface ReportDialogProps {
@@ -23,7 +22,6 @@ export default function ReportDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [comment, setComment] = useState("");
   const { showSuccessToast, showErrorToast } = useToast();
-  const router = useRouter();
   const { reportIdea } = useApiStore();
 
   const handleReport = async (e: React.MouseEvent) => {
@@ -35,14 +33,16 @@ export default function ReportDialog({
       const formData = new FormData();
       formData.append("idea_id", idea.id.toString());
       formData.append("reason", comment);
-      
+
       await reportIdea(formData);
       showSuccessToast("Idea reported successfully");
       onClose();
       setComment(""); // Reset the comment field
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        showErrorToast(error.response?.data?.message || "Failed to report idea");
+        showErrorToast(
+          error.response?.data?.message || "Failed to report idea",
+        );
       } else {
         showErrorToast("An unexpected error occurred");
       }

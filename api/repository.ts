@@ -104,18 +104,19 @@ export const userLogApi = {
 };
 
 export const reportApi = {
-  reportIdea: (data: FormData) => apiClient.post<{ message: string; data: Report }>("/report", data),
-  
+  reportIdea: (data: FormData) =>
+    apiClient.post<{ message: string; data: Report }>("/report", data),
+
   getReportedIdeas: (page: number = 1) =>
     apiClient.get<PaginatedResponse<ReportedIdea>>("/report/ideas", {
       params: { page },
     }),
-    
+
   getReportDetails: (ideaId: number) =>
     apiClient.get<ReportDetail[]>(`/report/ideas/${ideaId}`),
-    
+
   getReportedUsers: () => apiClient.get<ReportedUser[]>("/report/user"),
-  
+
   getUserReportedIdeas: (userId: number) =>
     apiClient.get<{ data: ReportedIdea[] }>(`/report/user/${userId}`),
 };

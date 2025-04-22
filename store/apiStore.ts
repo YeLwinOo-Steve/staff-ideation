@@ -140,7 +140,7 @@ interface ApiState {
   };
   reportDetails: ReportDetail[];
   reportedUsers: ReportedUser[];
-  
+
   // Report related functions
   reportIdea: (data: FormData) => Promise<void>;
   fetchReportedIdeas: (page?: number) => Promise<void>;
@@ -784,7 +784,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
   },
   reportDetails: [],
   reportedUsers: [],
-  
+
   reportIdea: async (data) => {
     try {
       set({ isLoading: true });
