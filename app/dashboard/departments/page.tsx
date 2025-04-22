@@ -62,7 +62,7 @@ export default function DepartmentsPage() {
     getDepartmentUsers(department.id);
     setDepartmentName(department.department_name);
     const qaCoordinator = allUsers.find(
-      (u: User) => u.id === department.qa_coordinator_name,
+      (u: User) => u.name === department.qa_coordinator_name,
     );
     setSelectedQACoordinator(qaCoordinator || null);
     setSearchQuery(qaCoordinator?.name || "");
@@ -80,7 +80,7 @@ export default function DepartmentsPage() {
 
     await createDepartment({
       department_name: departmentName,
-      qa_coordinator_name: selectedQACoordinator?.id || undefined,
+      QACoordinatorID: selectedQACoordinator?.id || undefined,
     });
 
     setIsEditModalOpen(false);
@@ -92,7 +92,7 @@ export default function DepartmentsPage() {
 
     await updateDepartment(Number(selectedDepartment.id), {
       department_name: departmentName,
-      qa_coordinator_name: selectedQACoordinator?.id || undefined,
+      QACoordinatorID: selectedQACoordinator?.id || undefined,
     });
 
     setIsEditModalOpen(false);

@@ -4,6 +4,7 @@ export interface Department {
   qa_coordinator_name: string;
   created_at: string;
   updated_at: string;
+  QACoordinatorID: number | null;
 }
 
 export interface Permission {
