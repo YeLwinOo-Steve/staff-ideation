@@ -6,6 +6,7 @@ import { Idea } from "@/api/models";
 import { useState } from "react";
 import axios from "axios";
 import { useToast } from "@/components/toast";
+import { useRouter } from "next/navigation";
 
 interface ReportDialogProps {
   idea: Idea;
@@ -19,7 +20,10 @@ export default function ReportDialog({
   onClose,
 }: ReportDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [comment, setComment] = useState("");
   const { showSuccessToast, showErrorToast } = useToast();
+  const router = useRouter();
+
   const handleReport = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -32,7 +36,7 @@ export default function ReportDialog({
     } catch (error) {
       if (axios.isAxiosError(error)) {
         showErrorToast(
-          error.response?.data?.message || "Failed to report idea",
+          error.response?.data?.message || "Failed to report idea"
         );
       } else {
         showErrorToast("An unexpected error occurred");
@@ -50,7 +54,11 @@ export default function ReportDialog({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-      onClick={onClose}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onClose();
+      }}
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
@@ -58,7 +66,10 @@ export default function ReportDialog({
         exit={{ scale: 0.95, opacity: 0 }}
         transition={{ duration: 0.2 }}
         className="bg-base-100 rounded-2xl shadow-xl max-w-md w-full overflow-hidden border border-base-300"
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
       >
         <div className="p-6 space-y-4">
           <div className="flex items-center gap-3">
@@ -73,7 +84,7 @@ export default function ReportDialog({
 
           <div className="divider divider-warning before:h-[1px] after:h-[1px] my-2"></div>
 
-          <div className="bg-warning/5 p-4 rounded-xl space-y-1">
+          <div className="bg-warning/20 p-4 rounded-xl space-y-1">
             <p className="font-medium">
               Are you sure you want to report this idea?
             </p>
@@ -91,6 +102,14 @@ export default function ReportDialog({
               appropriate action.
             </p>
           </div>
+
+          <input
+            type="text"
+            placeholder="Add a comment"
+            className="w-full input input-md input-warning"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
 
           <div className="flex justify-end gap-2 pt-2">
             <motion.button
@@ -112,7 +131,7 @@ export default function ReportDialog({
               onClick={handleReport}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              disabled={isSubmitting}
+              disabled={isSubmitting || !comment.trim()}
             >
               <Flag className="w-4 h-4" />
               {isSubmitting ? "Reporting..." : "Report"}
