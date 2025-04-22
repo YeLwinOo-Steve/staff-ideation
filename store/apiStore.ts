@@ -8,6 +8,9 @@ import {
   Role,
   Comment,
   UserLog,
+  ReportedIdea,
+  ReportDetail,
+  ReportedUser,
 } from "@/api/models";
 import * as api from "@/api/repository";
 import axios, { AxiosError } from "axios";
@@ -126,6 +129,24 @@ interface ApiState {
   clearError: () => void;
 
   fetchAllUsers: () => Promise<void>;
+
+  // Report related state
+  reportedIdeas: {
+    data: ReportedIdea[];
+    currentPage: number;
+    lastPage: number;
+    total: number;
+    loading: boolean;
+  };
+  reportDetails: ReportDetail[];
+  reportedUsers: ReportedUser[];
+  
+  // Report related functions
+  reportIdea: (data: FormData) => Promise<void>;
+  fetchReportedIdeas: (page?: number) => Promise<void>;
+  fetchReportDetails: (ideaId: number) => Promise<void>;
+  fetchReportedUsers: () => Promise<void>;
+  fetchUserReportedIdeas: (userId: number) => Promise<void>;
 }
 
 export const useApiStore = create<ApiState>((set, get) => ({
@@ -747,6 +768,116 @@ export const useApiStore = create<ApiState>((set, get) => ({
       await get().getIdea(id);
     } catch (error) {
       const message = handleError(error, "Failed to update idea categories");
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  reportedIdeas: {
+    data: [],
+    currentPage: 1,
+    lastPage: 1,
+    total: 0,
+    loading: false,
+  },
+  reportDetails: [],
+  reportedUsers: [],
+  
+  reportIdea: async (data) => {
+    try {
+      set({ isLoading: true });
+      await api.reportApi.reportIdea(data);
+      // Optionally refresh reported ideas list
+      await get().fetchReportedIdeas();
+    } catch (error) {
+      const message = handleError(error, "Failed to report idea");
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  fetchReportedIdeas: async (page = 1) => {
+    try {
+      set((state) => ({
+        ...state,
+        reportedIdeas: {
+          ...state.reportedIdeas,
+          loading: true,
+        },
+      }));
+
+      const response = await api.reportApi.getReportedIdeas(page);
+
+      set((state) => ({
+        ...state,
+        reportedIdeas: {
+          data: response.data.data,
+          currentPage: response.data.meta.current_page,
+          lastPage: response.data.meta.last_page,
+          total: response.data.meta.total,
+          loading: false,
+        },
+      }));
+    } catch (error) {
+      const message = handleError(error, "Failed to fetch reported ideas");
+      set({ error: message });
+      throw error;
+    } finally {
+      set((state) => ({
+        ...state,
+        reportedIdeas: {
+          ...state.reportedIdeas,
+          loading: false,
+        },
+      }));
+    }
+  },
+
+  fetchReportDetails: async (ideaId) => {
+    try {
+      set({ isLoading: true });
+      const response = await api.reportApi.getReportDetails(ideaId);
+      set({ reportDetails: response.data });
+    } catch (error) {
+      const message = handleError(error, "Failed to fetch report details");
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  fetchReportedUsers: async () => {
+    try {
+      set({ isLoading: true });
+      const response = await api.reportApi.getReportedUsers();
+      set({ reportedUsers: response.data });
+    } catch (error) {
+      const message = handleError(error, "Failed to fetch reported users");
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  fetchUserReportedIdeas: async (userId) => {
+    try {
+      set({ isLoading: true });
+      const response = await api.reportApi.getUserReportedIdeas(userId);
+      set((state) => ({
+        ...state,
+        reportedIdeas: {
+          ...state.reportedIdeas,
+          data: response.data.data,
+        },
+      }));
+    } catch (error) {
+      const message = handleError(error, "Failed to fetch user reported ideas");
       set({ error: message });
       throw error;
     } finally {

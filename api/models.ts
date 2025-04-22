@@ -133,3 +133,39 @@ export interface PaginatedResponse<T> {
   links: PaginationLinks;
   meta: PaginationMeta;
 }
+
+export interface Report {
+  id: number;
+  idea_id: string;
+  reason: string;
+  user_id: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ReportedIdea {
+  title: string;
+  content: string;
+  user_name: string;
+  photo: string;
+  department: string;
+  no_of_report: number;
+  hidden: number;
+}
+
+export interface ReportDetail {
+  reason: string;
+  user_name: string;
+  user_photo: string;
+  user_department: string;
+}
+
+export interface ReportedUser {
+  name: string;
+  photo: string;
+  email: string;
+  department: string;
+  hidden: number;
+  no_of_reports: number;
+  banned: boolean;
+}
