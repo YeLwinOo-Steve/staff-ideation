@@ -32,7 +32,7 @@ export function Avatar({
   }
 
   return (
-    <div className={`${className} relative rounded-full overflow-hidden`}>
+    <div className={`${className} relative mask mask-squircle overflow-hidden`}>
       <Image
         src={src}
         alt={alt || "Avatar"}

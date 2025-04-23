@@ -1,12 +1,11 @@
 import { motion } from "framer-motion";
 import IdeaCard from "./ideaCard";
-import ReportedIdeaCard from "./ReportedIdeaCard";
 import { useApiStore } from "@/store/apiStore";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuthStore } from "@/store/authStore";
 import { hasAnyRole } from "@/app/lib/utils";
-import { Idea, ReportedIdea } from "@/api/models";
+import ReportedIdeaList from "./ReportedIdeaList";
 
 const containerVariants = {
   hidden: { opacity: 1 },
@@ -41,6 +40,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
   const [activeTab, setActiveTab] = useState<"all" | "pending" | "reported">(
     "all",
   );
+
   const {
     ideaPagination: { data: ideas, currentPage, lastPage, loading },
     pendingIdeaPagination: {
@@ -50,7 +50,6 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
       loading: pendingLoading,
     },
     reportedIdeas: {
-      data: reportedIdeasData,
       currentPage: reportedCurrentPage,
       lastPage: reportedLastPage,
       loading: reportedLoading,
@@ -65,12 +64,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
   const canSubmitIdea = hasAnyRole(user, ["QA coordinators"]);
   const isQAManager = hasAnyRole(user, ["QA manager"]);
 
-  const displayedIdeas: Array<Idea | ReportedIdea> =
-    activeTab === "pending"
-      ? pendingIdeas
-      : activeTab === "reported"
-        ? reportedIdeasData
-        : ideas;
+  const displayedIdeas = activeTab === "pending" ? pendingIdeas : ideas;
 
   const currentPageToShow =
     activeTab === "pending"
@@ -93,7 +87,10 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
         ? reportedLoading
         : loading;
 
-  const gridClass = `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Math.min(gridCols, 4)} gap-6`;
+  const gridClass = `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Math.min(
+    gridCols,
+    4,
+  )} gap-6`;
 
   useEffect(() => {
     fetchUsers();
@@ -196,6 +193,8 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
         <motion.div className="flex justify-center items-center h-64">
           <span className="loading loading-spinner loading-lg text-primary"></span>
         </motion.div>
+      ) : activeTab === "reported" ? (
+        <ReportedIdeaList />
       ) : displayedIdeas.length === 0 ? (
         <motion.div
           variants={itemVariants}
@@ -210,24 +209,16 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
           animate="show"
           className={gridClass}
         >
-          {displayedIdeas.map((idea, index) => (
+          {displayedIdeas.map((idea) => (
             <motion.div
-              key={
-                activeTab === "reported"
-                  ? `reported-${index}`
-                  : (idea as Idea).id
-              }
+              key={idea.id}
               variants={itemVariants}
               className="h-full"
               layout
             >
-              {activeTab === "reported" ? (
-                <ReportedIdeaCard idea={idea as ReportedIdea} />
-              ) : (
-                <Link href={`/ideas/${(idea as Idea).id}`} className="h-full">
-                  <IdeaCard idea={idea as Idea} />
-                </Link>
-              )}
+              <Link href={`/ideas/${idea.id}`} className="h-full">
+                <IdeaCard idea={idea} />
+              </Link>
             </motion.div>
           ))}
         </motion.div>

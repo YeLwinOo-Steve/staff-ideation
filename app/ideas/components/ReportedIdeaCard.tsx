@@ -2,12 +2,13 @@
 
 import { ReportedIdea } from "@/api/models";
 import { EyeOff, Flag } from "lucide-react";
-import Image from "next/image";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { getInitials } from "@/util/getInitials";
 
 interface ReportedIdeaCardProps {
   idea: ReportedIdea;
+  onViewDetails: (ideaId: number) => void;
 }
 
 const itemVariants = {
@@ -27,7 +28,10 @@ const itemVariants = {
   },
 };
 
-export default function ReportedIdeaCard({ idea }: ReportedIdeaCardProps) {
+export default function ReportedIdeaCard({
+  idea,
+  onViewDetails,
+}: ReportedIdeaCardProps) {
   const isAnonymous = !idea.user_name || idea.user_name === "Anonymous";
   const userName = isAnonymous ? "Anonymous" : idea.user_name;
 
@@ -38,6 +42,7 @@ export default function ReportedIdeaCard({ idea }: ReportedIdeaCardProps) {
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
       layout
+      onClick={() => onViewDetails(idea.id)}
     >
       <div className="card-body p-5 flex flex-col h-full cursor-pointer">
         <div className="flex flex-col gap-4 flex-1">
