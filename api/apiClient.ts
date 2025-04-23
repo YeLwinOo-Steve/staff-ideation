@@ -31,7 +31,7 @@ apiClient.interceptors.response.use(
       redirect("/login");
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default apiClient;

@@ -57,10 +57,7 @@ const NotFoundPage = () => {
         </motion.p>
 
         <motion.div variants={itemVariants}>
-          <Link
-            href="/ideas"
-            className="btn btn-primary gap-2 min-w-[200px]"
-          >
+          <Link href="/ideas" className="btn btn-primary gap-2 min-w-[200px]">
             <Lightbulb className="w-4 h-4" />
             Back to Ideas
           </Link>

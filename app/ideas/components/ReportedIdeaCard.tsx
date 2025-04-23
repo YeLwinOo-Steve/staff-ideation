@@ -89,4 +89,4 @@ export default function ReportedIdeaCard({ idea }: ReportedIdeaCardProps) {
       </div>
     </motion.div>
   );
-} 
+}

@@ -38,7 +38,9 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
   const [page, setPage] = useState(1);
   const [latest, setLatest] = useState<boolean | null>(null);
   const [popular, setPopular] = useState<boolean | null>(null);
-  const [activeTab, setActiveTab] = useState<"all" | "pending" | "reported">("all");
+  const [activeTab, setActiveTab] = useState<"all" | "pending" | "reported">(
+    "all",
+  );
   const {
     ideaPagination: { data: ideas, currentPage, lastPage, loading },
     pendingIdeaPagination: {
@@ -63,33 +65,33 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
   const canSubmitIdea = hasAnyRole(user, ["QA coordinators"]);
   const isQAManager = hasAnyRole(user, ["QA manager"]);
 
-  const displayedIdeas: Array<Idea | ReportedIdea> = 
-    activeTab === "pending" 
-      ? pendingIdeas 
+  const displayedIdeas: Array<Idea | ReportedIdea> =
+    activeTab === "pending"
+      ? pendingIdeas
       : activeTab === "reported"
-      ? reportedIdeasData
-      : ideas;
-      
+        ? reportedIdeasData
+        : ideas;
+
   const currentPageToShow =
     activeTab === "pending"
       ? pendingCurrentPage
       : activeTab === "reported"
-      ? reportedCurrentPage
-      : currentPage;
-      
+        ? reportedCurrentPage
+        : currentPage;
+
   const lastPageToShow =
     activeTab === "pending"
       ? pendingLastPage
       : activeTab === "reported"
-      ? reportedLastPage
-      : lastPage;
-      
+        ? reportedLastPage
+        : lastPage;
+
   const isLoading =
     activeTab === "pending"
       ? pendingLoading
       : activeTab === "reported"
-      ? reportedLoading
-      : loading;
+        ? reportedLoading
+        : loading;
 
   const gridClass = `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Math.min(gridCols, 4)} gap-6`;
 
@@ -112,7 +114,15 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
     } else {
       fetchIdeas({ page: page.toString() });
     }
-  }, [page, popular, latest, fetchIdeas, getToSubmit, fetchReportedIdeas, activeTab]);
+  }, [
+    page,
+    popular,
+    latest,
+    fetchIdeas,
+    getToSubmit,
+    fetchReportedIdeas,
+    activeTab,
+  ]);
 
   const handleTabChange = (tab: "all" | "pending" | "reported") => {
     setActiveTab(tab);
@@ -201,16 +211,23 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
           className={gridClass}
         >
           {displayedIdeas.map((idea, index) => (
-            <motion.div 
-              key={activeTab === "reported" ? `reported-${index}` : (idea as Idea).id} 
-              variants={itemVariants} 
-              className="h-full" 
+            <motion.div
+              key={
+                activeTab === "reported"
+                  ? `reported-${index}`
+                  : (idea as Idea).id
+              }
+              variants={itemVariants}
+              className="h-full"
               layout
             >
               {activeTab === "reported" ? (
                 <ReportedIdeaCard idea={idea as ReportedIdea} />
               ) : (
-                <Link href={`/dashboard/ideas/${(idea as Idea).id}`} className="h-full">
+                <Link
+                  href={`/dashboard/ideas/${(idea as Idea).id}`}
+                  className="h-full"
+                >
                   <IdeaCard idea={idea as Idea} />
                 </Link>
               )}
