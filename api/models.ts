@@ -144,6 +144,8 @@ export interface Report {
 }
 
 export interface ReportedIdea {
+  id: number;
+  user_id: number;
   title: string;
   content: string;
   user_name: string;

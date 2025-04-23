@@ -47,12 +47,6 @@ export default function Dashboard() {
   const router = useRouter();
 
   useEffect(() => {
-    // TODO (Ye): Remove this once persistence is implemented
-    // if (!user) {
-    //   router.push("/login");
-    // } else {
-    //   fetchIdeas({ page: "1" });
-    // }
     const loadData = async () => {
       const promises = [];
       if (!userTotal) {
@@ -113,26 +107,6 @@ export default function Dashboard() {
               </span>
             </motion.div>
           )}
-        </div>
-      </div>
-
-      <div className="mb-8">
-        <div className="flex flex-wrap gap-4 my-4">
-          <div className="stats shadow">
-            <div className="stat">
-              <div className="stat-title">Total Ideas</div>
-              <div className="stat-value">{total}</div>
-              <div className="stat-desc">Number of ideas</div>
-            </div>
-          </div>
-
-          <div className="stats shadow">
-            <div className="stat">
-              <div className="stat-title">Total Users</div>
-              <div className="stat-value">{userTotal}</div>
-              <div className="stat-desc">Users in EWSD</div>
-            </div>
-          </div>
         </div>
       </div>
 
