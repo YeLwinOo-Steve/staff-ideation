@@ -7,14 +7,17 @@ import { useEffect } from "react";
 import { BrowserUsageChart } from "@/app/components/analytics/BrowserUsageChart";
 import { UserActivityChart } from "@/app/components/analytics/UserActivityChart";
 import { DepartmentStatsChart } from "@/app/components/analytics/DepartmentStatsChart";
+import { CategoryStatsChart } from "@/app/components/analytics/CategoryStatsChart";
+import { HiddenStatsChart } from "@/app/components/analytics/HiddenStatsChart";
+import { UserLogChart } from "@/app/components/analytics/UserLogChart";
 
 const ReportsPage = () => {
   const user = useAuthStore((state) => state.user);
   const loginActivities = useLoginActivityStore(
-    (state) => state.loginActivities,
+    (state) => state.loginActivities
   );
   const getUserLoginActivities = useLoginActivityStore(
-    (state) => state.getUserLoginActivities,
+    (state) => state.getUserLoginActivities
   );
   const {
     fetchIdeas,
@@ -23,12 +26,14 @@ const ReportsPage = () => {
     fetchDepartments,
     getActiveUsers,
     getDepartmentReport,
+    getHiddenIdeas,
     categories,
     departments,
     userPagination: { total: userTotal },
     ideaPagination: { total },
     activeUsers,
     departmentReport,
+    hiddenIdeas,
   } = useApiStore();
   const router = useRouter();
 
@@ -49,6 +54,7 @@ const ReportsPage = () => {
       }
       promises.push(getActiveUsers());
       promises.push(getDepartmentReport());
+      promises.push(getHiddenIdeas());
       if (user) {
         promises.push(getUserLoginActivities(user.id));
       }
@@ -71,6 +77,7 @@ const ReportsPage = () => {
     getActiveUsers,
     getDepartmentReport,
     getUserLoginActivities,
+    getHiddenIdeas,
   ]);
 
   return (
@@ -149,6 +156,34 @@ const ReportsPage = () => {
           <div className="card">
             <div className="card-body">
               <h2 className="card-title">Department Statistics</h2>
+              <div className="w-full h-[300px] flex items-center justify-center">
+                <span className="loading loading-spinner loading-lg"></span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Category Stats Chart */}
+        {categories && categories.length > 0 ? (
+          <CategoryStatsChart categories={categories} />
+        ) : (
+          <div className="card">
+            <div className="card-body">
+              <h2 className="card-title">Categories Distribution</h2>
+              <div className="w-full h-[300px] flex items-center justify-center">
+                <span className="loading loading-spinner loading-lg"></span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Hidden Stats Chart */}
+        {hiddenIdeas && hiddenIdeas.length > 0 ? (
+          <HiddenStatsChart hiddenIdeas={hiddenIdeas} />
+        ) : (
+          <div className="card">
+            <div className="card-body">
+              <h2 className="card-title">Hidden Content by Department</h2>
               <div className="w-full h-[300px] flex items-center justify-center">
                 <span className="loading loading-spinner loading-lg"></span>
               </div>

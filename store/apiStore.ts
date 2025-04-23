@@ -156,13 +156,7 @@ interface ApiState {
   fetchUserReportedIdeas: (userId: number) => Promise<void>;
 
   // Hidden ideas state
-  hiddenIdeas: {
-    data: HiddenIdea[];
-    currentPage: number;
-    lastPage: number;
-    total: number;
-    loading: boolean;
-  };
+  hiddenIdeas: HiddenIdea[];
   hiddenUsers: {
     data: HiddenIdea[];
     currentPage: number;
@@ -957,13 +951,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
     }
   },
 
-  hiddenIdeas: {
-    data: [],
-    currentPage: 1,
-    lastPage: 1,
-    total: 0,
-    loading: false,
-  },
+  hiddenIdeas: [],
   hiddenUsers: {
     data: [],
     currentPage: 1,
@@ -1011,25 +999,15 @@ export const useApiStore = create<ApiState>((set, get) => ({
 
   getHiddenIdeas: async () => {
     try {
-      set((state) => ({
-        ...state,
-        hiddenIdeas: { ...state.hiddenIdeas, loading: true },
-      }));
+      set({ isLoading: true });
       const response = await api.hideApi.getHiddenIdeas();
-      set((state) => ({
-        ...state,
-        hiddenIdeas: {
-          data: response.data.data,
-          currentPage: response.data.meta.current_page,
-          lastPage: response.data.meta.last_page,
-          total: response.data.meta.total,
-          loading: false,
-        },
-      }));
+      set({ hiddenIdeas: response.data.data });
     } catch (error) {
       const message = handleError(error, "Failed to fetch hidden ideas");
       set({ error: message });
-      throw error;
+      set({ hiddenIdeas: [] });
+    } finally {
+      set({ isLoading: false });
     }
   },
 
