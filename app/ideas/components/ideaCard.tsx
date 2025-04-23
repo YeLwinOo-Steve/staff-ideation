@@ -125,7 +125,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
         onClick={handleCardClick}
       >
         <div
-          className="card-body p-5 flex flex-col h-full"
+          className="card-body p-5 flex flex-col h-full cursor-pointer"
           onClick={handleCardClick}
         >
           <div className="flex flex-col gap-4 flex-1">

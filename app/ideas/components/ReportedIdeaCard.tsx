@@ -39,7 +39,7 @@ export default function ReportedIdeaCard({ idea }: ReportedIdeaCardProps) {
       transition={{ duration: 0.2 }}
       layout
     >
-      <div className="card-body p-5 flex flex-col h-full">
+      <div className="card-body p-5 flex flex-col h-full cursor-pointer">
         <div className="flex flex-col gap-4 flex-1">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
