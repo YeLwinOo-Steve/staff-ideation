@@ -225,7 +225,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
                 <ReportedIdeaCard idea={idea as ReportedIdea} />
               ) : (
                 <Link
-                  href={`/dashboard/ideas/${(idea as Idea).id}`}
+                  href={`/ideas/${(idea as Idea).id}`}
                   className="h-full"
                 >
                   <IdeaCard idea={idea as Idea} />

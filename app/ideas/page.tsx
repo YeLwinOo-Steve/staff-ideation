@@ -90,7 +90,7 @@ export default function Dashboard() {
           </h1>
           {canCreateIdea ? (
             <Link
-              href="/dashboard/ideas/create"
+              href="/ideas/create"
               className="btn btn-primary btn-md"
             >
               <PlusIcon className="w-4 h-4" />

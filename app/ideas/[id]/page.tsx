@@ -21,14 +21,14 @@ import { getInitials } from "@/util/getInitials";
 import { formatDistanceToNow } from "date-fns";
 import saveAs from "file-saver";
 import JSZip from "jszip";
-import { AnimatedNumber } from "../../components/animatedNumber";
 import { useToast } from "@/components/toast";
 import { AxiosError } from "axios";
-import ReportDialog from "../../components/ReportDialog";
 import { useAuthStore } from "@/store/authStore";
 import { hasPermission } from "@/app/lib/utils";
 import type { Document } from "@/api/models";
 import Image from "next/image";
+import { AnimatedNumber } from "../components/animatedNumber";
+import ReportDialog from "../components/ReportDialog";
 
 const containerVariants = {
   hidden: { opacity: 0 },
