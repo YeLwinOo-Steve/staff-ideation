@@ -185,9 +185,16 @@ export interface BannedUser extends User {
 export interface ActiveUser {
   id: number;
   name: string;
-  total_ideas: number;
-  total_comments: number;
-  department: string | null;
+  photo: string;
+  email: string;
+  department_id: number | null;
+  email_verified_at: string | null;
+  hidden: number;
+  created_at: string | null;
+  updated_at: string;
+  ideas_count: number;
+  comments_count: number;
+  total_activity: number;
 }
 
 export interface DepartmentReport {

@@ -154,8 +154,7 @@ export const permissionApi = {
 };
 
 export const reportingApi = {
-  getActiveUsers: () =>
-    apiClient.get<PaginatedResponse<ActiveUser>>("/active-users"),
+  getActiveUsers: () => apiClient.get<ActiveUser[]>("/active-users"),
 
   getDepartmentReport: () =>
     apiClient.get<DepartmentReport[]>("/department-report"),

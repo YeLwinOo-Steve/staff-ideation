@@ -181,13 +181,7 @@ interface ApiState {
   };
 
   // Active users state
-  activeUsers: {
-    data: ActiveUser[];
-    currentPage: number;
-    lastPage: number;
-    total: number;
-    loading: boolean;
-  };
+  activeUsers: ActiveUser[];
 
   // Department report state
   departmentReport: DepartmentReport[];
@@ -240,6 +234,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
   error: null,
   roles: [],
   allUsers: [],
+  activeUsers: [],
   isLoadingAllUsers: false,
   pendingIdeas: [],
   pendingIdeaPagination: {
@@ -983,13 +978,6 @@ export const useApiStore = create<ApiState>((set, get) => ({
     total: 0,
     loading: false,
   },
-  activeUsers: {
-    data: [],
-    currentPage: 1,
-    lastPage: 1,
-    total: 0,
-    loading: false,
-  },
   departmentReport: [],
   anonymousIdeas: {
     data: [],
@@ -1139,25 +1127,15 @@ export const useApiStore = create<ApiState>((set, get) => ({
   // Reporting functions
   getActiveUsers: async () => {
     try {
-      set((state) => ({
-        ...state,
-        activeUsers: { ...state.activeUsers, loading: true },
-      }));
+      set({ isLoading: true });
       const response = await api.reportingApi.getActiveUsers();
-      set((state) => ({
-        ...state,
-        activeUsers: {
-          data: response.data.data,
-          currentPage: response.data.meta.current_page,
-          lastPage: response.data.meta.last_page,
-          total: response.data.meta.total,
-          loading: false,
-        },
-      }));
+      set({ activeUsers: response.data });
     } catch (error) {
       const message = handleError(error, "Failed to fetch active users");
       set({ error: message });
-      throw error;
+      set({ activeUsers: [] });
+    } finally {
+      set({ isLoading: false });
     }
   },
 
