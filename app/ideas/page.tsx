@@ -89,10 +89,7 @@ export default function Dashboard() {
             Welcome, {user?.name.split(" ")[0]}!
           </h1>
           {canCreateIdea ? (
-            <Link
-              href="/ideas/create"
-              className="btn btn-primary btn-md"
-            >
+            <Link href="/ideas/create" className="btn btn-primary btn-md">
               <PlusIcon className="w-4 h-4" />
               Create New Idea
             </Link>

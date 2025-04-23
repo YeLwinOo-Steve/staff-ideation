@@ -14,26 +14,39 @@ interface UserLogChartProps {
   userLogs: UserLog[];
 }
 
+interface DailyLogStats {
+  date: string;
+  system_setting: number;
+  idea: number;
+  category: number;
+  department: number;
+  user: number;
+  [key: string]: string | number; // Allow string indexing for dynamic access
+}
+
 export const UserLogChart = ({ userLogs }: UserLogChartProps) => {
   // Group logs by type and date
-  const logsByDate = userLogs.reduce((acc, log) => {
-    const date = new Date(log.time).toLocaleDateString();
-    if (!acc[date]) {
-      acc[date] = {
-        date,
-        system_setting: 0,
-        idea: 0,
-        category: 0,
-        department: 0,
-        user: 0,
-      };
-    }
-    acc[date][log.type] += 1;
-    return acc;
-  }, {} as Record<string, any>);
+  const logsByDate = userLogs.reduce(
+    (acc, log) => {
+      const date = new Date(log.time).toLocaleDateString();
+      if (!acc[date]) {
+        acc[date] = {
+          date,
+          system_setting: 0,
+          idea: 0,
+          category: 0,
+          department: 0,
+          user: 0,
+        };
+      }
+      acc[date][log.type] += 1;
+      return acc;
+    },
+    {} as Record<string, DailyLogStats>,
+  );
 
-  const data = Object.values(logsByDate).sort((a, b) => 
-    new Date(a.date).getTime() - new Date(b.date).getTime()
+  const data = Object.values(logsByDate).sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   );
 
   return (
@@ -102,4 +115,4 @@ export const UserLogChart = ({ userLogs }: UserLogChartProps) => {
       </div>
     </div>
   );
-}; 
+};

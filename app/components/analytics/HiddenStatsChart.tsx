@@ -16,17 +16,20 @@ interface HiddenStatsChartProps {
 
 export const HiddenStatsChart = ({ hiddenIdeas }: HiddenStatsChartProps) => {
   // Group ideas by department
-  const departmentStats = hiddenIdeas.reduce((acc, idea) => {
-    const dept = idea.department?.[0] || "No Department";
-    if (!acc[dept]) {
-      acc[dept] = { hidden: 0, total: 0 };
-    }
-    if (idea.hidden) {
-      acc[dept].hidden += 1;
-    }
-    acc[dept].total += 1;
-    return acc;
-  }, {} as Record<string, { hidden: number; total: number }>);
+  const departmentStats = hiddenIdeas.reduce(
+    (acc, idea) => {
+      const dept = idea.department?.[0] || "No Department";
+      if (!acc[dept]) {
+        acc[dept] = { hidden: 0, total: 0 };
+      }
+      if (idea.hidden) {
+        acc[dept].hidden += 1;
+      }
+      acc[dept].total += 1;
+      return acc;
+    },
+    {} as Record<string, { hidden: number; total: number }>,
+  );
 
   const data = Object.entries(departmentStats)
     .map(([name, stats]) => ({
@@ -64,4 +67,4 @@ export const HiddenStatsChart = ({ hiddenIdeas }: HiddenStatsChartProps) => {
       </div>
     </div>
   );
-}; 
+};

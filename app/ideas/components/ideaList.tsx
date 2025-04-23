@@ -224,10 +224,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
               {activeTab === "reported" ? (
                 <ReportedIdeaCard idea={idea as ReportedIdea} />
               ) : (
-                <Link
-                  href={`/ideas/${(idea as Idea).id}`}
-                  className="h-full"
-                >
+                <Link href={`/ideas/${(idea as Idea).id}`} className="h-full">
                   <IdeaCard idea={idea as Idea} />
                 </Link>
               )}

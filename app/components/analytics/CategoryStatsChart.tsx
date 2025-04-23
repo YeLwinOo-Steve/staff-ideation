@@ -1,11 +1,25 @@
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Legend,
+  Tooltip,
+} from "recharts";
 import { Category } from "@/api/models";
 
 interface CategoryStatsChartProps {
   categories: Category[];
 }
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8", "#82ca9d"];
+const COLORS = [
+  "#0088FE",
+  "#00C49F",
+  "#FFBB28",
+  "#FF8042",
+  "#8884d8",
+  "#82ca9d",
+];
 
 export const CategoryStatsChart = ({ categories }: CategoryStatsChartProps) => {
   const data = categories.map((category) => ({
@@ -31,7 +45,10 @@ export const CategoryStatsChart = ({ categories }: CategoryStatsChartProps) => {
                 label={({ name }) => name}
               >
                 {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
               <Tooltip />
@@ -42,4 +59,4 @@ export const CategoryStatsChart = ({ categories }: CategoryStatsChartProps) => {
       </div>
     </div>
   );
-}; 
+};
