@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { motion } from "framer-motion";
-import LogoutDialog from "@/app/dashboard/components/LogoutDialog";
+import LogoutDialog from "@/app/ideas/components/LogoutDialog";
 import { getInitials } from "@/util/getInitials";
 import { User } from "lucide-react";
 const containerVariants = {

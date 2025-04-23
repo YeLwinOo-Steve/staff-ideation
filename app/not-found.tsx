@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FileQuestion, Home, MoveLeft } from "lucide-react";
+import { FileQuestion, Lightbulb, MoveLeft } from "lucide-react";
 import Link from "next/link";
 
 const containerVariants = {
@@ -58,11 +58,11 @@ const NotFoundPage = () => {
 
         <motion.div variants={itemVariants}>
           <Link
-            href="/dashboard"
+            href="/ideas"
             className="btn btn-primary gap-2 min-w-[200px]"
           >
-            <Home className="w-4 h-4" />
-            Back to Dashboard
+            <Lightbulb className="w-4 h-4" />
+            Back to Ideas
           </Link>
         </motion.div>
 

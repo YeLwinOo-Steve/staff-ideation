@@ -22,7 +22,7 @@ import {
   UserCircle,
   Menu,
   X,
-  FileArchive,
+  ChartPie,
 } from "lucide-react";
 
 import LogoutDialog from "./LogoutDialog";
@@ -152,19 +152,19 @@ const NavBar = () => {
           <ul className="menu bg-base-200 menu-horizontal gap-1 rounded-xl text-base-content">
             <li>
               <Link
-                href="/dashboard"
-                className={`${pathname === "/dashboard" ? "active" : ""} text-base-content flex items-center gap-2`}
+                href="/ideas"
+                className={`${pathname === "/ideas" ? "active" : ""} text-base-content flex items-center gap-2`}
                 suppressHydrationWarning
               >
                 <Lightbulb size={16} />
-                Home
+                Ideas
               </Link>
             </li>
             {hasPermission(user, "user") && (
               <li>
                 <Link
-                  href="/dashboard/users"
-                  className={`${pathname === "/dashboard/users" ? "active" : ""} flex items-center gap-2`}
+                  href="/ideas/users"
+                  className={`${pathname === "/ideas/users" ? "active" : ""} flex items-center gap-2`}
                   suppressHydrationWarning
                 >
                   <Users size={16} />
@@ -175,8 +175,8 @@ const NavBar = () => {
             {hasPermission(user, "manage category") && (
               <li>
                 <Link
-                  href="/dashboard/categories"
-                  className={`${pathname === "/dashboard/categories" ? "active" : ""} flex items-center gap-2`}
+                  href="/ideas/categories"
+                  className={`${pathname === "/ideas/categories" ? "active" : ""} flex items-center gap-2`}
                   suppressHydrationWarning
                 >
                   <Blocks size={16} />
@@ -187,8 +187,8 @@ const NavBar = () => {
             {canManageDepartments && (
               <li>
                 <Link
-                  href="/dashboard/departments"
-                  className={`${pathname === "/dashboard/departments" ? "active" : ""} flex items-center gap-2`}
+                  href="/ideas/departments"
+                  className={`${pathname === "/ideas/departments" ? "active" : ""} flex items-center gap-2`}
                   suppressHydrationWarning
                 >
                   <Building2 size={16} />
@@ -198,19 +198,19 @@ const NavBar = () => {
             )}
             <li>
               <Link
-                href="/dashboard/reports"
-                className={`${pathname === "/dashboard/reports" ? "active" : ""} flex items-center gap-2`}
+                href="/ideas/reports"
+                className={`${pathname === "/ideas/reports" ? "active" : ""} flex items-center gap-2`}
                 suppressHydrationWarning
               >
-                <FileArchive size={16} />
-                Reports
+                <ChartPie size={16} />
+                Dashboard
               </Link>
             </li>
             {hasPermission(user, "system setting") && (
               <li>
                 <Link
-                  href="/dashboard/settings/system"
-                  className={`flex items-center gap-2 ${pathname === "/dashboard/settings/system" ? "active" : ""}`}
+                  href="/ideas/settings/system"
+                  className={`flex items-center gap-2 ${pathname === "/ideas/settings/system" ? "active" : ""}`}
                   suppressHydrationWarning
                 >
                   <Sliders size={16} />
@@ -242,8 +242,8 @@ const NavBar = () => {
                 <ul className="menu menu-vertical shadow-sm rounded-md p-2 bg-base-200 full-width z-50">
                   <li>
                     <Link
-                      href="/dashboard/settings/account"
-                      className={`flex items-center gap-2 ${pathname === "/dashboard/settings/account" ? "active" : ""}`}
+                      href="/ideas/settings/account"
+                      className={`flex items-center gap-2 ${pathname === "/ideas/settings/account" ? "active" : ""}`}
                       onClick={() => setIsSettingsOpen(false)}
                       suppressHydrationWarning
                     >
@@ -325,12 +325,12 @@ const NavBar = () => {
                   className="w-full max-w-[95%] sm:max-w-md"
                 >
                   <Link
-                    href="/dashboard"
+                    href="/ideas"
                     className="flex items-center gap-2 sm:gap-3 py-1 px-3 sm:px-4 hover:bg-base-200 rounded-xl transition-colors"
-                    onClick={() => handleNavigation("/dashboard")}
+                    onClick={() => handleNavigation("/ideas")}
                   >
                     <Lightbulb className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                    <span className="text-base sm:text-lg">Home</span>
+                    <span className="text-base sm:text-lg">Ideas</span>
                   </Link>
 
                   <div className="divider my-0.5 sm:my-1"></div>
@@ -338,9 +338,9 @@ const NavBar = () => {
                   {hasPermission(user, "user") && (
                     <>
                       <Link
-                        href="/dashboard/users"
+                        href="/ideas/users"
                         className="flex items-center gap-2 sm:gap-3 py-1 px-3 sm:px-4 hover:bg-base-200 rounded-xl transition-colors"
-                        onClick={() => handleNavigation("/dashboard/users")}
+                        onClick={() => handleNavigation("/ideas/users")}
                       >
                         <Users className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                         <span className="text-base sm:text-lg">Users</span>
@@ -353,11 +353,9 @@ const NavBar = () => {
                   {hasPermission(user, "category") && (
                     <>
                       <Link
-                        href="/dashboard/categories"
+                        href="/ideas/categories"
                         className="flex items-center gap-2 sm:gap-3 py-1 px-3 sm:px-4 hover:bg-base-200 rounded-xl transition-colors"
-                        onClick={() =>
-                          handleNavigation("/dashboard/categories")
-                        }
+                        onClick={() => handleNavigation("/ideas/categories")}
                       >
                         <Blocks className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                         <span className="text-base sm:text-lg">Categories</span>
@@ -370,11 +368,9 @@ const NavBar = () => {
                   {canManageDepartments && (
                     <>
                       <Link
-                        href="/dashboard/departments"
+                        href="/ideas/departments"
                         className="flex items-center gap-2 sm:gap-3 py-1 px-3 sm:px-4 hover:bg-base-200 rounded-xl transition-colors"
-                        onClick={() =>
-                          handleNavigation("/dashboard/departments")
-                        }
+                        onClick={() => handleNavigation("/ideas/departments")}
                       >
                         <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                         <span className="text-base sm:text-lg">
@@ -389,21 +385,19 @@ const NavBar = () => {
                   <div className="divider my-0.5 sm:my-1"></div>
 
                   <Link
-                    href="/dashboard/reports"
+                    href="/ideas/reports"
                     className="flex items-center gap-2 sm:gap-3 py-1 px-3 sm:px-4 hover:bg-base-200 rounded-xl transition-colors"
-                    onClick={() => handleNavigation("/dashboard/reports")}
+                    onClick={() => handleNavigation("/ideas/reports")}
                   >
-                    <FileArchive className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                    <span className="text-base sm:text-lg">Reports</span>
+                    <ChartPie className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                    <span className="text-base sm:text-lg">Dashboard</span>
                   </Link>
                   <div className="divider my-0.5 sm:my-1"></div>
                   {hasPermission(user, "system setting") && (
                     <Link
-                      href="/dashboard/settings/system"
+                      href="/ideas/settings/system"
                       className="flex items-center gap-2 sm:gap-3 py-1 px-2 sm:px-3 hover:bg-base-300 rounded-lg transition-colors"
-                      onClick={() =>
-                        handleNavigation("/dashboard/settings/system")
-                      }
+                      onClick={() => handleNavigation("/ideas/settings/system")}
                     >
                       <Sliders className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                       <span className="text-sm sm:text-base">System</span>
@@ -424,10 +418,10 @@ const NavBar = () => {
                     </div>
                     <div className="collapse-content space-y-0.5 sm:space-y-1">
                       <Link
-                        href="/dashboard/settings/account"
+                        href="/ideas/settings/account"
                         className="flex items-center gap-2 sm:gap-3 py-1 px-2 sm:px-3 hover:bg-base-300 rounded-lg transition-colors"
                         onClick={() =>
-                          handleNavigation("/dashboard/settings/account")
+                          handleNavigation("/ideas/settings/account")
                         }
                       >
                         <UserCircle className="w-4 h-4 sm:w-5 sm:h-5" />
