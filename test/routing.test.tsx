@@ -85,7 +85,7 @@ describe("Login page", () => {
     fireEvent.click(screen.getByRole("button"));
 
     await waitFor(() => {
-      expect(mockRouter.pathname).toBe("/dashboard");
+      expect(mockRouter.pathname).toBe("/ideas");
       expect(publicIpv4).toHaveBeenCalled();
       expect(detect).toHaveBeenCalled();
     });

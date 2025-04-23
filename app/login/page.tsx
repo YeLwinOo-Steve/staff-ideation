@@ -34,7 +34,7 @@ export default function Login() {
       const browser = detect();
       if (browser) {
         await login(data.email, data.password, ip, browser.name);
-        router.push("/dashboard");
+        router.push("/ideas");
         showSuccessToast("Login successful");
       } else {
         showErrorToast("Browser not detected");
