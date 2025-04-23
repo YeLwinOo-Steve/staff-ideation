@@ -4,7 +4,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useLoginActivityStore } from "@/store/apiStore";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Meh } from "lucide-react";
+import { Meh, Users, Building2, Lightbulb, Blocks } from "lucide-react";
 import { BrowserUsageChart } from "@/app/components/analytics/BrowserUsageChart";
 import { UserActivityChart } from "@/app/components/analytics/UserActivityChart";
 import { DepartmentStatsChart } from "@/app/components/analytics/DepartmentStatsChart";
@@ -141,35 +141,67 @@ const ReportsPage = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="stats shadow">
+        <div className="stats bg-primary/30 text-primary-content">
           <div className="stat">
-            <div className="stat-title">Total Ideas</div>
+            <div className="stat-figure text-primary">
+              <Lightbulb className="w-8 h-8" />
+            </div>
+            <div className="stat-title text-primary-content/80">
+              Total Ideas
+            </div>
             <div className="stat-value">{total || 0}</div>
-            <div className="stat-desc">Number of ideas</div>
+            <div className="stat-desc text-primary-content/60">
+              {total > 0
+                ? "Ideas submitted by users"
+                : "No ideas submitted yet"}
+            </div>
           </div>
         </div>
 
-        <div className="stats shadow">
+        <div className="stats bg-secondary/30 text-secondary-content">
           <div className="stat">
-            <div className="stat-title">Total Users</div>
+            <div className="stat-figure text-secondary">
+              <Users className="w-8 h-8" />
+            </div>
+            <div className="stat-title text-secondary-content/80">
+              Total Users
+            </div>
             <div className="stat-value">{userTotal || 0}</div>
-            <div className="stat-desc">Users in EWSD</div>
+            <div className="stat-desc text-secondary-content/60">
+              {userTotal > 0
+                ? "Active users in EWSD"
+                : "No users registered yet"}
+            </div>
           </div>
         </div>
 
-        <div className="stats shadow">
+        <div className="stats bg-accent/30 text-accent-content">
           <div className="stat">
-            <div className="stat-title">Total Categories</div>
+            <div className="stat-figure text-accent">
+              <Blocks className="w-8 h-8" />
+            </div>
+            <div className="stat-title text-accent-content/80">Categories</div>
             <div className="stat-value">{categories?.length || 0}</div>
-            <div className="stat-desc">Number of categories</div>
+            <div className="stat-desc text-accent-content/60">
+              {categories?.length > 0
+                ? "Available idea categories"
+                : "No categories created"}
+            </div>
           </div>
         </div>
 
-        <div className="stats shadow">
+        <div className="stats bg-info/30 text-info-content">
           <div className="stat">
-            <div className="stat-title">Total Departments</div>
+            <div className="stat-figure text-info">
+              <Building2 className="w-8 h-8" />
+            </div>
+            <div className="stat-title text-info-content/80">Departments</div>
             <div className="stat-value">{departments?.length || 0}</div>
-            <div className="stat-desc">Number of departments</div>
+            <div className="stat-desc text-info-content/60">
+              {departments?.length > 0
+                ? "Active departments"
+                : "No departments created"}
+            </div>
           </div>
         </div>
       </div>
