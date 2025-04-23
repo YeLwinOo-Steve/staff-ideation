@@ -27,11 +27,11 @@ apiClient.interceptors.response.use(
   (error) => {
     const UNAUTHENTICATED = 401;
     if (error.response?.status === UNAUTHENTICATED) {
-      useAuthStore.getState().logout();
+      // useAuthStore.getState().logout();
       redirect("/login");
     }
     return Promise.reject(error);
-  },
+  }
 );
 
 export default apiClient;

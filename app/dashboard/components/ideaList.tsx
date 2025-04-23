@@ -1,10 +1,12 @@
 import { motion } from "framer-motion";
 import IdeaCard from "./ideaCard";
+import ReportedIdeaCard from "./ReportedIdeaCard";
 import { useApiStore } from "@/store/apiStore";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuthStore } from "@/store/authStore";
-import { hasPermission } from "@/app/lib/utils";
+import { hasAnyRole } from "@/app/lib/utils";
+import { Idea, ReportedIdea } from "@/api/models";
 
 const containerVariants = {
   hidden: { opacity: 1 },
@@ -36,7 +38,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
   const [page, setPage] = useState(1);
   const [latest, setLatest] = useState<boolean | null>(null);
   const [popular, setPopular] = useState<boolean | null>(null);
-  const [activeTab, setActiveTab] = useState<"all" | "pending">("all");
+  const [activeTab, setActiveTab] = useState<"all" | "pending" | "reported">("all");
   const {
     ideaPagination: { data: ideas, currentPage, lastPage, loading },
     pendingIdeaPagination: {
@@ -45,18 +47,50 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
       lastPage: pendingLastPage,
       loading: pendingLoading,
     },
+    reportedIdeas: {
+      data: reportedIdeasData,
+      currentPage: reportedCurrentPage,
+      lastPage: reportedLastPage,
+      loading: reportedLoading,
+    },
     fetchIdeas,
     fetchUsers,
     getToSubmit,
+    fetchReportedIdeas,
   } = useApiStore();
-  const user = useAuthStore((state) => state.user);
-  const canSubmitIdea = hasPermission(user, "idea submission");
 
-  const displayedIdeas = activeTab === "pending" ? pendingIdeas : ideas;
+  const user = useAuthStore((state) => state.user);
+  const canSubmitIdea = hasAnyRole(user, ["QA coordinators"]);
+  const isQAManager = hasAnyRole(user, ["QA manager"]);
+
+  const displayedIdeas: Array<Idea | ReportedIdea> = 
+    activeTab === "pending" 
+      ? pendingIdeas 
+      : activeTab === "reported"
+      ? reportedIdeasData
+      : ideas;
+      
   const currentPageToShow =
-    activeTab === "pending" ? pendingCurrentPage : currentPage;
-  const lastPageToShow = activeTab === "pending" ? pendingLastPage : lastPage;
-  const isLoading = activeTab === "pending" ? pendingLoading : loading;
+    activeTab === "pending"
+      ? pendingCurrentPage
+      : activeTab === "reported"
+      ? reportedCurrentPage
+      : currentPage;
+      
+  const lastPageToShow =
+    activeTab === "pending"
+      ? pendingLastPage
+      : activeTab === "reported"
+      ? reportedLastPage
+      : lastPage;
+      
+  const isLoading =
+    activeTab === "pending"
+      ? pendingLoading
+      : activeTab === "reported"
+      ? reportedLoading
+      : loading;
+
   const gridClass = `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Math.min(gridCols, 4)} gap-6`;
 
   useEffect(() => {
@@ -66,6 +100,8 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
   useEffect(() => {
     if (activeTab === "pending") {
       getToSubmit(page);
+    } else if (activeTab === "reported") {
+      fetchReportedIdeas(page);
     } else if (popular !== null && popular === true) {
       fetchIdeas({
         page: page.toString(),
@@ -76,9 +112,9 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
     } else {
       fetchIdeas({ page: page.toString() });
     }
-  }, [page, popular, latest, fetchIdeas, getToSubmit, activeTab]);
+  }, [page, popular, latest, fetchIdeas, getToSubmit, fetchReportedIdeas, activeTab]);
 
-  const handleTabChange = (tab: "all" | "pending") => {
+  const handleTabChange = (tab: "all" | "pending" | "reported") => {
     setActiveTab(tab);
     setPage(1);
     setPopular(null);
@@ -88,53 +124,61 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
   return (
     <div className="w-full max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        {canSubmitIdea ? (
-          <div className="tabs tabs-boxed">
-            <button
-              className={`tab ${activeTab === "all" ? "tab-active" : ""}`}
-              onClick={() => handleTabChange("all")}
-            >
-              All Ideas
-            </button>
+        <div className="tabs tabs-boxed">
+          <button
+            className={`tab ${activeTab === "all" ? "tab-active" : ""}`}
+            onClick={() => handleTabChange("all")}
+          >
+            All Ideas
+          </button>
+          {canSubmitIdea && (
             <button
               className={`tab ${activeTab === "pending" ? "tab-active" : ""}`}
               onClick={() => handleTabChange("pending")}
             >
               Pending Ideas
             </button>
-          </div>
-        ) : (
-          <h2 className="text-xl font-bold">All Ideas</h2>
-        )}
-
-        <div className="flex items-center gap-4">
-          <div className="join">
-            <input
-              type="radio"
-              name="sort"
-              className="join-item btn btn-sm"
-              aria-label="Latest"
-              checked={latest === true}
-              onChange={() => {
-                setPage(1);
-                setPopular(false);
-                setLatest(true);
-              }}
-            />
-            <input
-              type="radio"
-              name="sort"
-              className="join-item btn btn-sm"
-              aria-label="Popular"
-              checked={popular === true}
-              onChange={() => {
-                setPage(1);
-                setPopular(true);
-                setLatest(null);
-              }}
-            />
-          </div>
+          )}
+          {isQAManager && (
+            <button
+              className={`tab ${activeTab === "reported" ? "tab-active" : ""}`}
+              onClick={() => handleTabChange("reported")}
+            >
+              Reported Ideas
+            </button>
+          )}
         </div>
+
+        {activeTab === "all" && (
+          <div className="flex items-center gap-4">
+            <div className="join">
+              <input
+                type="radio"
+                name="sort"
+                className="join-item btn btn-sm"
+                aria-label="Latest"
+                checked={latest === true}
+                onChange={() => {
+                  setPage(1);
+                  setPopular(false);
+                  setLatest(true);
+                }}
+              />
+              <input
+                type="radio"
+                name="sort"
+                className="join-item btn btn-sm"
+                aria-label="Popular"
+                checked={popular === true}
+                onChange={() => {
+                  setPage(1);
+                  setPopular(true);
+                  setLatest(null);
+                }}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Ideas Grid with Loading State */}
@@ -156,16 +200,21 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
           animate="show"
           className={gridClass}
         >
-          {displayedIdeas.map((idea) => (
-            <Link
-              key={idea.id}
-              href={`/dashboard/ideas/${idea.id}`}
-              className="h-full"
+          {displayedIdeas.map((idea, index) => (
+            <motion.div 
+              key={activeTab === "reported" ? `reported-${index}` : (idea as Idea).id} 
+              variants={itemVariants} 
+              className="h-full" 
+              layout
             >
-              <motion.div variants={itemVariants} className="h-full" layout>
-                <IdeaCard idea={idea} />
-              </motion.div>
-            </Link>
+              {activeTab === "reported" ? (
+                <ReportedIdeaCard idea={idea as ReportedIdea} />
+              ) : (
+                <Link href={`/dashboard/ideas/${(idea as Idea).id}`} className="h-full">
+                  <IdeaCard idea={idea as Idea} />
+                </Link>
+              )}
+            </motion.div>
           ))}
         </motion.div>
       )}
