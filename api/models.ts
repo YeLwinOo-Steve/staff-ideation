@@ -199,9 +199,13 @@ export interface ActiveUser {
 
 export interface DepartmentReport {
   department_name: string;
+  qa_coordinator: string;
   total_ideas: number;
   total_comments: number;
-  total_users: number;
+  total_user: number;
+  ideas_percentage: number;
+  contributors: number;
+  total_activity: number;
 }
 
 export interface AnonymousIdea {
