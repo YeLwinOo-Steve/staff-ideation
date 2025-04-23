@@ -212,3 +212,12 @@ export interface AnonymousComment {
   idea_title: string;
   department: string | null;
 }
+
+export interface LoginActivity {
+  id: number;
+  user_id: number;
+  browser: string;
+  ip_address: string;
+  created_at: string;
+  updated_at: string;
+}

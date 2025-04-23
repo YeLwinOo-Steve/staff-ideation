@@ -17,6 +17,7 @@ import {
   DepartmentReport,
   AnonymousIdea,
   AnonymousComment,
+  LoginActivity,
 } from "@/api/models";
 import * as api from "@/api/repository";
 import axios, { AxiosError } from "axios";
@@ -1220,5 +1221,18 @@ export const useApiStore = create<ApiState>((set, get) => ({
       set({ error: message });
       throw error;
     }
+  },
+}));
+
+interface LoginActivityStore {
+  loginActivities: LoginActivity[];
+  getUserLoginActivities: (userId: number) => Promise<void>;
+}
+
+export const useLoginActivityStore = create<LoginActivityStore>((set) => ({
+  loginActivities: [],
+  getUserLoginActivities: async (userId: number) => {
+    const response = await api.loginActivityApi.getUserLoginActivities(userId);
+    set({ loginActivities: response.data });
   },
 }));

@@ -20,6 +20,7 @@ import {
   DepartmentReport,
   AnonymousIdea,
   AnonymousComment,
+  LoginActivity,
 } from "@/api/models";
 
 export const departmentApi = {
@@ -164,4 +165,9 @@ export const reportingApi = {
 
   getAnonymousComments: () =>
     apiClient.get<PaginatedResponse<AnonymousComment>>("/anonymous-comments"),
+};
+
+export const loginActivityApi = {
+  getUserLoginActivities: (userId: number) =>
+    apiClient.get<LoginActivity[]>(`/log-in-activities/${userId}`),
 };
