@@ -198,8 +198,8 @@ const NavBar = () => {
             )}
             <li>
               <Link
-                href="/ideas/reports"
-                className={`${pathname === "/ideas/reports" ? "active" : ""} flex items-center gap-2`}
+                href="/ideas/dashboard"
+                className={`${pathname === "/ideas/dashboard" ? "active" : ""} flex items-center gap-2`}
                 suppressHydrationWarning
               >
                 <ChartPie size={16} />
@@ -385,9 +385,9 @@ const NavBar = () => {
                   <div className="divider my-0.5 sm:my-1"></div>
 
                   <Link
-                    href="/ideas/reports"
+                    href="/ideas/dashboard"
                     className="flex items-center gap-2 sm:gap-3 py-1 px-3 sm:px-4 hover:bg-base-200 rounded-xl transition-colors"
-                    onClick={() => handleNavigation("/ideas/reports")}
+                    onClick={() => handleNavigation("/ideas/dashboard")}
                   >
                     <ChartPie className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                     <span className="text-base sm:text-lg">Dashboard</span>
