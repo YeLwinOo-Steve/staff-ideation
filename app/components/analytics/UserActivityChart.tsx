@@ -27,16 +27,16 @@ export const UserActivityChart = ({ activeUsers }: UserActivityChartProps) => {
 
   return (
     <div className="card">
+      <h2 className="card-title">Top Active Users</h2>
       <div className="card-body">
-        <h2 className="card-title">Top Active Users</h2>
         <div className="w-full h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={data}
               margin={{
                 top: 20,
-                right: 30,
-                left: 20,
+                right: 5,
+                left: 5,
                 bottom: 5,
               }}
             >

@@ -26,8 +26,8 @@ export const DepartmentStatsChart = ({
 
   return (
     <div className="card">
+      <h2 className="card-title">Department Statistics</h2>
       <div className="card-body">
-        <h2 className="card-title">Department Statistics</h2>
         <div className="w-full h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart

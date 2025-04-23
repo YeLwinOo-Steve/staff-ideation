@@ -4,7 +4,14 @@ import { useAuthStore } from "@/store/authStore";
 import { useLoginActivityStore } from "@/store/apiStore";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Meh, Users, Building2, Lightbulb, Blocks } from "lucide-react";
+import {
+  Meh,
+  Users,
+  Building2,
+  Lightbulb,
+  Blocks,
+  ChartPie,
+} from "lucide-react";
 import { BrowserUsageChart } from "@/app/components/analytics/BrowserUsageChart";
 import { UserActivityChart } from "@/app/components/analytics/UserActivityChart";
 import { DepartmentStatsChart } from "@/app/components/analytics/DepartmentStatsChart";
@@ -136,8 +143,13 @@ const ReportsPage = () => {
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Analytics Dashboard</h1>
+    <div className="container mx-auto p-6 max-w-7xl space-y-6">
+      <div className="mb-8">
+        <div className="flex items-center gap-2">
+          <ChartPie className="w-8 h-8 text-primary" />
+          <h1 className="text-2xl font-bold">Analytics Dashboard</h1>
+        </div>
+      </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

@@ -33,8 +33,8 @@ export const BrowserUsageChart = ({
 
   return (
     <div className="card">
+      <h2 className="card-title">Browser Usage</h2>
       <div className="card-body">
-        <h2 className="card-title">Browser Usage</h2>
         <div className="w-full h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>

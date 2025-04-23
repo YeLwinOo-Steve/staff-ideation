@@ -24,13 +24,13 @@ const COLORS = [
 export const CategoryStatsChart = ({ categories }: CategoryStatsChartProps) => {
   const data = categories.map((category) => ({
     name: category.name,
-    value: 1, // You can add a count property if available
+    value: 1,
   }));
 
   return (
     <div className="card">
+      <h2 className="card-title">Categories Distribution</h2>
       <div className="card-body">
-        <h2 className="card-title">Categories Distribution</h2>
         <div className="w-full h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>

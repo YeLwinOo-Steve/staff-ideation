@@ -41,8 +41,8 @@ export const HiddenStatsChart = ({ hiddenIdeas }: HiddenStatsChartProps) => {
 
   return (
     <div className="card">
+      <h2 className="card-title">Hidden Content by Department</h2>
       <div className="card-body">
-        <h2 className="card-title">Hidden Content by Department</h2>
         <div className="w-full h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
