@@ -171,3 +171,44 @@ export interface ReportedUser {
   no_of_reports: number;
   banned: boolean;
 }
+
+export interface HiddenIdea extends Idea {
+  hidden: number;
+}
+
+export interface BannedUser extends User {
+  hidden: number;
+  email_verified_at: string;
+  department_id: number | null;
+}
+
+export interface ActiveUser {
+  id: number;
+  name: string;
+  total_ideas: number;
+  total_comments: number;
+  department: string | null;
+}
+
+export interface DepartmentReport {
+  department_name: string;
+  total_ideas: number;
+  total_comments: number;
+  total_users: number;
+}
+
+export interface AnonymousIdea {
+  id: number;
+  title: string;
+  content: string;
+  created_at: string;
+  department: string | null;
+}
+
+export interface AnonymousComment {
+  id: number;
+  comment: string;
+  created_at: string;
+  idea_title: string;
+  department: string | null;
+}

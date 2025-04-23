@@ -14,6 +14,12 @@ import {
   ReportedIdea,
   ReportDetail,
   ReportedUser,
+  HiddenIdea,
+  BannedUser,
+  ActiveUser,
+  DepartmentReport,
+  AnonymousIdea,
+  AnonymousComment,
 } from "@/api/models";
 
 export const departmentApi = {
@@ -119,4 +125,43 @@ export const reportApi = {
 
   getUserReportedIdeas: (userId: number) =>
     apiClient.get<{ data: ReportedIdea[] }>(`/report/user/${userId}`),
+};
+
+export const hideApi = {
+  hideIdea: (id: number, hide: number) =>
+    apiClient.put<{ message: string }>(`/hide/${id}`, { hide }),
+
+  getHiddenIdeas: () =>
+    apiClient.get<PaginatedResponse<HiddenIdea>>("/get-hide-ideas"),
+
+  hideUserIdeas: (userId: number, hide: number) =>
+    apiClient.put<{ message: string }>(`/user/hide/${userId}`, { hide }),
+
+  getHiddenUsers: () =>
+    apiClient.get<PaginatedResponse<HiddenIdea>>("/get-hide-ideas-user"),
+};
+
+export const permissionApi = {
+  removeIdeaPermissions: (userId: number) =>
+    apiClient.put<{ message: string }>(`/remove-idea-permissions/${userId}`),
+
+  giveIdeaPermissions: (userId: number) =>
+    apiClient.put<{ message: string }>(`/give-idea-permissions/${userId}`),
+
+  getBannedUsers: () =>
+    apiClient.get<PaginatedResponse<BannedUser>>("/banUser"),
+};
+
+export const reportingApi = {
+  getActiveUsers: () =>
+    apiClient.get<PaginatedResponse<ActiveUser>>("/active-users"),
+
+  getDepartmentReport: () =>
+    apiClient.get<DepartmentReport[]>("/department-report"),
+
+  getAnonymousIdeas: () =>
+    apiClient.get<PaginatedResponse<AnonymousIdea>>("/anonymous-ideas"),
+
+  getAnonymousComments: () =>
+    apiClient.get<PaginatedResponse<AnonymousComment>>("/anonymous-comments"),
 };

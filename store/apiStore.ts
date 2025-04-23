@@ -11,6 +11,12 @@ import {
   ReportedIdea,
   ReportDetail,
   ReportedUser,
+  HiddenIdea,
+  BannedUser,
+  ActiveUser,
+  DepartmentReport,
+  AnonymousIdea,
+  AnonymousComment,
 } from "@/api/models";
 import * as api from "@/api/repository";
 import axios, { AxiosError } from "axios";
@@ -147,6 +153,76 @@ interface ApiState {
   fetchReportDetails: (ideaId: number) => Promise<void>;
   fetchReportedUsers: () => Promise<void>;
   fetchUserReportedIdeas: (userId: number) => Promise<void>;
+
+  // Hidden ideas state
+  hiddenIdeas: {
+    data: HiddenIdea[];
+    currentPage: number;
+    lastPage: number;
+    total: number;
+    loading: boolean;
+  };
+  hiddenUsers: {
+    data: HiddenIdea[];
+    currentPage: number;
+    lastPage: number;
+    total: number;
+    loading: boolean;
+  };
+
+  // Banned users state
+  bannedUsers: {
+    data: BannedUser[];
+    currentPage: number;
+    lastPage: number;
+    total: number;
+    loading: boolean;
+  };
+
+  // Active users state
+  activeUsers: {
+    data: ActiveUser[];
+    currentPage: number;
+    lastPage: number;
+    total: number;
+    loading: boolean;
+  };
+
+  // Department report state
+  departmentReport: DepartmentReport[];
+
+  // Anonymous content state
+  anonymousIdeas: {
+    data: AnonymousIdea[];
+    currentPage: number;
+    lastPage: number;
+    total: number;
+    loading: boolean;
+  };
+  anonymousComments: {
+    data: AnonymousComment[];
+    currentPage: number;
+    lastPage: number;
+    total: number;
+    loading: boolean;
+  };
+
+  // Hide functions
+  hideIdea: (id: number, hide: number) => Promise<void>;
+  getHiddenIdeas: () => Promise<void>;
+  hideUserIdeas: (userId: number, hide: number) => Promise<void>;
+  getHiddenUsers: () => Promise<void>;
+
+  // Permission functions
+  removeIdeaPermissions: (userId: number) => Promise<void>;
+  giveIdeaPermissions: (userId: number) => Promise<void>;
+  getBannedUsers: () => Promise<void>;
+
+  // Reporting functions
+  getActiveUsers: () => Promise<void>;
+  getDepartmentReport: () => Promise<void>;
+  getAnonymousIdeas: () => Promise<void>;
+  getAnonymousComments: () => Promise<void>;
 }
 
 export const useApiStore = create<ApiState>((set, get) => ({
@@ -882,6 +958,267 @@ export const useApiStore = create<ApiState>((set, get) => ({
       throw error;
     } finally {
       set({ isLoading: false });
+    }
+  },
+
+  hiddenIdeas: {
+    data: [],
+    currentPage: 1,
+    lastPage: 1,
+    total: 0,
+    loading: false,
+  },
+  hiddenUsers: {
+    data: [],
+    currentPage: 1,
+    lastPage: 1,
+    total: 0,
+    loading: false,
+  },
+  bannedUsers: {
+    data: [],
+    currentPage: 1,
+    lastPage: 1,
+    total: 0,
+    loading: false,
+  },
+  activeUsers: {
+    data: [],
+    currentPage: 1,
+    lastPage: 1,
+    total: 0,
+    loading: false,
+  },
+  departmentReport: [],
+  anonymousIdeas: {
+    data: [],
+    currentPage: 1,
+    lastPage: 1,
+    total: 0,
+    loading: false,
+  },
+  anonymousComments: {
+    data: [],
+    currentPage: 1,
+    lastPage: 1,
+    total: 0,
+    loading: false,
+  },
+
+  // Hide functions
+  hideIdea: async (id, hide) => {
+    try {
+      set({ isLoading: true });
+      await api.hideApi.hideIdea(id, hide);
+      await get().getHiddenIdeas();
+    } catch (error) {
+      const message = handleError(error, "Failed to hide idea");
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  getHiddenIdeas: async () => {
+    try {
+      set((state) => ({
+        ...state,
+        hiddenIdeas: { ...state.hiddenIdeas, loading: true },
+      }));
+      const response = await api.hideApi.getHiddenIdeas();
+      set((state) => ({
+        ...state,
+        hiddenIdeas: {
+          data: response.data.data,
+          currentPage: response.data.meta.current_page,
+          lastPage: response.data.meta.last_page,
+          total: response.data.meta.total,
+          loading: false,
+        },
+      }));
+    } catch (error) {
+      const message = handleError(error, "Failed to fetch hidden ideas");
+      set({ error: message });
+      throw error;
+    }
+  },
+
+  hideUserIdeas: async (userId, hide) => {
+    try {
+      set({ isLoading: true });
+      await api.hideApi.hideUserIdeas(userId, hide);
+      await get().getHiddenUsers();
+    } catch (error) {
+      const message = handleError(error, "Failed to hide user ideas");
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  getHiddenUsers: async () => {
+    try {
+      set((state) => ({
+        ...state,
+        hiddenUsers: { ...state.hiddenUsers, loading: true },
+      }));
+      const response = await api.hideApi.getHiddenUsers();
+      set((state) => ({
+        ...state,
+        hiddenUsers: {
+          data: response.data.data,
+          currentPage: response.data.meta.current_page,
+          lastPage: response.data.meta.last_page,
+          total: response.data.meta.total,
+          loading: false,
+        },
+      }));
+    } catch (error) {
+      const message = handleError(error, "Failed to fetch hidden users");
+      set({ error: message });
+      throw error;
+    }
+  },
+
+  // Permission functions
+  removeIdeaPermissions: async (userId) => {
+    try {
+      set({ isLoading: true });
+      await api.permissionApi.removeIdeaPermissions(userId);
+      await get().getBannedUsers();
+    } catch (error) {
+      const message = handleError(error, "Failed to remove idea permissions");
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  giveIdeaPermissions: async (userId) => {
+    try {
+      set({ isLoading: true });
+      await api.permissionApi.giveIdeaPermissions(userId);
+      await get().getBannedUsers();
+    } catch (error) {
+      const message = handleError(error, "Failed to give idea permissions");
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  getBannedUsers: async () => {
+    try {
+      set((state) => ({
+        ...state,
+        bannedUsers: { ...state.bannedUsers, loading: true },
+      }));
+      const response = await api.permissionApi.getBannedUsers();
+      set((state) => ({
+        ...state,
+        bannedUsers: {
+          data: response.data.data,
+          currentPage: response.data.meta.current_page,
+          lastPage: response.data.meta.last_page,
+          total: response.data.meta.total,
+          loading: false,
+        },
+      }));
+    } catch (error) {
+      const message = handleError(error, "Failed to fetch banned users");
+      set({ error: message });
+      throw error;
+    }
+  },
+
+  // Reporting functions
+  getActiveUsers: async () => {
+    try {
+      set((state) => ({
+        ...state,
+        activeUsers: { ...state.activeUsers, loading: true },
+      }));
+      const response = await api.reportingApi.getActiveUsers();
+      set((state) => ({
+        ...state,
+        activeUsers: {
+          data: response.data.data,
+          currentPage: response.data.meta.current_page,
+          lastPage: response.data.meta.last_page,
+          total: response.data.meta.total,
+          loading: false,
+        },
+      }));
+    } catch (error) {
+      const message = handleError(error, "Failed to fetch active users");
+      set({ error: message });
+      throw error;
+    }
+  },
+
+  getDepartmentReport: async () => {
+    try {
+      set({ isLoading: true });
+      const response = await api.reportingApi.getDepartmentReport();
+      set({ departmentReport: response.data });
+    } catch (error) {
+      const message = handleError(error, "Failed to fetch department report");
+      set({ error: message });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  getAnonymousIdeas: async () => {
+    try {
+      set((state) => ({
+        ...state,
+        anonymousIdeas: { ...state.anonymousIdeas, loading: true },
+      }));
+      const response = await api.reportingApi.getAnonymousIdeas();
+      set((state) => ({
+        ...state,
+        anonymousIdeas: {
+          data: response.data.data,
+          currentPage: response.data.meta.current_page,
+          lastPage: response.data.meta.last_page,
+          total: response.data.meta.total,
+          loading: false,
+        },
+      }));
+    } catch (error) {
+      const message = handleError(error, "Failed to fetch anonymous ideas");
+      set({ error: message });
+      throw error;
+    }
+  },
+
+  getAnonymousComments: async () => {
+    try {
+      set((state) => ({
+        ...state,
+        anonymousComments: { ...state.anonymousComments, loading: true },
+      }));
+      const response = await api.reportingApi.getAnonymousComments();
+      set((state) => ({
+        ...state,
+        anonymousComments: {
+          data: response.data.data,
+          currentPage: response.data.meta.current_page,
+          lastPage: response.data.meta.last_page,
+          total: response.data.meta.total,
+          loading: false,
+        },
+      }));
+    } catch (error) {
+      const message = handleError(error, "Failed to fetch anonymous comments");
+      set({ error: message });
+      throw error;
     }
   },
 }));
