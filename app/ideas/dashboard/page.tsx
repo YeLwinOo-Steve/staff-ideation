@@ -17,9 +17,24 @@ import { UserActivityChart } from "@/app/components/analytics/UserActivityChart"
 import { DepartmentStatsChart } from "@/app/components/analytics/DepartmentStatsChart";
 import { CategoryStatsChart } from "@/app/components/analytics/CategoryStatsChart";
 import { HiddenStatsChart } from "@/app/components/analytics/HiddenStatsChart";
+import { motion } from "framer-motion";
+
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5 },
+};
+
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
 
 const EmptyState = ({ title }: { title: string }) => (
-  <div className="card">
+  <motion.div className="card" {...fadeInUp}>
     <div className="card-body">
       <h2 className="card-title">{title}</h2>
       <div className="w-full h-[300px] flex items-center justify-center">
@@ -29,18 +44,18 @@ const EmptyState = ({ title }: { title: string }) => (
         </div>
       </div>
     </div>
-  </div>
+  </motion.div>
 );
 
 const LoadingState = ({ title }: { title: string }) => (
-  <div className="card">
+  <motion.div className="card" {...fadeInUp}>
     <div className="card-body">
       <h2 className="card-title">{title}</h2>
       <div className="w-full h-[300px] flex items-center justify-center">
         <span className="loading loading-spinner loading-lg"></span>
       </div>
     </div>
-  </div>
+  </motion.div>
 );
 
 const ReportsPage = () => {
@@ -144,16 +159,29 @@ const ReportsPage = () => {
 
   return (
     <div className="container mx-auto p-6 max-w-7xl space-y-6">
-      <div className="mb-8">
+      <motion.div
+        className="mb-8"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <div className="flex items-center gap-2">
           <ChartPie className="w-8 h-8 text-primary" />
           <h1 className="text-2xl font-bold">Analytics Dashboard</h1>
         </div>
-      </div>
+      </motion.div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="stats bg-primary/30 text-primary-content">
+      <motion.div
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
+        <motion.div
+          variants={fadeInUp}
+          className="stats bg-primary/30 text-primary-content"
+        >
           <div className="stat">
             <div className="stat-figure text-primary">
               <Lightbulb className="w-8 h-8" />
@@ -168,9 +196,12 @@ const ReportsPage = () => {
                 : "No ideas submitted yet"}
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="stats bg-secondary/30 text-secondary-content">
+        <motion.div
+          variants={fadeInUp}
+          className="stats bg-secondary/30 text-secondary-content"
+        >
           <div className="stat">
             <div className="stat-figure text-secondary">
               <Users className="w-8 h-8" />
@@ -185,9 +216,12 @@ const ReportsPage = () => {
                 : "No users registered yet"}
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="stats bg-accent/30 text-accent-content">
+        <motion.div
+          variants={fadeInUp}
+          className="stats bg-accent/30 text-accent-content"
+        >
           <div className="stat">
             <div className="stat-figure text-accent">
               <Blocks className="w-8 h-8" />
@@ -200,9 +234,12 @@ const ReportsPage = () => {
                 : "No categories created"}
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="stats bg-info/30 text-info-content">
+        <motion.div
+          variants={fadeInUp}
+          className="stats bg-info/30 text-info-content"
+        >
           <div className="stat">
             <div className="stat-figure text-info">
               <Building2 className="w-8 h-8" />
@@ -215,56 +252,71 @@ const ReportsPage = () => {
                 : "No departments created"}
             </div>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <motion.div
+        className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
         {/* Browser Usage Chart */}
-        {isLoading ? (
-          <LoadingState title="Browser Usage" />
-        ) : loginActivities && loginActivities.length > 0 ? (
-          <BrowserUsageChart loginActivities={loginActivities} />
-        ) : (
-          <EmptyState title="Browser Usage" />
-        )}
+        <motion.div variants={fadeInUp}>
+          {isLoading ? (
+            <LoadingState title="Browser Usage" />
+          ) : loginActivities && loginActivities.length > 0 ? (
+            <BrowserUsageChart loginActivities={loginActivities} />
+          ) : (
+            <EmptyState title="Browser Usage" />
+          )}
+        </motion.div>
 
         {/* User Activity Chart */}
-        {isLoading ? (
-          <LoadingState title="Top Active Users" />
-        ) : activeUsers && activeUsers.length > 0 ? (
-          <UserActivityChart activeUsers={activeUsers} />
-        ) : (
-          <EmptyState title="Top Active Users" />
-        )}
+        <motion.div variants={fadeInUp}>
+          {isLoading ? (
+            <LoadingState title="Top Active Users" />
+          ) : activeUsers && activeUsers.length > 0 ? (
+            <UserActivityChart activeUsers={activeUsers} />
+          ) : (
+            <EmptyState title="Top Active Users" />
+          )}
+        </motion.div>
 
         {/* Department Stats Chart */}
-        {isLoading ? (
-          <LoadingState title="Department Statistics" />
-        ) : departmentReport && departmentReport.length > 0 ? (
-          <DepartmentStatsChart departmentStats={departmentReport} />
-        ) : (
-          <EmptyState title="Department Statistics" />
-        )}
+        <motion.div variants={fadeInUp}>
+          {isLoading ? (
+            <LoadingState title="Department Statistics" />
+          ) : departmentReport && departmentReport.length > 0 ? (
+            <DepartmentStatsChart departmentStats={departmentReport} />
+          ) : (
+            <EmptyState title="Department Statistics" />
+          )}
+        </motion.div>
 
         {/* Category Stats Chart */}
-        {isLoading ? (
-          <LoadingState title="Categories Distribution" />
-        ) : categories && categories.length > 0 ? (
-          <CategoryStatsChart categories={categories} />
-        ) : (
-          <EmptyState title="Categories Distribution" />
-        )}
+        <motion.div variants={fadeInUp}>
+          {isLoading ? (
+            <LoadingState title="Categories Distribution" />
+          ) : categories && categories.length > 0 ? (
+            <CategoryStatsChart categories={categories} />
+          ) : (
+            <EmptyState title="Categories Distribution" />
+          )}
+        </motion.div>
 
         {/* Hidden Stats Chart */}
-        {isLoading ? (
-          <LoadingState title="Hidden Content by Department" />
-        ) : hiddenIdeas && hiddenIdeas.length > 0 ? (
-          <HiddenStatsChart hiddenIdeas={hiddenIdeas} />
-        ) : (
-          <EmptyState title="Hidden Content by Department" />
-        )}
-      </div>
+        <motion.div variants={fadeInUp}>
+          {isLoading ? (
+            <LoadingState title="Hidden Content by Department" />
+          ) : hiddenIdeas && hiddenIdeas.length > 0 ? (
+            <HiddenStatsChart hiddenIdeas={hiddenIdeas} />
+          ) : (
+            <EmptyState title="Hidden Content by Department" />
+          )}
+        </motion.div>
+      </motion.div>
     </div>
   );
 };
