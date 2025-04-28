@@ -79,7 +79,7 @@ const UsersPage = () => {
       {hasPermission(user, "create user") && (
         <button
           className="btn btn-primary"
-          onClick={() => router.push("/dashboard/users/create")}
+          onClick={() => router.push("/ideas/users/create")}
         >
           <PlusIcon className="w-4 h-4" />
           Add New User
@@ -187,7 +187,7 @@ const UsersPage = () => {
                           <button
                             className="btn btn-sm btn-primary/10 hover:bg-primary border-0"
                             onClick={() =>
-                              router.push(`/dashboard/users/edit/${user.id}`)
+                              router.push(`/ideas/users/edit/${user.id}`)
                             }
                           >
                             <PencilIcon className="w-4 h-4" />
@@ -201,7 +201,7 @@ const UsersPage = () => {
                         <button
                           className="btn btn-sm btn-info/10 hover:bg-info border-0"
                           onClick={() =>
-                            router.push(`/dashboard/users/logs/${user.id}`)
+                            router.push(`/ideas/users/logs/${user.id}`)
                           }
                         >
                           <History className="w-4 h-4" />
