@@ -370,12 +370,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
 
   getUser: async (id) => {
     try {
-      // Check if the requested user is the authenticated user
-      const authUser = useAuthStore.getState().user;
-      if (authUser && authUser.id === id) {
-        return authUser;
-      }
-
+      
       // If not the auth user or no auth user, fetch from API
       set({ isLoading: true });
       const response = await api.userApi.getOne(id);

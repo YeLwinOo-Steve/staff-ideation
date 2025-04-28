@@ -2,12 +2,13 @@
 
 import { LogOutIcon, Mail, Building2, UserCircle2, Shield } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { motion } from "framer-motion";
 import LogoutDialog from "@/app/ideas/components/LogoutDialog";
 import { getInitials } from "@/util/getInitials";
 import { User } from "lucide-react";
+import { useApiStore } from "@/store/apiStore";
 const containerVariants = {
   hidden: { opacity: 0 },
   show: {
@@ -25,9 +26,16 @@ const itemVariants = {
 
 const AccountPage = () => {
   const { user } = useAuthStore();
+  const { getUser, user: userData } = useApiStore();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
 
-  if (!user) return null;
+  useEffect(() => {
+    if (user?.id) {
+      getUser(user.id);
+    }
+  }, [getUser, user?.id]);
+
+  if (!userData) return null;
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -62,24 +70,24 @@ const AccountPage = () => {
           <div className="flex items-center gap-4">
             <div className="avatar placeholder">
               <div className="bg-base-300 mask mask-squircle w-16">
-                {user.photo && user.photo?.includes("cloudinary") ? (
+                {userData.photo && userData.photo?.includes("cloudinary") ? (
                   <Image
-                    src={user.photo}
-                    alt={user.name}
+                    src={userData.photo}
+                    alt={userData.name}
                     width={64}
                     height={64}
                     className="mask mask-squircle"
                   />
                 ) : (
                   <span className="text-2xl font-bold">
-                    {getInitials(user.name)}
+                    {getInitials(userData.name)}
                   </span>
                 )}
               </div>
             </div>
             <div>
-              <h1 className="text-2xl font-bold">{user.name}</h1>
-              <p className="text-base-content/60">{user.email}</p>
+              <h1 className="text-2xl font-bold">{userData.name}</h1>
+              <p className="text-base-content/60">{userData.email}</p>
             </div>
           </div>
         </motion.div>
@@ -98,7 +106,7 @@ const AccountPage = () => {
                 </div>
                 <div>
                   <p className="text-sm text-base-content/70">Full Name</p>
-                  <p className="font-medium text-lg">{user.name}</p>
+                  <p className="font-medium text-lg">{userData.name}</p>
                 </div>
               </div>
 
@@ -108,7 +116,7 @@ const AccountPage = () => {
                 </div>
                 <div>
                   <p className="text-sm text-base-content/70">Email</p>
-                  <p className="font-medium text-lg">{user.email}</p>
+                  <p className="font-medium text-lg">{userData.email}</p>
                 </div>
               </div>
 
@@ -119,7 +127,7 @@ const AccountPage = () => {
                 <div>
                   <p className="text-sm text-base-content/70">Department</p>
                   <p className="font-medium text-lg">
-                    {user.department || "Not assigned"}
+                    {userData.department || "Not assigned"}
                   </p>
                 </div>
               </div>
@@ -136,7 +144,7 @@ const AccountPage = () => {
                 <div>
                   <p className="text-sm text-base-content/70">Roles</p>
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {user.roles?.map((role, index) => (
+                    {userData.roles?.map((role, index) => (
                       <div key={index} className="badge badge-primary p-3">
                         {role}
                       </div>
@@ -150,7 +158,7 @@ const AccountPage = () => {
               <div className="space-y-3">
                 <p className="text-sm text-base-content/70">Permissions</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {user.permissions?.map((permission, index) => (
+                  {userData.permissions?.map((permission, index) => (
                     <div
                       key={index}
                       className="bg-info text-info-content px-4 py-2 rounded-xl text-sm font-medium"
