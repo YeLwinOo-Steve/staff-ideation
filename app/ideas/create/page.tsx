@@ -31,7 +31,8 @@ const itemVariants = {
 const IdeaCreatePage = () => {
   const router = useRouter();
   const { showSuccessToast, showErrorToast } = useToast();
-  const { fetchCategories, createIdea, categories, error } = useApiStore();
+  const { fetchCategories, createIdea, categories, error, clearError } =
+    useApiStore();
   const { user: authUser } = useAuthStore();
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [formData, setFormData] = useState({
@@ -50,11 +51,18 @@ const IdeaCreatePage = () => {
     fetchCategories();
   }, [fetchCategories]);
 
+  useEffect(() => {
+    if (error) {
+      showErrorToast(error);
+      clearError();
+    }
+  }, [error]);
+
   const handleCategoryToggle = (categoryId: number) => {
     setSelectedCategories((prev) =>
       prev.includes(categoryId)
         ? prev.filter((id) => id !== categoryId)
-        : [...prev, categoryId],
+        : [...prev, categoryId]
     );
   };
 
@@ -112,9 +120,7 @@ const IdeaCreatePage = () => {
       showSuccessToast("Idea created successfully");
       router.push("/dashboard");
     } catch (e) {
-      setIsSubmitting(false);
-      showErrorToast(error || "Failed to create idea");
-      console.error("Failed to create idea:", e);
+      console.error("Failed to create idea:", error);
     }
   };
 

@@ -40,7 +40,7 @@ export default function DepartmentsPage() {
   const user = apiUser || authUser;
 
   // Check if user has admin permissions
-  const hasActions = hasAnyRole(user, ["admin", "administrator"]);
+  const hasActions = hasAnyRole(user, ["admin", "administrator", "qa manager"]);
 
   // Effects
   useEffect(() => {
