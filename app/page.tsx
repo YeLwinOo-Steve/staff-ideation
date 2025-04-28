@@ -7,11 +7,11 @@ export default function Home() {
       <div className="hero-content">
         <div className="max-w-lg text-center">
           <Image
+            className="dark:invert mb-8"
             src="/logo.png"
             width="250"
             height="52"
-            alt="University of Greenwich Logo"
-            className="mb-8"
+            alt="Staff Ideation Logo"
           />
           <h1 className="text-5xl font-bold">Welcome</h1>
           <p className="mt-4 mb-8">EWSD Staff Ideation Website</p>

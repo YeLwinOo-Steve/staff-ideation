@@ -51,8 +51,8 @@ export function ReportDetailsModal({
                     <p className="text-sm text-gray-500">{idea.department}</p>
                   </div>
                 </div>
-                <h3 className="font-medium mt-3">{idea.title}</h3>
-                <p className="text-sm opacity-80">{idea.content}</p>
+                <h3 className="font-medium mt-3 ml-16">{idea.title}</h3>
+                <p className="text-sm opacity-80 ml-16">{idea.content}</p>
               </div>
 
               {/* Reports List */}

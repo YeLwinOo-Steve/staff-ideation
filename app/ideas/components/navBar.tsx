@@ -117,11 +117,11 @@ const NavBar = () => {
       <div className="navbar bg-base-100 z-50">
         <div className="flex-1">
           <Image
-            src={theme === "abyss" ? "/dark/logo.png" : "/logo.png"}
+            src="/logo.png"
             alt="EWSD"
             width={64}
             height={64}
-            className="w-14 h-14 sm:w-16 sm:h-16"
+            className="w-14 h-14 sm:w-16 sm:h-16 dark:invert"
           />
         </div>
       </div>
