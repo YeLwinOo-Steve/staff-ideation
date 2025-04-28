@@ -378,7 +378,6 @@ const NavBar = () => {
                         </span>
                       </Link>
 
-                      <div className="divider my-0.5 sm:my-1"></div>
                     </>
                   )}
 

@@ -678,7 +678,7 @@ const IdeaDetail = () => {
                   rows={3}
                 />
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <label className="flex items-center gap-2 cursor-pointer">
+                  <label className="flex items-start gap-2 cursor-pointer">
                     <input
                       type="checkbox"
                       className="checkbox checkbox-sm checkbox-primary"

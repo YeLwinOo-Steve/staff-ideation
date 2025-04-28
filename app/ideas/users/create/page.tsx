@@ -156,7 +156,7 @@ const CreateUser = () => {
 
       await createUser(formData);
       showSuccessToast("User created successfully");
-      router.push("/dashboard/users");
+      router.push("/ideas/users");
     } catch (error) {
       console.error("Failed to create user:", error);
       showErrorToast(

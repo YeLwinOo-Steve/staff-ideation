@@ -63,28 +63,29 @@ const UsersPage = () => {
 
   return (
     <div className="p-6 min-h-screen pb-24 relative mx-auto max-w-7xl space-y-6">
-      <motion.div
-        className="mb-8"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="flex items-center gap-2">
-          <Users className="w-8 h-8 text-primary" />
-          <h1 className="text-2xl font-bold">Users </h1>
-          <span className="badge badge-outline badge-lg">{total}</span>
-        </div>
-      </motion.div>
-
-      {hasPermission(user, "create user") && (
-        <button
-          className="btn btn-primary"
-          onClick={() => router.push("/ideas/users/create")}
+      <div className="flex items-center justify-between mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
         >
-          <PlusIcon className="w-4 h-4" />
-          Add New User
-        </button>
-      )}
+          <div className="flex items-center gap-2">
+            <Users className="w-8 h-8 text-primary" />
+            <h1 className="text-2xl font-bold">Users </h1>
+            <span className="badge badge-outline badge-lg">{total}</span>
+          </div>
+        </motion.div>
+
+        {hasPermission(user, "create user") && (
+          <button
+            className="btn btn-primary"
+            onClick={() => router.push("/ideas/users/create")}
+          >
+            <PlusIcon className="w-4 h-4" />
+            Add New User
+          </button>
+        )}
+      </div>
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
