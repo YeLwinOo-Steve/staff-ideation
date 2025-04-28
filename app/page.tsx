@@ -7,7 +7,7 @@ export default function Home() {
       <div className="hero-content">
         <div className="max-w-lg text-center">
           <Image
-            className="dark:invert mb-8"
+            className="mb-8"
             src="/logo.png"
             width="250"
             height="52"

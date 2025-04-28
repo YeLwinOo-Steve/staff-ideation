@@ -118,7 +118,7 @@ const IdeaCreatePage = () => {
       setIsSubmitting(false);
 
       showSuccessToast("Idea created successfully");
-      router.push("/dashboard");
+      router.push("/ideas");
     } catch (e) {
       console.error("Failed to create idea:", error);
     }

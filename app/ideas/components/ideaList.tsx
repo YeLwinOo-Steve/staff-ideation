@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAuthStore } from "@/store/authStore";
 import { hasAnyRole } from "@/app/lib/utils";
 import ReportedIdeaList from "./ReportedIdeaList";
+import CategoryChip from "./categoryChip";
 
 const containerVariants = {
   hidden: { opacity: 1 },
@@ -38,7 +39,10 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
   const [latest, setLatest] = useState<boolean | null>(null);
   const [popular, setPopular] = useState<boolean | null>(null);
   const [activeTab, setActiveTab] = useState<"all" | "pending" | "reported">(
-    "all",
+    "all"
+  );
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
+    null
   );
 
   const {
@@ -54,8 +58,9 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
       lastPage: reportedLastPage,
       loading: reportedLoading,
     },
+    categories,
     fetchIdeas,
-    fetchUsers,
+    fetchCategories,
     getToSubmit,
     fetchReportedIdeas,
   } = useApiStore();
@@ -89,12 +94,22 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
 
   const gridClass = `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Math.min(
     gridCols,
-    4,
+    4
   )} gap-6`;
 
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    const loadData = async () => {
+      const promises = [];
+      if (categories === null) {
+        console.log("fetching categories");
+        promises.push(fetchCategories());
+      }
+      if (promises.length > 0) {
+        await Promise.all(promises);
+      }
+    };
+    loadData();
+  }, [fetchCategories]);
 
   useEffect(() => {
     if (activeTab === "pending") {
@@ -127,6 +142,15 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
     setPopular(null);
     setLatest(null);
   };
+
+  const filteredIdeas = selectedCategoryId
+    ? displayedIdeas.filter((idea) =>
+        idea.category?.some((catName) => {
+          const cat = categories.find((c) => c.id === selectedCategoryId);
+          return cat && cat.name === catName;
+        })
+      )
+    : displayedIdeas;
 
   return (
     <div className="w-full max-w-7xl mx-auto space-y-6">
@@ -187,7 +211,24 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
           </div>
         )}
       </div>
-
+      {/* Category Chips Row */}
+      <div className="w-full overflow-x-auto p-2">
+        <div className="flex flex-row gap-2 min-w-max">
+          {categories.map((cat) => (
+            <div key={cat.id}>
+              <CategoryChip
+                category={cat}
+                isSelected={selectedCategoryId === cat.id}
+                onClick={() =>
+                  setSelectedCategoryId(
+                    selectedCategoryId === cat.id ? null : cat.id
+                  )
+                }
+              />
+            </div>
+          ))}
+        </div>
+      </div>
       {/* Ideas Grid with Loading State */}
       {isLoading ? (
         <motion.div className="flex justify-center items-center h-64">
@@ -195,7 +236,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
         </motion.div>
       ) : activeTab === "reported" ? (
         <ReportedIdeaList />
-      ) : displayedIdeas.length === 0 ? (
+      ) : filteredIdeas.length === 0 ? (
         <motion.div
           variants={itemVariants}
           className="flex justify-center items-center py-8"
@@ -209,7 +250,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
           animate="show"
           className={gridClass}
         >
-          {displayedIdeas.map((idea) => (
+          {filteredIdeas.map((idea) => (
             <motion.div
               key={idea.id}
               variants={itemVariants}
@@ -223,7 +264,6 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
           ))}
         </motion.div>
       )}
-
       {/* Pagination */}
       {lastPageToShow > 1 && (
         <motion.div
@@ -246,7 +286,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
                     setPage(index + 1);
                   }}
                 />
-              ),
+              )
             )}
           </div>
         </motion.div>

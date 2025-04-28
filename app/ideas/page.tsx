@@ -38,41 +38,21 @@ export default function Dashboard() {
   const user = useAuthStore((state) => state.user);
   const {
     fetchIdeas,
-    fetchCategories,
-    fetchUsers,
-    categories,
-    userPagination: { total: userTotal },
     ideaPagination: { total },
   } = useApiStore();
-  const router = useRouter();
 
   useEffect(() => {
     const loadData = async () => {
       const promises = [];
-      if (!userTotal) {
-        promises.push(fetchUsers());
-      }
       if (!total) {
         promises.push(fetchIdeas({ page: "1" }));
-      }
-      if (categories === null) {
-        promises.push(fetchCategories());
       }
       if (promises.length > 0) {
         await Promise.all(promises);
       }
     };
     loadData();
-  }, [
-    fetchIdeas,
-    fetchUsers,
-    fetchCategories,
-    categories,
-    router,
-    user,
-    userTotal,
-    total,
-  ]);
+  }, [fetchIdeas]);
 
   const canCreateIdea = hasPermission(user, "create idea");
 
