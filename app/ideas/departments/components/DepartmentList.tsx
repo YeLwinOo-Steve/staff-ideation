@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Department, User } from "@/api/models";
 import { DepartmentCard } from "./DepartmentCard";
-import { Building2, Pencil, Trash2, Users, AlertCircle } from "lucide-react";
+import { Building2, Users } from "lucide-react";
 
 interface DepartmentListProps {
   departments: Department[];

@@ -1,13 +1,13 @@
 import { motion } from "framer-motion";
 import IdeaCard from "./ideaCard";
 import { useApiStore } from "@/store/apiStore";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuthStore } from "@/store/authStore";
 import { hasAnyRole } from "@/app/lib/utils";
 import ReportedIdeaList from "./ReportedIdeaList";
 import CategoryChip from "./categoryChip";
-import { Search, ClipboardList, AlertCircle, Flag } from "lucide-react";
+import { Search, ClipboardList, AlertCircle } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 
 const containerVariants = {

@@ -1,7 +1,6 @@
 "use client";
 
 import { useAuthStore } from "@/store/authStore";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import IdeaList from "./components/ideaList";
 import { useApiStore } from "@/store/apiStore";

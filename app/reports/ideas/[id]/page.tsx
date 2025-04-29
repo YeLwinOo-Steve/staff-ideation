@@ -17,7 +17,6 @@ import { useRouter } from "next/navigation";
 import { use } from "react";
 import NavBar from "@/app/ideas/components/navBar";
 import { useToast } from "@/components/toast";
-import { HiddenIdea, BannedUser, PaginatedResponse } from "@/api/models";
 import { hasPermission } from "@/app/lib/utils";
 
 interface ReportedIdeaDetailsProps {
@@ -131,6 +130,7 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
       // Refresh the idea to get updated hidden status
       await fetchReportedIdeas();
     } catch (error) {
+      console.error("Failed to update idea visibility:", error);
       showErrorToast("Failed to update idea visibility");
     } finally {
       setIsLoading(false);
@@ -152,6 +152,7 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
       const updatedHiddenUserIds = useApiStore.getState().hiddenUsers?.data?.map((idea) => idea.id) || [];
       setHiddenUsers(updatedHiddenUserIds);
     } catch (error) {
+      console.error("Failed to update user visibility:", error);
       showErrorToast("Failed to update user visibility");
     } finally {
       setIsLoading(false);
@@ -174,6 +175,7 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
       const updatedBannedUserIds = useApiStore.getState().bannedUsers?.data?.map((user) => user.id) || [];
       setBannedUsers(updatedBannedUserIds);
     } catch (error) {
+      console.error("Failed to update idea permissions:", error);
       showErrorToast("Failed to update idea permissions");
     } finally {
       setIsLoading(false);

@@ -65,11 +65,10 @@ export function CategoryList({
             <Tag className="w-5 h-5 text-primary animate-pulse" />
           </div>
         </div>
-        <h3 className="text-xl font-bold text-center m-2">
-          No Categories Yet
-        </h3>
+        <h3 className="text-xl font-bold text-center m-2">No Categories Yet</h3>
         <p className="text-base-content/60 text-center max-w-sm">
-          Start organizing ideas by creating categories. Click the 'Add Category' button above to get started.
+          Start organizing ideas by creating categories. Click the &apos;Add
+          Category&apos; button above to get started.
         </p>
       </motion.div>
     );

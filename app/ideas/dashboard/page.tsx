@@ -53,7 +53,7 @@ const EmptyState = ({ title }: { title: string }) => (
             No Data Available
           </h3>
           <p className="text-base-content/60 text-center max-w-sm">
-            There's no data to display at the moment. Check back later for
+            There&apos;s no data to display at the moment. Check back later for
             updates.
           </p>
         </div>

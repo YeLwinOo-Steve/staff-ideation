@@ -124,7 +124,7 @@ const IdeaCreatePage = () => {
       showSuccessToast("Idea created successfully");
       router.push("/ideas");
     } catch (e) {
-      console.error("Failed to create idea:", error);
+      console.error("Failed to create idea:", e);
     }
   };
 
