@@ -111,7 +111,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
       }
     };
     loadData();
-  }, [fetchCategories]);
+  }, [fetchCategories, categories]);
 
   useEffect(() => {
     if (activeTab === "pending") {
@@ -162,6 +162,19 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
         })
       )
     : displayedIdeas;
+
+  const [filteredIdeasState, setFilteredIdeasState] = useState(filteredIdeas);
+
+  useEffect(() => {
+    const filtered = ideas.filter((idea) => {
+      if (selectedCategoryId === null) return true;
+      return idea.category?.some((catName) => {
+        const cat = categories.find((c) => c.id === selectedCategoryId);
+        return cat && cat.name === catName;
+      });
+    });
+    setFilteredIdeasState(filtered);
+  }, [ideas, selectedCategoryId, categories]);
 
   return (
     <div className="w-full max-w-7xl mx-auto space-y-2">
@@ -265,7 +278,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
         </motion.div>
       ) : activeTab === "reported" ? (
         <ReportedIdeaList />
-      ) : filteredIdeas.length === 0 ? (
+      ) : filteredIdeasState.length === 0 ? (
         <motion.div
           variants={itemVariants}
           className="flex flex-col items-center justify-center py-16 px-4"
@@ -301,7 +314,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
           animate="show"
           className={gridClass}
         >
-          {filteredIdeas.map((idea) => (
+          {filteredIdeasState.map((idea) => (
             <motion.div
               key={idea.id}
               variants={itemVariants}

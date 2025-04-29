@@ -56,7 +56,7 @@ const IdeaCreatePage = () => {
       showErrorToast(error);
       clearError();
     }
-  }, [error]);
+  }, [error, clearError, showErrorToast]);
 
   const handleCategoryToggle = (categoryId: number) => {
     setSelectedCategories((prev) =>

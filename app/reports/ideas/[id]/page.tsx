@@ -59,7 +59,6 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
     giveIdeaPermissions,
   } = useApiStore();
 
-  const [hiddenIdeas, setHiddenIdeas] = useState<number[]>([]);
   const [hiddenUsers, setHiddenUsers] = useState<number[]>([]);
   const [bannedUsers, setBannedUsers] = useState<number[]>([]);
 
@@ -84,8 +83,6 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
         ]);
 
         // Update states based on API responses
-        const hiddenIdeaIds =
-          useApiStore.getState().hiddenIdeas?.map((idea) => idea.id) || [];
         const hiddenUserIds =
           useApiStore.getState().hiddenUsers?.data?.map((idea) => idea.id) ||
           [];
@@ -93,7 +90,6 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
           useApiStore.getState().bannedUsers?.data?.map((user) => user.id) ||
           [];
 
-        setHiddenIdeas(hiddenIdeaIds);
         setHiddenUsers(hiddenUserIds);
         setBannedUsers(bannedUserIds);
       } catch (error) {
@@ -105,6 +101,9 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
   }, [
     id,
     idea,
+    getUser,
+    canBanUser,
+    authUser?.id,
     fetchReportedIdeas,
     fetchReportDetails,
     getHiddenIdeas,
@@ -112,6 +111,12 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
     getBannedUsers,
     showErrorToast,
   ]);
+
+  useEffect(() => {
+    if (idea?.user_id) {
+      getUser(idea.user_id);
+    }
+  }, [idea?.user_id, authUser?.id, canBanUser, getUser]);
 
   const isIdeaHidden = idea && idea.hidden;
   const isUserHidden =
@@ -149,7 +154,8 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
       );
       await getHiddenUsers();
       // Update local state with new hidden users
-      const updatedHiddenUserIds = useApiStore.getState().hiddenUsers?.data?.map((idea) => idea.id) || [];
+      const updatedHiddenUserIds =
+        useApiStore.getState().hiddenUsers?.data?.map((idea) => idea.id) || [];
       setHiddenUsers(updatedHiddenUserIds);
     } catch (error) {
       console.error("Failed to update user visibility:", error);
@@ -172,7 +178,8 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
       }
       await getBannedUsers();
       // Update local state with new banned users
-      const updatedBannedUserIds = useApiStore.getState().bannedUsers?.data?.map((user) => user.id) || [];
+      const updatedBannedUserIds =
+        useApiStore.getState().bannedUsers?.data?.map((user) => user.id) || [];
       setBannedUsers(updatedBannedUserIds);
     } catch (error) {
       console.error("Failed to update idea permissions:", error);
