@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useApiStore } from "@/store/apiStore";
 import { useToast } from "@/components/toast";
 import ReportedIdeaCard from "./ReportedIdeaCard";
@@ -18,6 +19,7 @@ const containerVariants = {
 };
 
 export default function ReportedIdeaList() {
+  const router = useRouter();
   const [selectedIdeaId, setSelectedIdeaId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -45,6 +47,10 @@ export default function ReportedIdeaList() {
     (idea) => idea.id === selectedIdeaId,
   );
 
+  const handleMoreDetails = () => {
+    router.push(`/reports/ideas/${selectedIdeaId}`);
+  };
+  
   return (
     <>
       <motion.div
@@ -66,6 +72,7 @@ export default function ReportedIdeaList() {
         <ReportDetailsModal
           isOpen={selectedIdeaId !== null}
           onClose={() => setSelectedIdeaId(null)}
+          onMoreDetails={() => handleMoreDetails()}
           idea={selectedIdea}
           reportDetails={reportDetails}
           isLoading={isLoading}

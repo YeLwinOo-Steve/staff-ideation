@@ -11,11 +11,13 @@ interface ReportDetailsModalProps {
   idea: ReportedIdea;
   reportDetails: ReportDetail[];
   isLoading: boolean;
+  onMoreDetails: () => void;
 }
 
 export function ReportDetailsModal({
   isOpen,
   onClose,
+  onMoreDetails,
   idea,
   reportDetails,
   isLoading,
@@ -100,12 +102,12 @@ export function ReportDetailsModal({
             Cancel
           </motion.button>
           <motion.button
-            className="btn btn-error btn-sm"
-            onClick={onClose}
+            className="btn btn-info btn-sm"
+            onClick={onMoreDetails}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            Ban {idea.user_name.split(" ")[0]}
+            More Details
           </motion.button>
         </div>
       </motion.div>

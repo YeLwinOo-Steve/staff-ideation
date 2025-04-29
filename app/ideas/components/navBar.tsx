@@ -112,6 +112,8 @@ const NavBar = () => {
     "QA Manager",
   ]);
 
+  const canViewDashboard = hasPermission(user, "view reports");
+
   if (!mounted) {
     return (
       <div className="navbar bg-base-100 z-50">
@@ -196,16 +198,19 @@ const NavBar = () => {
                 </Link>
               </li>
             )}
-            <li>
-              <Link
-                href="/ideas/dashboard"
-                className={`${pathname === "/ideas/dashboard" ? "active" : ""} flex items-center gap-2`}
-                suppressHydrationWarning
-              >
-                <ChartPie size={16} />
-                Dashboard
-              </Link>
-            </li>
+            {canViewDashboard && (
+              <li>
+                <Link
+                  href="/ideas/dashboard"
+                  className={`${pathname === "/ideas/dashboard" ? "active" : ""} flex items-center gap-2`}
+                  suppressHydrationWarning
+                >
+                  <ChartPie size={16} />
+                  Dashboard
+                </Link>
+              </li>
+            )}
+
             {hasPermission(user, "system setting") && (
               <li>
                 <Link
@@ -377,21 +382,23 @@ const NavBar = () => {
                           Departments
                         </span>
                       </Link>
-
+                      <div className="divider my-0.5 sm:my-1"></div>
+                    </>
+                  )}
+                  {canViewDashboard && (
+                    <>
+                      <Link
+                        href="/ideas/dashboard"
+                        className="flex items-center gap-2 sm:gap-3 py-1 px-3 sm:px-4 hover:bg-base-200 rounded-xl transition-colors"
+                        onClick={() => handleNavigation("/ideas/dashboard")}
+                      >
+                        <ChartPie className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                        <span className="text-base sm:text-lg">Dashboard</span>
+                      </Link>
+                      <div className="divider my-0.5 sm:my-1"></div>
                     </>
                   )}
 
-                  <div className="divider my-0.5 sm:my-1"></div>
-
-                  <Link
-                    href="/ideas/dashboard"
-                    className="flex items-center gap-2 sm:gap-3 py-1 px-3 sm:px-4 hover:bg-base-200 rounded-xl transition-colors"
-                    onClick={() => handleNavigation("/ideas/dashboard")}
-                  >
-                    <ChartPie className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                    <span className="text-base sm:text-lg">Dashboard</span>
-                  </Link>
-                  <div className="divider my-0.5 sm:my-1"></div>
                   {hasPermission(user, "system setting") && (
                     <Link
                       href="/ideas/settings/system"
