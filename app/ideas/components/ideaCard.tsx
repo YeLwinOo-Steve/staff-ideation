@@ -59,7 +59,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
 
   const [isVoting, setIsVoting] = useState(false);
   const [voteCountLocal, setVoteCountLocal] = useState(
-    idea.total_vote_value || 0,
+    idea.total_vote_value || 0
   );
   const [userVoteLocal, setUserVoteLocal] = useState(idea.user_vote_value || 0);
 
@@ -78,7 +78,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
       setVoteCountLocal((prev) => prev + (value - userVoteLocal));
       setUserVoteLocal(value);
 
-      await createVote(idea.id, value);
+      await createVote(idea.id, idea.total_vote_value || 0 + value);
     } catch (e) {
       console.error("Failed to update vote", e);
       setVoteCountLocal(idea.total_vote_value || 0);
