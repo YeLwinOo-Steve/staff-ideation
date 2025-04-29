@@ -118,28 +118,6 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
   }, [fetchCategories, categories]);
 
   useEffect(() => {
-    const filtered = activeTab === "pending" ? pendingIdeas : ideas;
-    const filteredByCategory = filtered.filter((idea) => {
-      // First check category filter
-      if (selectedCategoryId !== null) {
-        const matchesCategory = idea.category?.some((catName) => {
-          const cat = categories.find((c) => c.id === selectedCategoryId);
-          return cat && cat.name === catName;
-        });
-        if (!matchesCategory) return false;
-      }
-
-      // Then check search term if it exists
-      if (debouncedSearchTerm) {
-        return idea.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
-      }
-
-      return true;
-    });
-    setFilteredIdeasState(filteredByCategory);
-  }, [ideas, pendingIdeas, selectedCategoryId, categories, activeTab, debouncedSearchTerm]);
-
-  useEffect(() => {
     if (activeTab === "pending") {
       getToSubmit(page);
     } else if (activeTab === "reported") {
@@ -180,7 +158,28 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
     setLatest(null);
   };
 
-  const [filteredIdeasState, setFilteredIdeasState] = useState(displayedIdeas);
+  const filteredIdeas = selectedCategoryId
+    ? displayedIdeas.filter((idea) =>
+        idea.category?.some((catName) => {
+          const cat = categories.find((c) => c.id === selectedCategoryId);
+          return cat && cat.name === catName;
+        }),
+      )
+    : displayedIdeas;
+
+  const [filteredIdeasState, setFilteredIdeasState] = useState(filteredIdeas);
+
+  useEffect(() => {
+    const filtered = activeTab === "pending" ? pendingIdeas : ideas;
+    const filteredByCategory = filtered.filter((idea) => {
+      if (selectedCategoryId === null) return true;
+      return idea.category?.some((catName) => {
+        const cat = categories.find((c) => c.id === selectedCategoryId);
+        return cat && cat.name === catName;
+      });
+    });
+    setFilteredIdeasState(filteredByCategory);
+  }, [ideas, pendingIdeas, selectedCategoryId, categories, activeTab]);
 
   return (
     <div className="w-full max-w-7xl mx-auto space-y-2">
