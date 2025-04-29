@@ -3,18 +3,18 @@ import axios from "axios";
 export async function uploadToCloudinary(
   file: File,
   userName?: String,
-  onProgress?: (progress: number) => void
+  onProgress?: (progress: number) => void,
 ): Promise<string> {
   const formData = new FormData();
   formData.append("file", file);
   formData.append(
     "upload_preset",
-    `${process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}`
+    `${process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}`,
   );
   if (userName) {
     formData.append(
       "folder",
-      `user_uploads/${userName.toLowerCase().replace(/\s+/g, "_")}`
+      `user_uploads/${userName.toLowerCase().replace(/\s+/g, "_")}`,
     );
   }
 
@@ -32,7 +32,7 @@ export async function uploadToCloudinary(
             onProgress(progress);
           }
         },
-      }
+      },
     );
 
     return response.data.secure_url;
@@ -46,7 +46,7 @@ export const handleUpload = async (
   files: File[],
   onProgress: (progress: number) => void,
   setIsUploading: (value: boolean) => void,
-  userName?: String
+  userName?: String,
 ) => {
   setIsUploading(true);
   try {
@@ -55,11 +55,11 @@ export const handleUpload = async (
         const cloudinaryUrl = await uploadToCloudinary(
           file,
           userName,
-          onProgress
+          onProgress,
         );
         console.log("Uploaded:", file.name, cloudinaryUrl);
         return cloudinaryUrl;
-      })
+      }),
     );
   } catch (error) {
     console.error("Upload failed:", error);

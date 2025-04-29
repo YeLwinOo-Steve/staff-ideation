@@ -67,7 +67,7 @@ const IdeaEditPage = () => {
       setSelectedCategories(
         idea.category
           ?.map((cat) => categories.find((c) => c.name === cat)?.id || 0)
-          .filter((id) => id !== 0) || []
+          .filter((id) => id !== 0) || [],
       );
 
       // Set existing Cloudinary files
@@ -85,7 +85,7 @@ const IdeaEditPage = () => {
     setSelectedCategories((prev) =>
       prev.includes(categoryId)
         ? prev.filter((id) => id !== categoryId)
-        : [...prev, categoryId]
+        : [...prev, categoryId],
     );
   };
 
@@ -110,7 +110,7 @@ const IdeaEditPage = () => {
                 ...prev,
                 [file.name]: Math.round(progress),
               }));
-            }
+            },
           );
           return {
             file_name: file.name,
@@ -254,7 +254,7 @@ const IdeaEditPage = () => {
               existingFiles={cloudinaryFiles}
               onRemoveExistingFile={(file) => {
                 setCloudinaryFiles((prev) =>
-                  prev.filter((f) => f.file_path !== file.file_path)
+                  prev.filter((f) => f.file_path !== file.file_path),
                 );
               }}
             />

@@ -62,7 +62,7 @@ const IdeaCreatePage = () => {
     setSelectedCategories((prev) =>
       prev.includes(categoryId)
         ? prev.filter((id) => id !== categoryId)
-        : [...prev, categoryId]
+        : [...prev, categoryId],
     );
   };
 
@@ -89,7 +89,7 @@ const IdeaCreatePage = () => {
                 ...prev,
                 [file.name]: Math.round(progress),
               }));
-            }
+            },
           );
           return {
             file_name: file.name,

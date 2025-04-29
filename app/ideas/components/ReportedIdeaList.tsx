@@ -56,7 +56,7 @@ export default function ReportedIdeaList() {
   const handleMoreDetails = () => {
     router.push(`/reports/ideas/${selectedIdeaId}`);
   };
-  
+
   if (reportedIdeasData.length === 0) {
     return (
       <motion.div
@@ -72,11 +72,10 @@ export default function ReportedIdeaList() {
             <AlertCircle className="w-5 h-5 text-primary animate-pulse" />
           </div>
         </div>
-        <h3 className="text-xl font-bold text-center m-2">
-          No Reported Ideas
-        </h3>
+        <h3 className="text-xl font-bold text-center m-2">No Reported Ideas</h3>
         <p className="text-base-content/60 text-center max-w-sm">
-          No ideas have been reported. Reported ideas will appear here for review.
+          No ideas have been reported. Reported ideas will appear here for
+          review.
         </p>
       </motion.div>
     );

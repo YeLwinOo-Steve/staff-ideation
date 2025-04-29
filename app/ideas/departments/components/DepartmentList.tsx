@@ -72,7 +72,7 @@ export function DepartmentList({
           No Departments Yet
         </h3>
         <p className="text-base-content/60 text-center max-w-sm">
-          {hasAdminPermissions 
+          {hasAdminPermissions
             ? "Start by adding your first department. Click the 'Add Department' button above to get started."
             : "No departments have been created yet. Check back later for updates."}
         </p>

@@ -77,10 +77,10 @@ const ReportsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const user = useAuthStore((state) => state.user);
   const loginActivities = useLoginActivityStore(
-    (state) => state.loginActivities
+    (state) => state.loginActivities,
   );
   const getUserLoginActivities = useLoginActivityStore(
-    (state) => state.getUserLoginActivities
+    (state) => state.getUserLoginActivities,
   );
   const {
     fetchIdeas,

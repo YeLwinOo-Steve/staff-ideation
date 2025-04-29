@@ -21,7 +21,7 @@ export function DepartmentHeader({
         <Building2 className="w-8 h-8 text-primary" />
         <h1 className="text-2xl font-bold">Departments</h1>
       </div>
-      
+
       {showAddButton && (
         <motion.button
           className="btn btn-primary ml-auto"

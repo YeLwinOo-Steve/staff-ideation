@@ -124,7 +124,7 @@ interface ApiState {
   createSystemSetting: (data: Partial<SystemSetting>) => Promise<void>;
   updateSystemSetting: (
     id: number,
-    data: Partial<SystemSetting>
+    data: Partial<SystemSetting>,
   ) => Promise<void>;
   deleteSystemSetting: (id: number) => Promise<void>;
   getCSV: (id: number) => Promise<Blob | undefined>;
@@ -265,14 +265,14 @@ export const useApiStore = create<ApiState>((set, get) => ({
     currentPage: 1,
     lastPage: 1,
     total: 0,
-    loading: false
+    loading: false,
   },
   bannedUsers: {
     data: [],
     currentPage: 1,
     lastPage: 1,
     total: 0,
-    loading: false
+    loading: false,
   },
 
   fetchDepartments: async (options?: { isCache?: boolean }) => {
@@ -384,7 +384,6 @@ export const useApiStore = create<ApiState>((set, get) => ({
 
   getUser: async (id) => {
     try {
-      
       // If not the auth user or no auth user, fetch from API
       set({ isLoading: true });
       const response = await api.userApi.getOne(id);
@@ -641,10 +640,10 @@ export const useApiStore = create<ApiState>((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await api.categoryApi.getAll();
-      console.log('Categories API Response:', response);
+      console.log("Categories API Response:", response);
       set({ categories: response.data.data });
     } catch (error) {
-      console.error('Categories API Error:', error);
+      console.error("Categories API Error:", error);
       const message = handleError(error, "Failed to fetch categories");
       set({ error: message });
       throw error;
@@ -806,13 +805,13 @@ export const useApiStore = create<ApiState>((set, get) => ({
 
       const remainingPages = Array.from(
         { length: lastPage - 1 },
-        (_, i) => i + 2
+        (_, i) => i + 2,
       );
       await Promise.all(
         remainingPages.map(async (page) => {
           const pageResponse = await api.userApi.getAll(page);
           allUsers = [...allUsers, ...pageResponse.data.data];
-        })
+        }),
       );
 
       set({ allUsers });
@@ -1083,11 +1082,17 @@ export const useApiStore = create<ApiState>((set, get) => ({
         bannedUsers: { ...state.bannedUsers, loading: true },
       }));
       const response = await api.permissionApi.getBannedUsers();
-      
+
       // Handle both paginated and non-paginated responses
-      const bannedUsersData = Array.isArray(response.data) ? response.data : response.data.data;
-      const meta = response.data.meta || { current_page: 1, last_page: 1, total: bannedUsersData.length };
-      
+      const bannedUsersData = Array.isArray(response.data)
+        ? response.data
+        : response.data.data;
+      const meta = response.data.meta || {
+        current_page: 1,
+        last_page: 1,
+        total: bannedUsersData.length,
+      };
+
       set((state) => ({
         ...state,
         bannedUsers: {

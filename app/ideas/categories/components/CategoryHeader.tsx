@@ -19,7 +19,7 @@ export function CategoryHeader({ onAddClick }: CategoryHeaderProps) {
         <Blocks className="w-8 h-8 text-primary" />
         <h1 className="text-2xl font-bold">Categories</h1>
       </div>
-      
+
       <motion.button
         className="btn btn-primary ml-auto"
         onClick={onAddClick}

@@ -130,7 +130,7 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
     try {
       await hideIdea(idea.id, isIdeaHidden ? 0 : 1);
       showSuccessToast(
-        isIdeaHidden ? "Idea is now visible" : "Idea has been hidden"
+        isIdeaHidden ? "Idea is now visible" : "Idea has been hidden",
       );
       // Refresh the idea to get updated hidden status
       await fetchReportedIdeas();
@@ -150,7 +150,7 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
       showSuccessToast(
         isUserHidden
           ? "User's ideas are now visible"
-          : "User's ideas have been hidden"
+          : "User's ideas have been hidden",
       );
       await getHiddenUsers();
       // Update local state with new hidden users

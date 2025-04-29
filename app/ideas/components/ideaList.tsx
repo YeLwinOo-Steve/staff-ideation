@@ -41,8 +41,12 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
   const [latest, setLatest] = useState<boolean | null>(null);
   const [popular, setPopular] = useState<boolean | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState<"all" | "pending" | "reported">("all");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<"all" | "pending" | "reported">(
+    "all",
+  );
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
+    null,
+  );
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
@@ -95,7 +99,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
 
   const gridClass = `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Math.min(
     gridCols,
-    4
+    4,
   )} gap-6`;
 
   useEffect(() => {
@@ -159,7 +163,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
         idea.category?.some((catName) => {
           const cat = categories.find((c) => c.id === selectedCategoryId);
           return cat && cat.name === catName;
-        })
+        }),
       )
     : displayedIdeas;
 
@@ -263,7 +267,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
                   isSelected={selectedCategoryId === cat.id}
                   onClick={() =>
                     setSelectedCategoryId(
-                      selectedCategoryId === cat.id ? null : cat.id
+                      selectedCategoryId === cat.id ? null : cat.id,
                     )
                   }
                 />
@@ -303,8 +307,8 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
             {activeTab === "pending"
               ? "There are no ideas waiting for approval at the moment. New submissions will appear here."
               : selectedCategoryId
-              ? "No ideas found in the selected category. Try selecting a different category or removing filters."
-              : "No ideas match your current search. Try adjusting your search terms or removing filters."}
+                ? "No ideas found in the selected category. Try selecting a different category or removing filters."
+                : "No ideas match your current search. Try adjusting your search terms or removing filters."}
           </p>
         </motion.div>
       ) : (
@@ -350,7 +354,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
                     setPage(index + 1);
                   }}
                 />
-              )
+              ),
             )}
           </div>
         </motion.div>

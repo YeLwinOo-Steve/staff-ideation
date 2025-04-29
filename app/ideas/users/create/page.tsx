@@ -137,7 +137,7 @@ const CreateUser = () => {
           data.name,
           (progress) => {
             setUploadProgress(progress);
-          }
+          },
         );
       }
 
@@ -164,7 +164,7 @@ const CreateUser = () => {
     } catch (error) {
       console.error("Failed to create user:", error);
       showErrorToast(
-        error instanceof Error ? error.message : "Failed to create user"
+        error instanceof Error ? error.message : "Failed to create user",
       );
     } finally {
       setIsUploading(false);
@@ -267,7 +267,7 @@ const CreateUser = () => {
                         handleRoleChange={(roleId) =>
                           handleRoleChange(
                             roleId,
-                            !selectedRoles.includes(roleId)
+                            !selectedRoles.includes(roleId),
                           )
                         }
                         error={errors.role_ids?.message}
@@ -291,7 +291,7 @@ const CreateUser = () => {
                         handlePermissionChange={(permId) =>
                           handlePermissionChange(
                             permId,
-                            !selectedPermissions.includes(permId)
+                            !selectedPermissions.includes(permId),
                           )
                         }
                         roles={roles}
