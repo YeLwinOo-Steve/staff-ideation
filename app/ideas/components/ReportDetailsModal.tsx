@@ -97,7 +97,15 @@ export function ReportDetailsModal({
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            Close
+            Cancel
+          </motion.button>
+          <motion.button
+            className="btn btn-error btn-sm"
+            onClick={onClose}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            Ban {idea.user_name.split(" ")[0]}
           </motion.button>
         </div>
       </motion.div>

@@ -103,7 +103,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
   )} gap-6`;
 
   useEffect(() => {
-    console.log('Categories state:', categories);
+    console.log("Categories state:", categories);
     const loadData = async () => {
       const promises = [];
       if (categories.length === 0) {
@@ -129,13 +129,13 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
         ...(debouncedSearchTerm && { title: debouncedSearchTerm }),
       });
     } else if (latest !== null) {
-      fetchIdeas({ 
-        page: page.toString(), 
+      fetchIdeas({
+        page: page.toString(),
         latest: latest ? "true" : "false",
         ...(debouncedSearchTerm && { title: debouncedSearchTerm }),
       });
     } else {
-      fetchIdeas({ 
+      fetchIdeas({
         page: page.toString(),
         ...(debouncedSearchTerm && { title: debouncedSearchTerm }),
       });
@@ -224,39 +224,42 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
               />
             </div>
           )}
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-gray-400" />
+          {activeTab === "all" && (
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search ideas..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setPage(1); // Reset to first page when searching
+                }}
+                className="input input-bordered input-md pl-9 pr-3 w-full sm:w-[300px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+              />
             </div>
-            <input
-              type="text"
-              placeholder="Search ideas..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setPage(1); // Reset to first page when searching
-              }}
-              className="input input-bordered input-md pl-9 pr-3 w-full sm:w-[300px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
-          </div>
+          )}
         </div>
       </div>
       {/* Category Chips Row */}
       <div className="w-full overflow-x-auto p-1">
         <div className="flex flex-row gap-2 min-w-max">
-          {activeTab === "all" && categories.map((cat) => (
-            <div key={cat.id}>
-              <CategoryChip
-                category={cat}
-                isSelected={selectedCategoryId === cat.id}
-                onClick={() =>
-                  setSelectedCategoryId(
-                    selectedCategoryId === cat.id ? null : cat.id
-                  )
-                }
-              />
-            </div>
-          ))}
+          {activeTab === "all" &&
+            categories.map((cat) => (
+              <div key={cat.id}>
+                <CategoryChip
+                  category={cat}
+                  isSelected={selectedCategoryId === cat.id}
+                  onClick={() =>
+                    setSelectedCategoryId(
+                      selectedCategoryId === cat.id ? null : cat.id
+                    )
+                  }
+                />
+              </div>
+            ))}
         </div>
       </div>
       {/* Ideas Grid with Loading State */}
