@@ -7,7 +7,7 @@ import { useAuthStore } from "@/store/authStore";
 import { hasAnyRole } from "@/app/lib/utils";
 import ReportedIdeaList from "./ReportedIdeaList";
 import CategoryChip from "./categoryChip";
-import { Search } from "lucide-react";
+import { Search, ClipboardList, AlertCircle, Flag } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 
 const containerVariants = {
@@ -41,12 +41,8 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
   const [latest, setLatest] = useState<boolean | null>(null);
   const [popular, setPopular] = useState<boolean | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState<"all" | "pending" | "reported">(
-    "all"
-  );
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-    null
-  );
+  const [activeTab, setActiveTab] = useState<"all" | "pending" | "reported">("all");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
@@ -272,9 +268,31 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
       ) : filteredIdeas.length === 0 ? (
         <motion.div
           variants={itemVariants}
-          className="flex justify-center items-center py-8"
+          className="flex flex-col items-center justify-center py-16 px-4"
         >
-          <div>No ideas found.</div>
+          <div className="relative mb-6">
+            <div className="absolute inset-0 animate-ping bg-primary/20 rounded-full" />
+            <div className="relative bg-primary/10 p-6 rounded-full">
+              {activeTab === "pending" ? (
+                <ClipboardList className="w-12 h-12 text-primary" />
+              ) : (
+                <AlertCircle className="w-12 h-12 text-primary" />
+              )}
+            </div>
+            <div className="absolute -right-2 -top-2 bg-base-100 rounded-full p-2">
+              <Search className="w-5 h-5 text-primary animate-pulse" />
+            </div>
+          </div>
+          <h3 className="text-xl font-bold text-center m-2">
+            {activeTab === "pending" ? "No Pending Ideas" : "No Ideas Found"}
+          </h3>
+          <p className="text-base-content/60 text-center max-w-sm">
+            {activeTab === "pending"
+              ? "There are no ideas waiting for approval at the moment. New submissions will appear here."
+              : selectedCategoryId
+              ? "No ideas found in the selected category. Try selecting a different category or removing filters."
+              : "No ideas match your current search. Try adjusting your search terms or removing filters."}
+          </p>
         </motion.div>
       ) : (
         <motion.div

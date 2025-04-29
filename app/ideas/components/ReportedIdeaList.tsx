@@ -7,6 +7,7 @@ import { useToast } from "@/components/toast";
 import ReportedIdeaCard from "./ReportedIdeaCard";
 import { ReportDetailsModal } from "./ReportDetailsModal";
 import { motion } from "framer-motion";
+import { Flag, AlertCircle } from "lucide-react";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -16,6 +17,11 @@ const containerVariants = {
       staggerChildren: 0.1,
     },
   },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1 },
 };
 
 export default function ReportedIdeaList() {
@@ -51,6 +57,31 @@ export default function ReportedIdeaList() {
     router.push(`/reports/ideas/${selectedIdeaId}`);
   };
   
+  if (reportedIdeasData.length === 0) {
+    return (
+      <motion.div
+        variants={itemVariants}
+        className="flex flex-col items-center justify-center py-16 px-4"
+      >
+        <div className="relative mb-6">
+          <div className="absolute inset-0 animate-ping bg-primary/20 rounded-full" />
+          <div className="relative bg-primary/10 p-6 rounded-full">
+            <Flag className="w-12 h-12 text-primary" />
+          </div>
+          <div className="absolute -right-2 -top-2 bg-base-100 rounded-full p-2">
+            <AlertCircle className="w-5 h-5 text-primary animate-pulse" />
+          </div>
+        </div>
+        <h3 className="text-xl font-bold text-center m-2">
+          No Reported Ideas
+        </h3>
+        <p className="text-base-content/60 text-center max-w-sm">
+          No ideas have been reported. Reported ideas will appear here for review.
+        </p>
+      </motion.div>
+    );
+  }
+
   return (
     <>
       <motion.div
