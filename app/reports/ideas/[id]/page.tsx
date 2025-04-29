@@ -1,13 +1,24 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useApiStore } from "@/store/apiStore";
-import { AlertTriangle, ArrowLeft, ChevronLeft } from "lucide-react";
+import {
+  ChevronLeft,
+  EyeOff,
+  Eye,
+  UserX,
+  UserCheck,
+  ShieldOff,
+  Shield,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { Avatar } from "@/app/components/Avatar";
 import { useRouter } from "next/navigation";
 import { use } from "react";
 import NavBar from "@/app/ideas/components/navBar";
+import { useToast } from "@/components/toast";
+import { HiddenIdea, BannedUser, PaginatedResponse } from "@/api/models";
+import { hasPermission } from "@/app/lib/utils";
 
 interface ReportedIdeaDetailsProps {
   params: Promise<{
@@ -30,24 +41,144 @@ const itemVariants = {
 const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
   const { id } = use(params);
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const { showSuccessToast, showErrorToast } = useToast();
+  const { user: authUser } = useApiStore();
   const {
     reportedIdeas: { data: reportedIdeas },
     reportDetails,
+    user,
+    getUser,
     fetchReportDetails,
     fetchReportedIdeas,
+    getHiddenIdeas,
+    getHiddenUsers,
+    getBannedUsers,
+    hideIdea,
+    hideUserIdeas,
+    removeIdeaPermissions,
+    giveIdeaPermissions,
   } = useApiStore();
+
+  const [hiddenIdeas, setHiddenIdeas] = useState<number[]>([]);
+  const [hiddenUsers, setHiddenUsers] = useState<number[]>([]);
+  const [bannedUsers, setBannedUsers] = useState<number[]>([]);
 
   const idea = reportedIdeas.find((idea) => idea.id === parseInt(id));
 
+  const canBanUser = hasPermission(user, "banned user");
   useEffect(() => {
     const loadData = async () => {
       if (!idea) {
         await fetchReportedIdeas();
       }
       await fetchReportDetails(parseInt(id));
+      if (authUser?.id) {
+        await getUser(authUser.id);
+      }
+      // Load hidden/banned states
+      try {
+        await Promise.all([
+          getHiddenIdeas(),
+          getHiddenUsers(),
+          canBanUser && getBannedUsers(),
+        ]);
+
+        // Update states based on API responses
+        const hiddenIdeaIds =
+          useApiStore.getState().hiddenIdeas?.map((idea) => idea.id) || [];
+        const hiddenUserIds =
+          useApiStore.getState().hiddenUsers?.data?.map((idea) => idea.id) ||
+          [];
+        const bannedUserIds =
+          useApiStore.getState().bannedUsers?.data?.map((user) => user.id) ||
+          [];
+
+        setHiddenIdeas(hiddenIdeaIds);
+        setHiddenUsers(hiddenUserIds);
+        setBannedUsers(bannedUserIds);
+      } catch (error) {
+        console.error("Failed to load states:", error);
+        showErrorToast("Failed to load idea states");
+      }
     };
     loadData();
-  }, [id, idea, fetchReportedIdeas, fetchReportDetails]);
+  }, [
+    id,
+    idea,
+    fetchReportedIdeas,
+    fetchReportDetails,
+    getHiddenIdeas,
+    getHiddenUsers,
+    getBannedUsers,
+    showErrorToast,
+  ]);
+
+  const isIdeaHidden = idea && idea.hidden;
+  const isUserHidden =
+    idea && idea.user_id && hiddenUsers.includes(idea.user_id);
+  const isUserBanned =
+    idea && idea.user_id && bannedUsers.includes(idea.user_id);
+
+  const handleIdeaVisibility = async () => {
+    if (!idea) return;
+    setIsLoading(true);
+    try {
+      await hideIdea(idea.id, isIdeaHidden ? 0 : 1);
+      showSuccessToast(
+        isIdeaHidden ? "Idea is now visible" : "Idea has been hidden"
+      );
+      // Refresh the idea to get updated hidden status
+      await fetchReportedIdeas();
+    } catch (error) {
+      showErrorToast("Failed to update idea visibility");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUserVisibility = async () => {
+    if (!idea?.user_id) return;
+    setIsLoading(true);
+    try {
+      await hideUserIdeas(idea.user_id, isUserHidden ? 0 : 1);
+      showSuccessToast(
+        isUserHidden
+          ? "User's ideas are now visible"
+          : "User's ideas have been hidden"
+      );
+      await getHiddenUsers();
+      // Update local state with new hidden users
+      const updatedHiddenUserIds = useApiStore.getState().hiddenUsers?.data?.map((idea) => idea.id) || [];
+      setHiddenUsers(updatedHiddenUserIds);
+    } catch (error) {
+      showErrorToast("Failed to update user visibility");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleIdeaPermissions = async () => {
+    if (!idea?.user_id) return;
+    setIsLoading(true);
+    try {
+      if (isUserBanned) {
+        await giveIdeaPermissions(idea.user_id);
+        showSuccessToast("Idea permissions restored for user");
+      } else {
+        await removeIdeaPermissions(idea.user_id);
+        showSuccessToast("Idea permissions removed from user");
+      }
+      await getBannedUsers();
+      // Update local state with new banned users
+      const updatedBannedUserIds = useApiStore.getState().bannedUsers?.data?.map((user) => user.id) || [];
+      setBannedUsers(updatedBannedUserIds);
+    } catch (error) {
+      showErrorToast("Failed to update idea permissions");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (!idea) {
     return (
@@ -71,15 +202,110 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
               onClick={() => router.back()}
             >
               <ChevronLeft size={20} />
-              <span className="font-bold">Idea Details</span>
+              <span className="font-bold">All Ideas</span>
             </motion.button>
+
+            {/* Action Buttons */}
+            <div className="flex gap-2">
+              <motion.button
+                variants={itemVariants}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={`btn btn-sm ${isIdeaHidden ? "btn-success" : "btn-warning"}`}
+                onClick={handleIdeaVisibility}
+                disabled={isLoading}
+              >
+                {isIdeaHidden ? (
+                  <>
+                    <Eye size={16} />
+                    <span>Show Idea</span>
+                  </>
+                ) : (
+                  <>
+                    <EyeOff size={16} />
+                    <span>Hide Idea</span>
+                  </>
+                )}
+              </motion.button>
+
+              <motion.button
+                variants={itemVariants}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={`btn btn-sm ${isUserHidden ? "btn-success" : "btn-warning"}`}
+                onClick={handleUserVisibility}
+                disabled={isLoading}
+              >
+                {isUserHidden ? (
+                  <>
+                    <UserCheck size={16} />
+                    <span>Show User Ideas</span>
+                  </>
+                ) : (
+                  <>
+                    <UserX size={16} />
+                    <span>Hide User Ideas</span>
+                  </>
+                )}
+              </motion.button>
+
+              {canBanUser && (
+                <motion.button
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`btn btn-sm ${isUserBanned ? "btn-success" : "btn-error"}`}
+                  onClick={handleIdeaPermissions}
+                  disabled={isLoading}
+                >
+                  {isUserBanned ? (
+                    <>
+                      <Shield size={16} />
+                      <span>Give Permissions</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShieldOff size={16} />
+                      <span>Remove Permissions</span>
+                    </>
+                  )}
+                </motion.button>
+              )}
+            </div>
           </div>
         </div>
 
         <div className="max-w-4xl mx-auto p-6 pt-4">
-
           {/* Main Content */}
           <div className="space-y-8">
+            {/* Status Badges */}
+            {(isIdeaHidden || isUserHidden || isUserBanned) && (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex flex-wrap gap-2"
+              >
+                {isIdeaHidden && (
+                  <span className="badge badge-warning gap-1">
+                    <EyeOff size={14} />
+                    Hidden Idea
+                  </span>
+                )}
+                {isUserHidden && (
+                  <span className="badge badge-warning gap-1">
+                    <UserX size={14} />
+                    Hidden User
+                  </span>
+                )}
+                {isUserBanned && (
+                  <span className="badge badge-error gap-1">
+                    <ShieldOff size={14} />
+                    No Permissions
+                  </span>
+                )}
+              </motion.div>
+            )}
+
             {/* Idea Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}

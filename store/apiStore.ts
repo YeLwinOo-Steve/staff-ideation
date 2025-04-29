@@ -259,6 +259,21 @@ export const useApiStore = create<ApiState>((set, get) => ({
     total: 0,
     loading: false,
   },
+  hiddenIdeas: [],
+  hiddenUsers: {
+    data: [],
+    currentPage: 1,
+    lastPage: 1,
+    total: 0,
+    loading: false
+  },
+  bannedUsers: {
+    data: [],
+    currentPage: 1,
+    lastPage: 1,
+    total: 0,
+    loading: false
+  },
 
   fetchDepartments: async (options?: { isCache?: boolean }) => {
     const isCache = options?.isCache ?? true;
@@ -948,21 +963,6 @@ export const useApiStore = create<ApiState>((set, get) => ({
     }
   },
 
-  hiddenIdeas: [],
-  hiddenUsers: {
-    data: [],
-    currentPage: 1,
-    lastPage: 1,
-    total: 0,
-    loading: false,
-  },
-  bannedUsers: {
-    data: [],
-    currentPage: 1,
-    lastPage: 1,
-    total: 0,
-    loading: false,
-  },
   departmentReport: [],
   anonymousIdeas: {
     data: [],
@@ -1029,13 +1029,14 @@ export const useApiStore = create<ApiState>((set, get) => ({
         hiddenUsers: { ...state.hiddenUsers, loading: true },
       }));
       const response = await api.hideApi.getHiddenUsers();
+      const hiddenUsers = Array.isArray(response.data) ? response.data : [];
       set((state) => ({
         ...state,
         hiddenUsers: {
-          data: response.data.data,
-          currentPage: response.data.meta.current_page,
-          lastPage: response.data.meta.last_page,
-          total: response.data.meta.total,
+          data: hiddenUsers,
+          currentPage: 1,
+          lastPage: 1,
+          total: hiddenUsers.length,
           loading: false,
         },
       }));
@@ -1082,13 +1083,18 @@ export const useApiStore = create<ApiState>((set, get) => ({
         bannedUsers: { ...state.bannedUsers, loading: true },
       }));
       const response = await api.permissionApi.getBannedUsers();
+      
+      // Handle both paginated and non-paginated responses
+      const bannedUsersData = Array.isArray(response.data) ? response.data : response.data.data;
+      const meta = response.data.meta || { current_page: 1, last_page: 1, total: bannedUsersData.length };
+      
       set((state) => ({
         ...state,
         bannedUsers: {
-          data: response.data.data,
-          currentPage: response.data.meta.current_page,
-          lastPage: response.data.meta.last_page,
-          total: response.data.meta.total,
+          data: bannedUsersData,
+          currentPage: meta.current_page,
+          lastPage: meta.last_page,
+          total: meta.total,
           loading: false,
         },
       }));
