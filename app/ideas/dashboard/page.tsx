@@ -11,6 +11,7 @@ import {
   Lightbulb,
   Blocks,
   ChartPie,
+  ChartBar,
 } from "lucide-react";
 import { BrowserUsageChart } from "@/app/components/analytics/BrowserUsageChart";
 import { UserActivityChart } from "@/app/components/analytics/UserActivityChart";
@@ -38,9 +39,23 @@ const EmptyState = ({ title }: { title: string }) => (
     <div className="card-body">
       <h2 className="card-title">{title}</h2>
       <div className="w-full h-[300px] flex items-center justify-center">
-        <div className="text-center text-gray-500">
-          <Meh className="h-12 w-12 mx-auto mb-4" />
-          <p>No data available!</p>
+        <div className="flex flex-col items-center justify-center">
+          <div className="relative mb-6">
+            <div className="absolute inset-0 animate-ping bg-primary/20 rounded-full" />
+            <div className="relative bg-primary/10 p-6 rounded-full">
+              <Meh className="w-12 h-12 text-primary" />
+            </div>
+            <div className="absolute -right-2 -top-2 bg-base-100 rounded-full p-2">
+              <ChartBar className="w-5 h-5 text-primary animate-pulse" />
+            </div>
+          </div>
+          <h3 className="text-xl font-bold text-center m-2">
+            No Data Available
+          </h3>
+          <p className="text-base-content/60 text-center max-w-sm">
+            There's no data to display at the moment. Check back later for
+            updates.
+          </p>
         </div>
       </div>
     </div>
@@ -62,10 +77,10 @@ const ReportsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const user = useAuthStore((state) => state.user);
   const loginActivities = useLoginActivityStore(
-    (state) => state.loginActivities,
+    (state) => state.loginActivities
   );
   const getUserLoginActivities = useLoginActivityStore(
-    (state) => state.getUserLoginActivities,
+    (state) => state.getUserLoginActivities
   );
   const {
     fetchIdeas,
