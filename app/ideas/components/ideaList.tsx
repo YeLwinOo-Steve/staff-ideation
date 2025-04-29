@@ -1,12 +1,14 @@
 import { motion } from "framer-motion";
 import IdeaCard from "./ideaCard";
 import { useApiStore } from "@/store/apiStore";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useAuthStore } from "@/store/authStore";
 import { hasAnyRole } from "@/app/lib/utils";
 import ReportedIdeaList from "./ReportedIdeaList";
 import CategoryChip from "./categoryChip";
+import { Search } from "lucide-react";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const containerVariants = {
   hidden: { opacity: 1 },
@@ -38,12 +40,15 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
   const [page, setPage] = useState(1);
   const [latest, setLatest] = useState<boolean | null>(null);
   const [popular, setPopular] = useState<boolean | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "pending" | "reported">(
     "all"
   );
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
     null
   );
+
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const {
     ideaPagination: { data: ideas, currentPage, lastPage, loading },
@@ -121,11 +126,19 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
       fetchIdeas({
         page: page.toString(),
         popular: "desc",
+        ...(debouncedSearchTerm && { title: debouncedSearchTerm }),
       });
     } else if (latest !== null) {
-      fetchIdeas({ page: page.toString(), latest: latest ? "true" : "false" });
+      fetchIdeas({ 
+        page: page.toString(), 
+        latest: latest ? "true" : "false",
+        ...(debouncedSearchTerm && { title: debouncedSearchTerm }),
+      });
     } else {
-      fetchIdeas({ page: page.toString() });
+      fetchIdeas({ 
+        page: page.toString(),
+        ...(debouncedSearchTerm && { title: debouncedSearchTerm }),
+      });
     }
   }, [
     page,
@@ -135,6 +148,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
     getToSubmit,
     fetchReportedIdeas,
     activeTab,
+    debouncedSearchTerm,
   ]);
 
   const handleTabChange = (tab: "all" | "pending" | "reported") => {
@@ -181,8 +195,8 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
           )}
         </div>
 
-        {activeTab === "all" && (
-          <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4">
+          {activeTab === "all" && (
             <div className="join">
               <input
                 type="radio"
@@ -209,8 +223,23 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
                 }}
               />
             </div>
+          )}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-4 w-4 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search ideas..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setPage(1); // Reset to first page when searching
+              }}
+              className="input input-bordered input-md pl-9 pr-3 w-full sm:w-[300px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+            />
           </div>
-        )}
+        </div>
       </div>
       {/* Category Chips Row */}
       <div className="w-full overflow-x-auto p-1">
