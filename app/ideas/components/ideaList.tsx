@@ -244,7 +244,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
       {/* Category Chips Row */}
       <div className="w-full overflow-x-auto p-1">
         <div className="flex flex-row gap-2 min-w-max">
-          {categories.map((cat) => (
+          {activeTab === "all" && categories.map((cat) => (
             <div key={cat.id}>
               <CategoryChip
                 category={cat}
