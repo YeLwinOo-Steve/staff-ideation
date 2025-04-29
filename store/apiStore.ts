@@ -626,8 +626,10 @@ export const useApiStore = create<ApiState>((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await api.categoryApi.getAll();
+      console.log('Categories API Response:', response);
       set({ categories: response.data.data });
     } catch (error) {
+      console.error('Categories API Error:', error);
       const message = handleError(error, "Failed to fetch categories");
       set({ error: message });
       throw error;

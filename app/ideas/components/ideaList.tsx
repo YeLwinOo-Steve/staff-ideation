@@ -98,9 +98,10 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
   )} gap-6`;
 
   useEffect(() => {
+    console.log('Categories state:', categories);
     const loadData = async () => {
       const promises = [];
-      if (categories === null) {
+      if (categories.length === 0) {
         console.log("fetching categories");
         promises.push(fetchCategories());
       }
@@ -153,7 +154,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
     : displayedIdeas;
 
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-6">
+    <div className="w-full max-w-7xl mx-auto space-y-2">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="tabs tabs-boxed">
           <button
@@ -212,7 +213,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
         )}
       </div>
       {/* Category Chips Row */}
-      <div className="w-full overflow-x-auto p-2">
+      <div className="w-full overflow-x-auto p-1">
         <div className="flex flex-row gap-2 min-w-max">
           {categories.map((cat) => (
             <div key={cat.id}>
