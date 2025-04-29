@@ -76,19 +76,15 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
       }
       // Load hidden/banned states
       try {
-        await Promise.all([
-          getHiddenIdeas(),
-          getHiddenUsers(),
-          canBanUser && getBannedUsers(),
-        ]);
+        const promises = [getHiddenIdeas(), getHiddenUsers()];
+        if (canBanUser) {
+          promises.push(getBannedUsers());
+        }
+        await Promise.all(promises);
 
         // Update states based on API responses
-        const hiddenUserIds =
-          useApiStore.getState().hiddenUsers?.data?.map((idea) => idea.id) ||
-          [];
-        const bannedUserIds =
-          useApiStore.getState().bannedUsers?.data?.map((user) => user.id) ||
-          [];
+        const hiddenUserIds = useApiStore.getState().hiddenUsers?.data?.map((idea) => idea.id) || [];
+        const bannedUserIds = useApiStore.getState().bannedUsers?.data?.map((user) => user.id) || [];
 
         setHiddenUsers(hiddenUserIds);
         setBannedUsers(bannedUserIds);
@@ -98,25 +94,13 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
       }
     };
     loadData();
-  }, [
-    id,
-    idea,
-    getUser,
-    canBanUser,
-    authUser?.id,
-    fetchReportedIdeas,
-    fetchReportDetails,
-    getHiddenIdeas,
-    getHiddenUsers,
-    getBannedUsers,
-    showErrorToast,
-  ]);
+  }, [id, fetchReportDetails, fetchReportedIdeas]);
 
   useEffect(() => {
     if (idea?.user_id) {
       getUser(idea.user_id);
     }
-  }, [idea?.user_id, authUser?.id, canBanUser, getUser]);
+  }, [idea?.user_id, getUser]);
 
   const isIdeaHidden = idea && idea.hidden ? true : false;
   const isUserHidden =
@@ -270,12 +254,12 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
                   {isUserBanned ? (
                     <>
                       <Shield size={16} />
-                      <span>Give Permissions</span>
+                      <span>Unban User</span>
                     </>
                   ) : (
                     <>
                       <ShieldOff size={16} />
-                      <span>Remove Permissions</span>
+                      <span>Ban User</span>
                     </>
                   )}
                 </motion.button>
@@ -309,7 +293,7 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
                 {isUserBanned && (
                   <span className="badge badge-error gap-1">
                     <ShieldOff size={14} />
-                    No Permissions
+                    Banned User
                   </span>
                 )}
               </motion.div>
