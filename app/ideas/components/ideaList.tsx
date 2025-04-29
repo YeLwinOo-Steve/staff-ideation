@@ -170,15 +170,16 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
   const [filteredIdeasState, setFilteredIdeasState] = useState(filteredIdeas);
 
   useEffect(() => {
-    const filtered = ideas.filter((idea) => {
+    const filtered = activeTab === "pending" ? pendingIdeas : ideas;
+    const filteredByCategory = filtered.filter((idea) => {
       if (selectedCategoryId === null) return true;
       return idea.category?.some((catName) => {
         const cat = categories.find((c) => c.id === selectedCategoryId);
         return cat && cat.name === catName;
       });
     });
-    setFilteredIdeasState(filtered);
-  }, [ideas, selectedCategoryId, categories]);
+    setFilteredIdeasState(filteredByCategory);
+  }, [ideas, pendingIdeas, selectedCategoryId, categories, activeTab]);
 
   return (
     <div className="w-full max-w-7xl mx-auto space-y-2">
