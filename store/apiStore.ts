@@ -21,7 +21,6 @@ import {
 } from "@/api/models";
 import * as api from "@/api/repository";
 import axios, { AxiosError } from "axios";
-import { useAuthStore } from "./authStore";
 
 // Helper function to extract error message
 const handleError = (error: unknown, defaultMessage: string): string => {
