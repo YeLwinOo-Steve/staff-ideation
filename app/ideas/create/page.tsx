@@ -81,12 +81,16 @@ const IdeaCreatePage = () => {
       let uploadedFileUrls: { file_name: string; file_path: string }[] = [];
       if (files.length > 0) {
         const uploadPromises = files.map(async (file) => {
-          const result = await uploadToCloudinary(file, (progress) => {
-            setUploadProgress((prev) => ({
-              ...prev,
-              [file.name]: Math.round(progress),
-            }));
-          });
+          const result = await uploadToCloudinary(
+            file,
+            authUser?.name,
+            (progress) => {
+              setUploadProgress((prev) => ({
+                ...prev,
+                [file.name]: Math.round(progress),
+              }));
+            }
+          );
           return {
             file_name: file.name,
             file_path: result,
