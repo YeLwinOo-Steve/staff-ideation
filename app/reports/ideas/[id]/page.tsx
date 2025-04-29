@@ -118,7 +118,7 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
     }
   }, [idea?.user_id, authUser?.id, canBanUser, getUser]);
 
-  const isIdeaHidden = idea && idea.hidden;
+  const isIdeaHidden = idea && idea.hidden ? true : false;
   const isUserHidden =
     idea && idea.user_id && hiddenUsers.includes(idea.user_id);
   const isUserBanned =
@@ -130,7 +130,7 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
     try {
       await hideIdea(idea.id, isIdeaHidden ? 0 : 1);
       showSuccessToast(
-        isIdeaHidden ? "Idea is now visible" : "Idea has been hidden",
+        isIdeaHidden ? "Idea is now visible" : "Idea has been hidden"
       );
       // Refresh the idea to get updated hidden status
       await fetchReportedIdeas();
@@ -150,7 +150,7 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
       showSuccessToast(
         isUserHidden
           ? "User's ideas are now visible"
-          : "User's ideas have been hidden",
+          : "User's ideas have been hidden"
       );
       await getHiddenUsers();
       // Update local state with new hidden users
@@ -300,12 +300,12 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
                     Hidden Idea
                   </span>
                 )}
-                {isUserHidden && (
+                {isUserHidden ? (
                   <span className="badge badge-warning gap-1">
                     <UserX size={14} />
                     Hidden User
                   </span>
-                )}
+                ) : null}
                 {isUserBanned && (
                   <span className="badge badge-error gap-1">
                     <ShieldOff size={14} />
