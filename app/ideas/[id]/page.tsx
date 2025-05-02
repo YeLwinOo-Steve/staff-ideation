@@ -118,7 +118,7 @@ const ZipDownloadBtn = ({ files }: ZipDownloadBtnProps) => {
           const errorMessage =
             err instanceof Error ? err.message : "An unknown error occurred";
           throw new Error(
-            `Error downloading file ${index + 1}: ${errorMessage}`
+            `Error downloading file ${index + 1}: ${errorMessage}`,
           );
         }
       }
@@ -236,7 +236,7 @@ const IdeaDetail = () => {
   useEffect(() => {
     if (idea?.category) {
       setSelectedCategories(
-        Array.isArray(idea.category) ? idea.category : [idea.category]
+        Array.isArray(idea.category) ? idea.category : [idea.category],
       );
       // Set initial category IDs
       const categoryIds = (
@@ -328,7 +328,7 @@ const IdeaDetail = () => {
     } catch (e) {
       console.log("Failed to submit comment", e);
       showErrorToast(
-        editingCommentId ? "Failed to update comment" : "Failed to add comment"
+        editingCommentId ? "Failed to update comment" : "Failed to add comment",
       );
     } finally {
       setIsSubmittingComment(false);
@@ -378,7 +378,7 @@ const IdeaDetail = () => {
     } catch (error) {
       if (error instanceof AxiosError) {
         showErrorToast(
-          error.response?.data?.message || "Failed to publish idea"
+          error.response?.data?.message || "Failed to publish idea",
         );
       }
     }
@@ -386,7 +386,7 @@ const IdeaDetail = () => {
 
   const handleCategoryToggle = async (
     categoryName: string,
-    categoryId: number
+    categoryId: number,
   ) => {
     const newCategories = selectedCategories.includes(categoryName)
       ? selectedCategories.filter((cat) => cat !== categoryName)
