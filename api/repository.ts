@@ -132,8 +132,7 @@ export const hideApi = {
   hideIdea: (id: number, hide: number) =>
     apiClient.put<{ message: string }>(`/hide/${id}`, { hide }),
 
-  getHiddenIdeas: () =>
-    apiClient.get<HiddenIdea[]>("/get-hide-ideas"),
+  getHiddenIdeas: () => apiClient.get<HiddenIdea[]>("/get-hide-ideas"),
 
   hideUserIdeas: (userId: number, hide: number) =>
     apiClient.put<{ message: string }>(`/user/hide/${userId}`, { hide }),

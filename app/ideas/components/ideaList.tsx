@@ -36,7 +36,7 @@ const itemVariants = {
   },
 };
 
-export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
+export default function IdeaList() {
   const [page, setPage] = useState(1);
   const [latest, setLatest] = useState<boolean | null>(null);
   const [popular, setPopular] = useState<boolean | null>(null);
@@ -96,11 +96,6 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
       : activeTab === "reported"
         ? reportedLoading
         : loading;
-
-  const gridClass = `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Math.min(
-    gridCols,
-    4,
-  )} gap-6`;
 
   useEffect(() => {
     console.log("Categories state:", categories);

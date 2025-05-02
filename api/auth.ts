@@ -18,7 +18,7 @@ export const authApi = {
   login: (data: LoginRequest) => apiClient.post<AuthResponse>("/login", data),
 
   resetPassword: (id: number) =>
-    apiClient.post<{ message: string }>(`/reset-password/${id}`),
+    apiClient.post<{ message: string }>(`/users/reset-password/${id}`),
 
   logout: () => apiClient.post<{ message: string }>("/logout"),
 

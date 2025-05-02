@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useApiStore } from "@/store/apiStore";
 import {
   ChevronLeft,
@@ -65,42 +65,51 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
   const idea = reportedIdeas.find((idea) => idea.id === parseInt(id));
 
   const canBanUser = hasPermission(user, "banned user");
-  useEffect(() => {
-    const loadData = async () => {
-      if (!idea) {
-        await fetchReportedIdeas();
-      }
-      await fetchReportDetails(parseInt(id));
-      if (authUser?.id) {
-        await getUser(authUser.id);
-      }
-      // Load hidden/banned states
-      try {
-        const promises = [getHiddenIdeas(), getHiddenUsers()];
-        if (canBanUser) {
-          promises.push(getBannedUsers());
-        }
-        await Promise.all(promises);
-
-        // Update states based on API responses
-        const hiddenUserIds = useApiStore.getState().hiddenUsers?.data?.map((idea) => idea.id) || [];
-        const bannedUserIds = useApiStore.getState().bannedUsers?.data?.map((user) => user.id) || [];
-
-        setHiddenUsers(hiddenUserIds);
-        setBannedUsers(bannedUserIds);
-      } catch (error) {
-        console.error("Failed to load states:", error);
-        showErrorToast("Failed to load idea states");
-      }
-    };
-    loadData();
-  }, [id, fetchReportDetails, fetchReportedIdeas]);
-
-  useEffect(() => {
-    if (idea?.user_id) {
-      getUser(idea.user_id);
+  const loadData = useCallback(async () => {
+    if (!idea) {
+      await fetchReportedIdeas();
     }
-  }, [idea?.user_id, getUser]);
+    await fetchReportDetails(parseInt(id));
+    if (authUser?.id) {
+      await getUser(authUser.id);
+    }
+    // Load hidden/banned states
+    try {
+      const promises = [getHiddenIdeas(), getHiddenUsers()];
+      if (canBanUser) {
+        promises.push(getBannedUsers());
+      }
+      await Promise.all(promises);
+
+      // Update states based on API responses
+      const hiddenUserIds =
+        useApiStore.getState().hiddenUsers?.data?.map((idea) => idea.id) || [];
+      const bannedUserIds =
+        useApiStore.getState().bannedUsers?.data?.map((user) => user.id) || [];
+
+      setHiddenUsers(hiddenUserIds);
+      setBannedUsers(bannedUserIds);
+    } catch (error) {
+      console.error("Failed to load states:", error);
+      showErrorToast("Failed to load idea states");
+    }
+  }, [
+    authUser?.id,
+    canBanUser,
+    fetchReportDetails,
+    fetchReportedIdeas,
+    getBannedUsers,
+    getHiddenIdeas,
+    getHiddenUsers,
+    getUser,
+    id,
+    idea,
+    showErrorToast,
+  ]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const isIdeaHidden = idea && idea.hidden ? true : false;
   const isUserHidden =
@@ -114,7 +123,7 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
     try {
       await hideIdea(idea.id, isIdeaHidden ? 0 : 1);
       showSuccessToast(
-        isIdeaHidden ? "Idea is now visible" : "Idea has been hidden"
+        isIdeaHidden ? "Idea is now visible" : "Idea has been hidden",
       );
       // Refresh the idea to get updated hidden status
       await fetchReportedIdeas();
@@ -134,7 +143,7 @@ const ReportedIdeaDetails = ({ params }: ReportedIdeaDetailsProps) => {
       showSuccessToast(
         isUserHidden
           ? "User's ideas are now visible"
-          : "User's ideas have been hidden"
+          : "User's ideas have been hidden",
       );
       await getHiddenUsers();
       // Update local state with new hidden users
