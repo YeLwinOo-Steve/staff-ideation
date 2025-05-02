@@ -182,9 +182,9 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
   }, [ideas, pendingIdeas, selectedCategoryId, categories, activeTab]);
 
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-2">
+    <div className="w-full max-w-7xl mx-auto space-y-4 px-4 sm:px-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="tabs tabs-boxed">
+        <div className="tabs tabs-boxed w-full sm:w-auto overflow-x-auto">
           <button
             className={`tab ${activeTab === "all" ? "tab-active" : ""}`}
             onClick={() => handleTabChange("all")}
@@ -209,9 +209,9 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
           )}
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
           {activeTab === "all" && (
-            <div className="join">
+            <div className="join w-full sm:w-auto">
               <input
                 type="radio"
                 name="sort"
@@ -239,7 +239,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
             </div>
           )}
           {activeTab === "all" && (
-            <div className="relative">
+            <div className="relative w-full sm:w-[300px]">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search className="h-4 w-4 text-gray-400" />
               </div>
@@ -249,16 +249,16 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
-                  setPage(1); // Reset to first page when searching
+                  setPage(1);
                 }}
-                className="input input-bordered input-md pl-9 pr-3 w-full sm:w-[300px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="input input-bordered input-md pl-9 pr-3 w-full text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
           )}
         </div>
       </div>
       {/* Category Chips Row */}
-      <div className="w-full overflow-x-auto p-1">
+      <div className="w-full overflow-x-auto pb-2">
         <div className="flex flex-row gap-2 min-w-max">
           {activeTab === "all" &&
             categories.map((cat) => (
@@ -317,7 +317,7 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
           variants={containerVariants}
           initial="hidden"
           animate="show"
-          className={gridClass}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
         >
           {filteredIdeasState.map((idea) => (
             <motion.div
@@ -337,9 +337,9 @@ export default function IdeaList({ gridCols = 4 }: { gridCols?: number }) {
       {lastPageToShow > 1 && (
         <motion.div
           variants={itemVariants}
-          className="fixed bottom-6 left-0 right-0 flex justify-center z-10"
+          className="sticky bottom-6 left-0 right-0 flex justify-center z-10 mt-8"
         >
-          <div className="join bg-base-100">
+          <div className="join bg-base-100 shadow-lg rounded-lg">
             {Array.from({ length: Math.min(lastPageToShow, 10) }).map(
               (_, index) => (
                 <motion.input

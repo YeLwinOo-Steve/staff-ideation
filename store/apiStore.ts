@@ -997,7 +997,7 @@ export const useApiStore = create<ApiState>((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await api.hideApi.getHiddenIdeas();
-      set({ hiddenIdeas: response.data.data });
+      set({ hiddenIdeas: response.data });
     } catch (error) {
       const message = handleError(error, "Failed to fetch hidden ideas");
       set({ error: message });

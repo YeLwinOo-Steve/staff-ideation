@@ -26,9 +26,8 @@ const bannerVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      type: "spring",
-      stiffness: 100,
-      damping: 15,
+      duration: 0.4,
+      ease: "easeInOut",
     },
   },
 };
@@ -60,22 +59,22 @@ export default function Dashboard() {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="p-6 space-y-6 max-w-7xl mx-auto"
+      className="p-4 sm:p-6 space-y-6 max-w-7xl mx-auto"
     >
-      <div className="mb-8">
-        <div className="flex flex-wrap justify-between items-center">
-          <h1 className="text-2xl font-bold">
+      <div className="mb-6 sm:mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <h1 className="text-xl sm:text-2xl font-bold">
             Welcome, {user?.name.split(" ")[0]}!
           </h1>
           {canCreateIdea ? (
-            <Link href="/ideas/create" className="btn btn-primary btn-md">
+            <Link href="/ideas/create" className="btn btn-primary btn-md w-full sm:w-auto">
               <PlusIcon className="w-4 h-4" />
               Create New Idea
             </Link>
           ) : (
             <motion.div
               variants={bannerVariants}
-              className="inline-flex items-center gap-2 text-info-content bg-info rounded-lg py-1.5 px-3"
+              className="inline-flex items-center gap-2 text-info-content bg-info rounded-lg py-1.5 px-3 w-full sm:w-auto"
             >
               <AlertCircle className="w-4 h-4" />
               <span className="text-sm">
@@ -87,7 +86,7 @@ export default function Dashboard() {
       </div>
 
       {/* Ideas Section */}
-      <div className="mb-8 flex flex-col items-center">
+      <div className="mb-6 sm:mb-8">
         <IdeaList gridCols={3} />
       </div>
     </motion.div>

@@ -324,11 +324,11 @@ const ReportsPage = () => {
         {/* Hidden Stats Chart */}
         <motion.div variants={fadeInUp}>
           {isLoading ? (
-            <LoadingState title="Hidden Content by Department" />
+            <LoadingState title="Hidden Ideas" />
           ) : hiddenIdeas && hiddenIdeas.length > 0 ? (
             <HiddenStatsChart hiddenIdeas={hiddenIdeas} />
           ) : (
-            <EmptyState title="Hidden Content by Department" />
+            <EmptyState title="Hidden Ideas" />
           )}
         </motion.div>
       </motion.div>
