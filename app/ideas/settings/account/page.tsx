@@ -22,7 +22,7 @@ import { useApiStore } from "@/store/apiStore";
 import { changePasswordSchema } from "@/schema/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { isValid, z } from "zod";
+import { z } from "zod";
 import { useToast } from "@/components/toast";
 import { useLoginActivityStore } from "@/store/apiStore";
 
@@ -84,6 +84,7 @@ const AccountPage = () => {
         setIsActivitiesDialogOpen(true);
       }
     } catch (error) {
+      console.log("Failed to load login activities", error);
       showErrorToast("Failed to load login activities");
     }
   };
