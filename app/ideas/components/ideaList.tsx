@@ -42,10 +42,10 @@ export default function IdeaList() {
   const [popular, setPopular] = useState<boolean | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "pending" | "reported">(
-    "all"
+    "all",
   );
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-    null
+    null,
   );
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
@@ -158,7 +158,7 @@ export default function IdeaList() {
         idea.category?.some((catName) => {
           const cat = categories.find((c) => c.id === selectedCategoryId);
           return cat && cat.name === catName;
-        })
+        }),
       )
     : displayedIdeas;
 
@@ -263,7 +263,7 @@ export default function IdeaList() {
                   isSelected={selectedCategoryId === cat.id}
                   onClick={() =>
                     setSelectedCategoryId(
-                      selectedCategoryId === cat.id ? null : cat.id
+                      selectedCategoryId === cat.id ? null : cat.id,
                     )
                   }
                 />
@@ -319,9 +319,12 @@ export default function IdeaList() {
                   <AlertCircle className="w-5 h-5 text-info" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-base-content font-medium">Department-Specific View</p>
+                  <p className="text-base-content font-medium">
+                    Department-Specific View
+                  </p>
                   <p className="text-base-content/70 text-sm mt-1">
-                    The pending ideas only from your department are visible here!
+                    The pending ideas only from your department are visible
+                    here!
                   </p>
                 </div>
               </div>
@@ -371,7 +374,7 @@ export default function IdeaList() {
                     setPage(index + 1);
                   }}
                 />
-              )
+              ),
             )}
           </div>
         </motion.div>

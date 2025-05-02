@@ -2,7 +2,13 @@
 
 import { motion } from "framer-motion";
 import { Category } from "@/api/models";
-import { PencilIcon, PlusIcon, AlertCircle, Trash2Icon, CheckCircle2 } from "lucide-react";
+import {
+  PencilIcon,
+  PlusIcon,
+  AlertCircle,
+  Trash2Icon,
+  CheckCircle2,
+} from "lucide-react";
 
 interface CategoryModalsProps {
   isEditModalOpen: boolean;

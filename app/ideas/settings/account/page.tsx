@@ -29,7 +29,7 @@ import { useLoginActivityStore } from "@/store/apiStore";
 const dialogVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1 },
-  exit: { opacity: 0 }
+  exit: { opacity: 0 },
 };
 
 const containerVariants = {
@@ -38,14 +38,14 @@ const containerVariants = {
     opacity: 1,
     transition: {
       staggerChildren: 0.1,
-      delayChildren: 0.2
-    }
-  }
+      delayChildren: 0.2,
+    },
+  },
 };
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 }
+  visible: { opacity: 1, y: 0 },
 };
 
 type ChangePasswordForm = z.infer<typeof changePasswordSchema>;
@@ -403,7 +403,7 @@ const AccountPage = () => {
                 className="sticky top-0 bg-base-100 z-50 p-4 flex items-center justify-between"
                 variants={itemVariants}
               >
-                <motion.div 
+                <motion.div
                   className="flex items-center gap-3"
                   variants={itemVariants}
                 >
@@ -423,14 +423,14 @@ const AccountPage = () => {
                 </motion.button>
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 className="p-6 overflow-y-auto h-[calc(100vh-4rem)]"
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
               >
                 {loginActivities.length > 0 ? (
-                  <motion.div 
+                  <motion.div
                     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
                     variants={containerVariants}
                   >
@@ -443,15 +443,15 @@ const AccountPage = () => {
                         whileTap={{ scale: 0.98 }}
                       >
                         {/* Header */}
-                        <motion.div 
+                        <motion.div
                           className="flex items-center justify-between relative"
                           variants={itemVariants}
                         >
-                          <motion.div 
+                          <motion.div
                             className="flex items-center gap-4"
                             variants={itemVariants}
                           >
-                            <motion.div 
+                            <motion.div
                               className="bg-success/10 p-3 rounded-xl"
                               variants={itemVariants}
                             >
@@ -469,24 +469,28 @@ const AccountPage = () => {
                         </motion.div>
 
                         {/* Info Grid */}
-                        <motion.div 
+                        <motion.div
                           className="grid grid-cols-2 gap-4"
                           variants={itemVariants}
                         >
-                          <motion.div 
+                          <motion.div
                             className="bg-base-300/30 p-4 rounded-xl backdrop-blur-sm"
                             variants={itemVariants}
                           >
-                            <p className="text-xs font-medium text-base-content/60 mb-1">IP Address</p>
+                            <p className="text-xs font-medium text-base-content/60 mb-1">
+                              IP Address
+                            </p>
                             <p className="font-medium text-base-content">
                               {activity.ip_address}
                             </p>
                           </motion.div>
-                          <motion.div 
+                          <motion.div
                             className="bg-base-300/30 p-4 rounded-xl backdrop-blur-sm"
                             variants={itemVariants}
                           >
-                            <p className="text-xs font-medium text-base-content/60 mb-1">Last Updated</p>
+                            <p className="text-xs font-medium text-base-content/60 mb-1">
+                              Last Updated
+                            </p>
                             <p className="font-medium text-base-content">
                               {new Date(activity.updated_at).toLocaleString()}
                             </p>
@@ -494,21 +498,23 @@ const AccountPage = () => {
                         </motion.div>
 
                         {/* Footer */}
-                        <motion.div 
+                        <motion.div
                           className="flex items-center justify-between text-sm pt-2 border-t border-base-300/30"
                           variants={itemVariants}
                         >
-                          <motion.div 
+                          <motion.div
                             className="flex items-center gap-2"
                             variants={itemVariants}
                           >
-                            <motion.div 
+                            <motion.div
                               className="w-2 h-2 rounded-full bg-success animate-pulse"
                               variants={itemVariants}
                             />
-                            <span className="text-base-content/60">Active Session</span>
+                            <span className="text-base-content/60">
+                              Active Session
+                            </span>
                           </motion.div>
-                          <motion.span 
+                          <motion.span
                             className="text-base-content/60"
                             variants={itemVariants}
                           >
@@ -519,15 +525,15 @@ const AccountPage = () => {
                     ))}
                   </motion.div>
                 ) : (
-                  <motion.div 
+                  <motion.div
                     className="h-full flex items-center justify-center"
                     variants={containerVariants}
                   >
-                    <motion.div 
+                    <motion.div
                       className="text-center space-y-6"
                       variants={itemVariants}
                     >
-                      <motion.div 
+                      <motion.div
                         className="bg-base-200/50 p-8 rounded-full w-24 h-24 mx-auto flex items-center justify-center"
                         variants={itemVariants}
                         whileHover={{ scale: 1.1 }}
@@ -535,7 +541,7 @@ const AccountPage = () => {
                       >
                         <Globe className="w-12 h-12 text-base-content/50" />
                       </motion.div>
-                      <motion.p 
+                      <motion.p
                         className="text-base-content/60 text-lg"
                         variants={itemVariants}
                       >
@@ -547,7 +553,9 @@ const AccountPage = () => {
               </motion.div>
             </motion.div>
             <form method="dialog" className="modal-backdrop">
-              <button onClick={() => setIsActivitiesDialogOpen(false)}>close</button>
+              <button onClick={() => setIsActivitiesDialogOpen(false)}>
+                close
+              </button>
             </form>
           </motion.dialog>
         )}

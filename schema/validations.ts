@@ -36,7 +36,7 @@ export const ideaSchema = z.object({
       z.object({
         file_name: z.string(),
         file_path: z.string(),
-      })
+      }),
     )
     .optional(),
 });
