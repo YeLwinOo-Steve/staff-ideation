@@ -307,10 +307,25 @@ export default function IdeaList() {
                 : "No ideas match your current search. Try adjusting your search terms or removing filters."}
           </p>
           {activeTab === "pending" && (
-            <p className="text-info-content text-center mt-4 bg-info/50 p-4 rounded-lg">
-              <AlertCircle className="w-4 h-4 mr-2 mb-2" />
-              The pending ideas only from your department are visible here!
-            </p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="relative overflow-hidden mt-4"
+            >
+              <div className="absolute inset-0 bg-info/10 backdrop-blur-sm rounded-xl" />
+              <div className="relative flex items-start gap-3 p-4 rounded-xl border border-info/20">
+                <div className="bg-info/20 p-2 rounded-lg">
+                  <AlertCircle className="w-5 h-5 text-info" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-base-content font-medium">Department-Specific View</p>
+                  <p className="text-base-content/70 text-sm mt-1">
+                    The pending ideas only from your department are visible here!
+                  </p>
+                </div>
+              </div>
+            </motion.div>
           )}
         </motion.div>
       ) : (
@@ -318,7 +333,7 @@ export default function IdeaList() {
           variants={containerVariants}
           initial="hidden"
           animate="show"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 pb-16"
         >
           {filteredIdeasState.map((idea) => (
             <motion.div
