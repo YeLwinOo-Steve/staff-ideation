@@ -14,11 +14,19 @@ export interface LoginRequest {
   browser: string;
 }
 
+export interface ChangePasswordRequest {
+  old_password: string;
+  new_password: string;
+}
+
 export const authApi = {
   login: (data: LoginRequest) => apiClient.post<AuthResponse>("/login", data),
 
   resetPassword: (id: number) =>
     apiClient.post<{ message: string }>(`/users/reset-password/${id}`),
+
+  changePassword: (data: ChangePasswordRequest) =>
+    apiClient.put<{ message: string }>("/change-password", data),
 
   logout: () => apiClient.post<{ message: string }>("/logout"),
 

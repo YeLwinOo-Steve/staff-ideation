@@ -36,7 +36,7 @@ export const ideaSchema = z.object({
       z.object({
         file_name: z.string(),
         file_path: z.string(),
-      }),
+      })
     )
     .optional(),
 });
@@ -59,3 +59,18 @@ export const userFormSchema = z.object({
     .array(z.string())
     .min(1, "At least one permission is required"),
 });
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: z.string().min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string().min(1, "Please confirm your new password"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "New passwords don't match",
+    path: ["confirmPassword"],
+  })
+  .refine((data) => data.newPassword !== data.currentPassword, {
+    message: "New password must be different from current password",
+    path: ["newPassword"],
+  });

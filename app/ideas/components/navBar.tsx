@@ -425,7 +425,7 @@ const NavBar = () => {
                     <div className="collapse-content space-y-0.5 sm:space-y-1">
                       <Link
                         href="/ideas/settings/account"
-                        className="flex items-center gap-2 sm:gap-3 py-1 px-2 sm:px-3 hover:bg-base-300 rounded-lg transition-colors"
+                        className="flex items-center gap-2 sm:gap-3 py-3 px-2 sm:px-3 hover:bg-base-300 rounded-lg transition-colors"
                         onClick={() =>
                           handleNavigation("/ideas/settings/account")
                         }
@@ -436,7 +436,7 @@ const NavBar = () => {
 
                       <button
                         onClick={handleThemeSwitch}
-                        className="flex items-center gap-2 sm:gap-3 py-1 px-2 sm:px-3 w-full hover:bg-base-300 rounded-lg transition-colors"
+                        className="flex items-center gap-2 sm:gap-3 py-3 px-2 sm:px-3 w-full hover:bg-base-300 rounded-lg transition-colors"
                       >
                         <ThemeIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                         <span className="text-sm sm:text-base">

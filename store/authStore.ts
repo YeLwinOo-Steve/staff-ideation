@@ -13,9 +13,10 @@ interface AuthState {
     email: string,
     password: string,
     ip: string,
-    browser: string,
+    browser: string
   ) => Promise<void | null>;
   resetPassword: (id: number) => Promise<boolean>;
+  changePassword: (old_password: string, new_password: string) => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;
 }
@@ -64,6 +65,19 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
+      changePassword: async (old_password: string, new_password: string) => {
+        set({ isLoading: true, error: null });
+        try {
+          await authApi.changePassword({ old_password, new_password });
+          set({ isLoading: false });
+        } catch (error) {
+          const e = error as AxiosError<{ message: string }>;
+          const message = e.response?.data?.message || "Password change failed";
+          set({ error: message, isLoading: false });
+          throw error;
+        }
+      },
+
       logout: async () => {
         set({ isLoading: true });
         try {
@@ -83,6 +97,6 @@ export const useAuthStore = create<AuthState>()(
     {
       name: "auth-storage",
       partialize: (state) => ({ user: state.user, token: state.token }),
-    },
-  ),
+    }
+  )
 );

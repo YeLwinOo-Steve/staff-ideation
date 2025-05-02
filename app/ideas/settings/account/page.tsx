@@ -1,6 +1,14 @@
 "use client";
 
-import { LogOutIcon, Mail, Building2, UserCircle2, Shield, Lock, CheckCircle2 } from "lucide-react";
+import {
+  LogOutIcon,
+  Mail,
+  Building2,
+  UserCircle2,
+  Shield,
+  Lock,
+  CheckCircle2,
+} from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/authStore";
@@ -9,6 +17,12 @@ import LogoutDialog from "@/app/ideas/components/LogoutDialog";
 import { getInitials } from "@/util/getInitials";
 import { User } from "lucide-react";
 import { useApiStore } from "@/store/apiStore";
+import { changePasswordSchema } from "@/schema/validations";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { isValid, z } from "zod";
+import { useToast } from "@/components/toast";
+
 const containerVariants = {
   hidden: { opacity: 0 },
   show: {
@@ -24,15 +38,26 @@ const itemVariants = {
   show: { opacity: 1, y: 0 },
 };
 
+type ChangePasswordForm = z.infer<typeof changePasswordSchema>;
+
 const AccountPage = () => {
   const { user } = useAuthStore();
   const { getUser, user: userData } = useApiStore();
+  const { changePassword, isLoading, error } = useAuthStore();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
-  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] =
+    useState(false);
+  const { showSuccessToast, showErrorToast } = useToast();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<ChangePasswordForm>({
+    resolver: zodResolver(changePasswordSchema),
+    mode: "onChange",
+  });
 
   useEffect(() => {
     if (user?.id) {
@@ -42,21 +67,17 @@ const AccountPage = () => {
 
   if (!userData) return null;
 
-  const handleChangePassword = async () => {
-    if (newPassword !== confirmPassword) {
-      setError("New passwords do not match");
+  const handleChangePassword = async (data: ChangePasswordForm) => {
+    try {
+      await changePassword(data.currentPassword, data.newPassword);
+      setIsChangePasswordModalOpen(false);
+      reset();
+      showSuccessToast("Password changed successfully");
+    } catch (e) {
+      console.log("Failed to change password", e);
+      showErrorToast(error || "Failed to change password");
       return;
     }
-    if (newPassword.length < 8) {
-      setError("Password must be at least 8 characters long");
-      return;
-    }
-    // TODO: Implement password change logic
-    setIsChangePasswordModalOpen(false);
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
-    setError("");
   };
 
   return (
@@ -215,7 +236,9 @@ const AccountPage = () => {
       </motion.div>
 
       {/* Change Password Modal */}
-      <dialog className={`modal ${isChangePasswordModalOpen ? "modal-open" : ""}`}>
+      <dialog
+        className={`modal ${isChangePasswordModalOpen ? "modal-open" : ""}`}
+      >
         <motion.div
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -230,18 +253,27 @@ const AccountPage = () => {
               <h3 className="font-bold text-xl">Change Password</h3>
             </div>
 
-            <div className="space-y-4">
+            <form
+              onSubmit={handleSubmit(handleChangePassword)}
+              className="space-y-4"
+            >
               <div className="form-control w-full">
                 <label className="label">
                   <span className="label-text">Current Password</span>
                 </label>
                 <input
                   type="password"
-                  className="input input-bordered w-full"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  className={`input input-bordered w-full ${
+                    errors.currentPassword ? "input-error" : ""
+                  }`}
+                  {...register("currentPassword")}
                   placeholder="Enter current password"
                 />
+                {errors.currentPassword && (
+                  <span className="text-error text-xs mt-1">
+                    {errors.currentPassword.message}
+                  </span>
+                )}
               </div>
 
               <div className="form-control w-full">
@@ -250,11 +282,17 @@ const AccountPage = () => {
                 </label>
                 <input
                   type="password"
-                  className="input input-bordered w-full"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
+                  className={`input input-bordered w-full ${
+                    errors.newPassword ? "input-error" : ""
+                  }`}
+                  {...register("newPassword")}
                   placeholder="Enter new password"
                 />
+                {errors.newPassword && (
+                  <span className="text-error text-xs mt-1">
+                    {errors.newPassword.message}
+                  </span>
+                )}
               </div>
 
               <div className="form-control w-full">
@@ -263,46 +301,50 @@ const AccountPage = () => {
                 </label>
                 <input
                   type="password"
-                  className="input input-bordered w-full"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className={`input input-bordered w-full ${
+                    errors.confirmPassword ? "input-error" : ""
+                  }`}
+                  {...register("confirmPassword")}
                   placeholder="Confirm new password"
                 />
+                {errors.confirmPassword && (
+                  <span className="text-error text-xs mt-1">
+                    {errors.confirmPassword.message}
+                  </span>
+                )}
               </div>
 
-              {error && (
-                <div className="alert alert-error">
-                  <span>{error}</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="bg-base-200/30 p-4 flex justify-end gap-2">
-            <motion.button
-              className="btn btn-ghost btn-sm"
-              onClick={() => {
-                setIsChangePasswordModalOpen(false);
-                setError("");
-              }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Cancel
-            </motion.button>
-            <motion.button
-              className="btn btn-warning btn-sm"
-              onClick={handleChangePassword}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <CheckCircle2 className="w-5 h-5" />
-              Change Password
-            </motion.button>
+              <div className="bg-base-200/30 p-4 flex justify-end gap-2">
+                <motion.button
+                  type="button"
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => {
+                    setIsChangePasswordModalOpen(false);
+                    reset();
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Cancel
+                </motion.button>
+                <motion.button
+                  type="submit"
+                  className="btn btn-warning btn-sm"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  disabled={isLoading}
+                >
+                  <CheckCircle2 className="w-5 h-5" />
+                  Change Password
+                </motion.button>
+              </div>
+            </form>
           </div>
         </motion.div>
         <form method="dialog" className="modal-backdrop">
-          <button onClick={() => setIsChangePasswordModalOpen(false)}>close</button>
+          <button onClick={() => setIsChangePasswordModalOpen(false)}>
+            close
+          </button>
         </form>
       </dialog>
 
