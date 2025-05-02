@@ -42,10 +42,10 @@ export default function IdeaList() {
   const [popular, setPopular] = useState<boolean | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "pending" | "reported">(
-    "all",
+    "all"
   );
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-    null,
+    null
   );
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
@@ -158,7 +158,7 @@ export default function IdeaList() {
         idea.category?.some((catName) => {
           const cat = categories.find((c) => c.id === selectedCategoryId);
           return cat && cat.name === catName;
-        }),
+        })
       )
     : displayedIdeas;
 
@@ -263,7 +263,7 @@ export default function IdeaList() {
                   isSelected={selectedCategoryId === cat.id}
                   onClick={() =>
                     setSelectedCategoryId(
-                      selectedCategoryId === cat.id ? null : cat.id,
+                      selectedCategoryId === cat.id ? null : cat.id
                     )
                   }
                 />
@@ -306,6 +306,12 @@ export default function IdeaList() {
                 ? "No ideas found in the selected category. Try selecting a different category or removing filters."
                 : "No ideas match your current search. Try adjusting your search terms or removing filters."}
           </p>
+          {activeTab === "pending" && (
+            <p className="text-info-content text-center mt-4 bg-info/50 p-4 rounded-lg">
+              <AlertCircle className="w-4 h-4 mr-2 mb-2" />
+              The pending ideas only from your department are visible here!
+            </p>
+          )}
         </motion.div>
       ) : (
         <motion.div
@@ -350,7 +356,7 @@ export default function IdeaList() {
                     setPage(index + 1);
                   }}
                 />
-              ),
+              )
             )}
           </div>
         </motion.div>

@@ -21,7 +21,7 @@ const UsersPage = () => {
   const router = useRouter();
   const canViewLogs =
     hasPermission(authUser, "view user log") ||
-    hasPermission(authUser, "View User Logs");
+    hasPermission(authUser, "view user logs");
 
   useEffect(() => {
     fetchUsers();
