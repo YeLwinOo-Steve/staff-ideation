@@ -438,57 +438,64 @@ const AccountPage = () => {
                       <motion.div
                         key={index}
                         variants={itemVariants}
-                        className="bg-base-200/50 p-4 rounded-xl space-y-3 hover:bg-base-200/70 transition-colors"
+                        className="bg-base-200/50 p-6 rounded-xl space-y-4 hover:bg-base-200/70 transition-colors relative overflow-hidden group"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
+                        {/* Header */}
                         <motion.div 
-                          className="flex items-center justify-between"
+                          className="flex items-center justify-between relative"
                           variants={itemVariants}
                         >
                           <motion.div 
-                            className="flex items-center gap-3"
+                            className="flex items-center gap-4"
                             variants={itemVariants}
                           >
                             <motion.div 
-                              className="bg-success/10 p-2 rounded-lg"
+                              className="bg-success/10 p-3 rounded-xl"
                               variants={itemVariants}
                             >
-                              <Globe className="w-5 h-5 text-success" />
+                              <Globe className="w-6 h-6 text-success" />
                             </motion.div>
                             <motion.div variants={itemVariants}>
-                              <p className="font-medium text-lg">{activity.browser}</p>
-                              <p className="text-sm text-base-content/70">
+                              <p className="font-semibold text-lg text-base-content">
+                                {activity.browser}
+                              </p>
+                              <p className="text-sm text-base-content/60">
                                 {new Date(activity.created_at).toLocaleString()}
                               </p>
                             </motion.div>
                           </motion.div>
                         </motion.div>
 
+                        {/* Info Grid */}
                         <motion.div 
-                          className="grid grid-cols-2 gap-3"
+                          className="grid grid-cols-2 gap-4"
                           variants={itemVariants}
                         >
                           <motion.div 
-                            className="bg-base-300/30 p-3 rounded-lg"
+                            className="bg-base-300/30 p-4 rounded-xl backdrop-blur-sm"
                             variants={itemVariants}
                           >
-                            <p className="text-xs text-base-content/70 mb-1">IP Address</p>
-                            <p className="font-medium text-sm">{activity.ip_address}</p>
+                            <p className="text-xs font-medium text-base-content/60 mb-1">IP Address</p>
+                            <p className="font-medium text-base-content">
+                              {activity.ip_address}
+                            </p>
                           </motion.div>
                           <motion.div 
-                            className="bg-base-300/30 p-3 rounded-lg"
+                            className="bg-base-300/30 p-4 rounded-xl backdrop-blur-sm"
                             variants={itemVariants}
                           >
-                            <p className="text-xs text-base-content/70 mb-1">Last Updated</p>
-                            <p className="font-medium text-sm">
+                            <p className="text-xs font-medium text-base-content/60 mb-1">Last Updated</p>
+                            <p className="font-medium text-base-content">
                               {new Date(activity.updated_at).toLocaleString()}
                             </p>
                           </motion.div>
                         </motion.div>
 
+                        {/* Footer */}
                         <motion.div 
-                          className="flex items-center justify-between text-sm"
+                          className="flex items-center justify-between text-sm pt-2 border-t border-base-300/30"
                           variants={itemVariants}
                         >
                           <motion.div 
@@ -496,13 +503,13 @@ const AccountPage = () => {
                             variants={itemVariants}
                           >
                             <motion.div 
-                              className="w-2 h-2 rounded-full bg-success"
+                              className="w-2 h-2 rounded-full bg-success animate-pulse"
                               variants={itemVariants}
                             />
-                            <span className="text-base-content/70">Active Session</span>
+                            <span className="text-base-content/60">Active Session</span>
                           </motion.div>
                           <motion.span 
-                            className="text-base-content/70"
+                            className="text-base-content/60"
                             variants={itemVariants}
                           >
                             {new Date(activity.created_at).toLocaleTimeString()}
@@ -517,19 +524,19 @@ const AccountPage = () => {
                     variants={containerVariants}
                   >
                     <motion.div 
-                      className="text-center space-y-4"
+                      className="text-center space-y-6"
                       variants={itemVariants}
                     >
                       <motion.div 
-                        className="bg-base-200/50 p-6 rounded-full w-20 h-20 mx-auto flex items-center justify-center"
+                        className="bg-base-200/50 p-8 rounded-full w-24 h-24 mx-auto flex items-center justify-center"
                         variants={itemVariants}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                       >
-                        <Globe className="w-10 h-10 text-base-content/50" />
+                        <Globe className="w-12 h-12 text-base-content/50" />
                       </motion.div>
                       <motion.p 
-                        className="text-base-content/70 text-lg"
+                        className="text-base-content/60 text-lg"
                         variants={itemVariants}
                       >
                         No login activities found
