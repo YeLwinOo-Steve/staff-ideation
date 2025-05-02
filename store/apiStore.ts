@@ -108,6 +108,7 @@ interface ApiState {
   // Comments
   getCommentsForIdea: (id: number) => Promise<void>;
   createComment: (data: FormData) => Promise<void>;
+  updateComment: (id: number, data: FormData) => Promise<void>;
   deleteComment: (id: number) => Promise<void>;
 
   // Categories
@@ -621,6 +622,18 @@ export const useApiStore = create<ApiState>((set, get) => ({
       get().getCommentsForIdea(Number(ideaId));
     } catch (error) {
       const message = handleError(error, "Failed to create comment");
+      set({ error: message });
+      throw error;
+    }
+  },
+
+  updateComment: async (id, data) => {
+    try {
+      await api.commentApi.update(id, data);
+      const ideaId = data.get("idea_id");
+      get().getCommentsForIdea(Number(ideaId));
+    } catch (error) {
+      const message = handleError(error, "Failed to update comment");
       set({ error: message });
       throw error;
     }

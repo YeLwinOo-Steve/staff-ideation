@@ -14,6 +14,7 @@ import {
   Flag,
   AlertCircle,
   EyeOff,
+  PencilIcon,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useApiStore } from "@/store/apiStore";
@@ -25,7 +26,7 @@ import { useToast } from "@/components/toast";
 import { AxiosError } from "axios";
 import { useAuthStore } from "@/store/authStore";
 import { hasPermission } from "@/app/lib/utils";
-import type { Document } from "@/api/models";
+import type { Document, Comment } from "@/api/models";
 import Image from "next/image";
 import { AnimatedNumber } from "../components/animatedNumber";
 import ReportDialog from "../components/ReportDialog";
@@ -201,13 +202,15 @@ const IdeaDetail = () => {
     categories,
     fetchCategories,
     updateIdeaCategory,
+    updateComment,
   } = useApiStore();
   const [isVoting, setIsVoting] = useState(false);
   const [userVoteLocal, setUserVoteLocal] = useState<number>(0);
   const [voteCountLocal, setVoteCountLocal] = useState<number>(0);
   const [newComment, setNewComment] = useState("");
-  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [isAnonymousComment, setIsAnonymousComment] = useState(false);
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
   const { showSuccessToast, showErrorToast } = useToast();
@@ -302,28 +305,41 @@ const IdeaDetail = () => {
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newComment.trim()) return;
+    if (!newComment.trim() || !id) return;
 
+    setIsSubmittingComment(true);
     try {
-      setIsSubmittingComment(true);
       const formData = new FormData();
-      formData.append("idea_id", id as string);
+      formData.append("idea_id", id.toString());
       formData.append("comment", newComment);
       formData.append("is_anonymous", isAnonymousComment ? "1" : "0");
 
-      await createComment(formData);
+      if (editingCommentId) {
+        await updateComment(editingCommentId, formData);
+        showSuccessToast("Comment updated successfully");
+      } else {
+        await createComment(formData);
+        showSuccessToast("Comment added successfully");
+      }
 
-      // Reset form state after successful submission
       setNewComment("");
       setIsAnonymousComment(false);
-      showSuccessToast("Comment submitted successfully");
-    } catch (error) {
-      const e = error as AxiosError<{ message: string }>;
-      const message = e.response?.data?.message || "Failed to submit comment";
-      showErrorToast(message);
+      setEditingCommentId(null);
+    } catch (e) {
+      console.log("Failed to submit comment", e);
+      showErrorToast(
+        editingCommentId ? "Failed to update comment" : "Failed to add comment",
+      );
     } finally {
       setIsSubmittingComment(false);
     }
+  };
+
+  const handleEditComment = (comment: Comment) => {
+    if (!comment) return;
+    setNewComment(comment.comment);
+    setIsAnonymousComment(Boolean(comment.is_anonymous));
+    setEditingCommentId(comment.id);
   };
 
   const handleDelete = async () => {
@@ -696,6 +712,7 @@ const IdeaDetail = () => {
                       onClick={() => {
                         setNewComment("");
                         setIsAnonymousComment(false);
+                        setEditingCommentId(null);
                       }}
                       disabled={isSubmittingComment || !newComment.trim()}
                     >
@@ -706,14 +723,13 @@ const IdeaDetail = () => {
                       type="submit"
                       className="btn btn-primary btn-sm"
                       disabled={isSubmittingComment || !newComment.trim()}
-                      onClick={handleCommentSubmit}
                     >
                       {isSubmittingComment ? (
                         <span className="loading loading-spinner loading-sm" />
                       ) : (
                         <Send size={16} />
                       )}
-                      Comment
+                      {editingCommentId ? "Update" : "Comment"}
                     </button>
                   </div>
                 </div>
@@ -774,6 +790,18 @@ const IdeaDetail = () => {
                         )}
                       </div>
                       <div className="ml-auto">
+                        {canComment && (
+                          <motion.button
+                            className="btn btn-circle btn-sm bg-info/50 hover:bg-info border-0 mr-4"
+                            onClick={() => handleEditComment(comment)}
+                            variants={buttonVariants}
+                            initial="initial"
+                            whileTap="tap"
+                            whileHover="hover"
+                          >
+                            <PencilIcon className="w-4 h-4" />
+                          </motion.button>
+                        )}
                         {canDeleteComments && (
                           <motion.button
                             className="btn btn-circle btn-sm bg-error/50 hover:bg-error border-0"

@@ -90,7 +90,7 @@ export const commentApi = {
   getCommentsForIdea: (id: number) =>
     apiClient.get<{ data: Comment[] }>(`/idea/get-comment/${id}`),
   create: (data: FormData) => apiClient.post<Comment>("/comments", data),
-  update: (id: number, data: Partial<Comment>) =>
+  update: (id: number, data: FormData) =>
     apiClient.put<Comment>(`/comments/${id}`, data),
   delete: (id: number) => apiClient.delete(`/comments/${id}`),
 };
