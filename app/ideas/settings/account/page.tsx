@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOutIcon, Mail, Building2, UserCircle2, Shield } from "lucide-react";
+import { LogOutIcon, Mail, Building2, UserCircle2, Shield, Lock, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/authStore";
@@ -28,6 +28,11 @@ const AccountPage = () => {
   const { user } = useAuthStore();
   const { getUser, user: userData } = useApiStore();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (user?.id) {
@@ -36,6 +41,23 @@ const AccountPage = () => {
   }, [getUser, user?.id]);
 
   if (!userData) return null;
+
+  const handleChangePassword = async () => {
+    if (newPassword !== confirmPassword) {
+      setError("New passwords do not match");
+      return;
+    }
+    if (newPassword.length < 8) {
+      setError("Password must be at least 8 characters long");
+      return;
+    }
+    // TODO: Implement password change logic
+    setIsChangePasswordModalOpen(false);
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setError("");
+  };
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -131,6 +153,21 @@ const AccountPage = () => {
                   </p>
                 </div>
               </div>
+
+              <div className="flex items-center gap-3">
+                <div className="bg-warning/10 p-3 rounded-xl">
+                  <Lock className="w-6 h-6 text-warning" />
+                </div>
+                <div>
+                  <p className="text-sm text-base-content/70">Password</p>
+                  <button
+                    className="btn btn-warning btn-sm mt-1"
+                    onClick={() => setIsChangePasswordModalOpen(true)}
+                  >
+                    Change Password
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -176,6 +213,98 @@ const AccountPage = () => {
           </div>
         </motion.div>
       </motion.div>
+
+      {/* Change Password Modal */}
+      <dialog className={`modal ${isChangePasswordModalOpen ? "modal-open" : ""}`}>
+        <motion.div
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 50 }}
+          className="modal-box bg-base-100 p-0 max-w-md"
+        >
+          <div className="p-6 space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="bg-warning/10 p-3 rounded-xl">
+                <Lock className="w-6 h-6 text-warning" />
+              </div>
+              <h3 className="font-bold text-xl">Change Password</h3>
+            </div>
+
+            <div className="space-y-4">
+              <div className="form-control w-full">
+                <label className="label">
+                  <span className="label-text">Current Password</span>
+                </label>
+                <input
+                  type="password"
+                  className="input input-bordered w-full"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  placeholder="Enter current password"
+                />
+              </div>
+
+              <div className="form-control w-full">
+                <label className="label">
+                  <span className="label-text">New Password</span>
+                </label>
+                <input
+                  type="password"
+                  className="input input-bordered w-full"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter new password"
+                />
+              </div>
+
+              <div className="form-control w-full">
+                <label className="label">
+                  <span className="label-text">Confirm New Password</span>
+                </label>
+                <input
+                  type="password"
+                  className="input input-bordered w-full"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm new password"
+                />
+              </div>
+
+              {error && (
+                <div className="alert alert-error">
+                  <span>{error}</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="bg-base-200/30 p-4 flex justify-end gap-2">
+            <motion.button
+              className="btn btn-ghost btn-sm"
+              onClick={() => {
+                setIsChangePasswordModalOpen(false);
+                setError("");
+              }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Cancel
+            </motion.button>
+            <motion.button
+              className="btn btn-warning btn-sm"
+              onClick={handleChangePassword}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <CheckCircle2 className="w-5 h-5" />
+              Change Password
+            </motion.button>
+          </div>
+        </motion.div>
+        <form method="dialog" className="modal-backdrop">
+          <button onClick={() => setIsChangePasswordModalOpen(false)}>close</button>
+        </form>
+      </dialog>
 
       <LogoutDialog
         isOpen={isLogoutDialogOpen}
