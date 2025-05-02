@@ -415,8 +415,7 @@ const NavBar = () => {
                   <div className="collapse collapse-arrow bg-base-200 rounded-xl">
                     <input
                       type="checkbox"
-                      checked={isSettingsOpen}
-                      onChange={() => setIsSettingsOpen(!isSettingsOpen)}
+                      onChange={(e) => setIsSettingsOpen(e.target.checked)}
                     />
                     <div className="collapse-title flex items-center gap-2 sm:gap-3 px-3 sm:px-4">
                       <Settings className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
@@ -425,18 +424,22 @@ const NavBar = () => {
                     <div className="collapse-content space-y-0.5 sm:space-y-1">
                       <Link
                         href="/ideas/settings/account"
-                        className="flex items-center gap-2 sm:gap-3 py-3 px-2 sm:px-3 hover:bg-base-300 rounded-lg transition-colors"
-                        onClick={() =>
-                          handleNavigation("/ideas/settings/account")
-                        }
+                        className="flex items-center gap-2 sm:gap-3 py-4 px-2 sm:px-3 hover:bg-base-300 rounded-lg transition-colors"
+                        onClick={() => {
+                          handleNavigation("/ideas/settings/account");
+                          setIsSettingsOpen(false);
+                        }}
                       >
                         <UserCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                         <span className="text-sm sm:text-base">Account</span>
                       </Link>
 
                       <button
-                        onClick={handleThemeSwitch}
-                        className="flex items-center gap-2 sm:gap-3 py-3 px-2 sm:px-3 w-full hover:bg-base-300 rounded-lg transition-colors"
+                        onClick={() => {
+                          handleThemeSwitch();
+                          setIsSettingsOpen(false);
+                        }}
+                        className="flex items-center gap-2 sm:gap-3 py-4 px-2 sm:px-3 w-full hover:bg-base-300 rounded-lg transition-colors"
                       >
                         <ThemeIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                         <span className="text-sm sm:text-base">
