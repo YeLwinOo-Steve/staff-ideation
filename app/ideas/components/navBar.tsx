@@ -415,7 +415,8 @@ const NavBar = () => {
                   <div className="collapse collapse-arrow bg-base-200 rounded-xl">
                     <input
                       type="checkbox"
-                      onChange={(e) => setIsSettingsOpen(e.target.checked)}
+                      checked={isSettingsOpen}
+                      onChange={() => setIsSettingsOpen(!isSettingsOpen)}
                     />
                     <div className="collapse-title flex items-center gap-2 sm:gap-3 px-3 sm:px-4">
                       <Settings className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
@@ -425,20 +426,16 @@ const NavBar = () => {
                       <Link
                         href="/ideas/settings/account"
                         className="flex items-center gap-2 sm:gap-3 py-4 px-2 sm:px-3 hover:bg-base-300 rounded-lg transition-colors"
-                        onClick={() => {
-                          handleNavigation("/ideas/settings/account");
-                          setIsSettingsOpen(false);
-                        }}
+                        onClick={() =>
+                          handleNavigation("/ideas/settings/account")
+                        }
                       >
                         <UserCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                         <span className="text-sm sm:text-base">Account</span>
                       </Link>
 
                       <button
-                        onClick={() => {
-                          handleThemeSwitch();
-                          setIsSettingsOpen(false);
-                        }}
+                        onClick={handleThemeSwitch}
                         className="flex items-center gap-2 sm:gap-3 py-4 px-2 sm:px-3 w-full hover:bg-base-300 rounded-lg transition-colors"
                       >
                         <ThemeIcon className="w-4 h-4 sm:w-5 sm:h-5" />

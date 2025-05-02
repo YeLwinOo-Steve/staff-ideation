@@ -8,6 +8,8 @@ import {
   Shield,
   Lock,
   CheckCircle2,
+  Globe,
+  X,
 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -22,6 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { isValid, z } from "zod";
 import { useToast } from "@/components/toast";
+import { useLoginActivityStore } from "@/store/apiStore";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -47,7 +50,9 @@ const AccountPage = () => {
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] =
     useState(false);
+  const [isActivitiesDialogOpen, setIsActivitiesDialogOpen] = useState(false);
   const { showSuccessToast, showErrorToast } = useToast();
+  const { loginActivities, getUserLoginActivities } = useLoginActivityStore();
 
   const {
     register,
@@ -64,6 +69,17 @@ const AccountPage = () => {
       getUser(user.id);
     }
   }, [getUser, user?.id]);
+
+  const handleActivitiesClick = async () => {
+    try {
+      if (user?.id) {
+        await getUserLoginActivities(user.id);
+        setIsActivitiesDialogOpen(true);
+      }
+    } catch (error) {
+      showErrorToast("Failed to load login activities");
+    }
+  };
 
   if (!userData) return null;
 
@@ -87,16 +103,28 @@ const AccountPage = () => {
           <User className="w-8 h-8 text-primary" />
           <h1 className="text-2xl font-bold">Account</h1>
         </div>
-        <motion.button
-          variants={itemVariants}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="btn btn-error btn-sm gap-2"
-          onClick={() => setIsLogoutDialogOpen(true)}
-        >
-          <LogOutIcon className="w-4 h-4" />
-          Log Out
-        </motion.button>
+        <div className="flex items-center gap-2">
+          <motion.button
+            variants={itemVariants}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="btn btn-info btn-sm gap-2"
+            onClick={handleActivitiesClick}
+          >
+            <Globe className="w-4 h-4" />
+            Activities
+          </motion.button>
+          <motion.button
+            variants={itemVariants}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="btn btn-error btn-sm gap-2"
+            onClick={() => setIsLogoutDialogOpen(true)}
+          >
+            <LogOutIcon className="w-4 h-4" />
+            Log Out
+          </motion.button>
+        </div>
       </div>
 
       <motion.div
@@ -138,7 +166,7 @@ const AccountPage = () => {
         {/* Details Section */}
         <motion.div
           variants={itemVariants}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[calc(100vh-16rem)]"
         >
           {/* Left Column */}
           <div className="space-y-4">
@@ -345,6 +373,98 @@ const AccountPage = () => {
           <button onClick={() => setIsChangePasswordModalOpen(false)}>
             close
           </button>
+        </form>
+      </dialog>
+
+      {/* Activities Dialog */}
+      <dialog
+        className={`modal ${isActivitiesDialogOpen ? "modal-open" : ""}`}
+      >
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-base-100 z-50"
+        >
+          <div className="sticky top-0 bg-base-100 z-50 p-4 border-b border-base-300 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="bg-info/10 p-2 rounded-lg">
+                <Globe className="w-5 h-5 text-info" />
+              </div>
+              <h3 className="text-xl font-bold">Login Activities</h3>
+            </div>
+            <button
+              className="btn btn-ghost btn-circle"
+              onClick={() => setIsActivitiesDialogOpen(false)}
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          <div className="p-6 overflow-y-auto h-[calc(100vh-4rem)]">
+            {loginActivities.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {loginActivities.map((activity, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-base-200/50 p-4 rounded-xl space-y-3 hover:bg-base-200/70 transition-colors"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="bg-success/10 p-2 rounded-lg">
+                          <Globe className="w-5 h-5 text-success" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-lg">{activity.browser}</p>
+                          <p className="text-sm text-base-content/70">
+                            {new Date(activity.created_at).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-base-300/30 p-3 rounded-lg">
+                        <p className="text-xs text-base-content/70 mb-1">IP Address</p>
+                        <p className="font-medium text-sm">{activity.ip_address}</p>
+                      </div>
+                      <div className="bg-base-300/30 p-3 rounded-lg">
+                        <p className="text-xs text-base-content/70 mb-1">Last Updated</p>
+                        <p className="font-medium text-sm">
+                          {new Date(activity.updated_at).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-success"></div>
+                        <span className="text-base-content/70">Active Session</span>
+                      </div>
+                      <span className="text-base-content/70">
+                        {new Date(activity.created_at).toLocaleTimeString()}
+                      </span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="h-full flex items-center justify-center">
+                <div className="text-center space-y-4">
+                  <div className="bg-base-200/50 p-6 rounded-full w-20 h-20 mx-auto flex items-center justify-center">
+                    <Globe className="w-10 h-10 text-base-content/50" />
+                  </div>
+                  <p className="text-base-content/70 text-lg">No login activities found</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </motion.div>
+        <form method="dialog" className="modal-backdrop">
+          <button onClick={() => setIsActivitiesDialogOpen(false)}>close</button>
         </form>
       </dialog>
 
