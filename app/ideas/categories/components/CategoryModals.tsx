@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Category } from "@/api/models";
-import { PencilIcon, PlusIcon, AlertCircle, Trash2Icon } from "lucide-react";
+import { PencilIcon, PlusIcon, AlertCircle, Trash2Icon, CheckCircle2 } from "lucide-react";
 
 interface CategoryModalsProps {
   isEditModalOpen: boolean;
@@ -83,6 +83,7 @@ export function CategoryModals({
               whileTap={{ scale: 0.98 }}
               disabled={!categoryName.trim()}
             >
+              <CheckCircle2 className="w-5 h-5" />
               {selectedCategory ? "Save Changes" : "Create Category"}
             </motion.button>
           </div>
