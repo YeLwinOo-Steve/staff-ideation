@@ -17,7 +17,6 @@ interface AuthState {
   ) => Promise<void | null>;
   resetPassword: (id: number) => Promise<boolean>;
   changePassword: (old_password: string, new_password: string) => Promise<void>;
-  logout: () => Promise<void>;
   clearError: () => void;
 }
 
@@ -76,21 +75,7 @@ export const useAuthStore = create<AuthState>()(
           set({ error: message, isLoading: false });
           throw error;
         }
-      },
-
-      logout: async () => {
-        set({ isLoading: true });
-        try {
-          await authApi.logout();
-        } catch (error) {
-          const e = error as AxiosError<{ message: string }>;
-          const message = e.response?.data?.message || "Logout failed";
-          set({ error: message });
-          throw error;
-        } finally {
-          set({ user: null, token: null, isLoading: false });
-        }
-      },
+      }, 
 
       clearError: () => set({ error: null }),
     }),

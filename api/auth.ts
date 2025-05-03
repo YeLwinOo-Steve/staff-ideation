@@ -28,8 +28,6 @@ export const authApi = {
   changePassword: (data: ChangePasswordRequest) =>
     apiClient.put<{ message: string }>("/change-password", data),
 
-  logout: () => apiClient.post<{ message: string }>("/logout"),
-
   getUser: (id: number) => apiClient.get<User>(`/users/${id}`),
 
   getAllUsers: () => apiClient.get<User[]>("/users"),
