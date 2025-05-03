@@ -1,7 +1,7 @@
 import { mockApiClient } from "./mockApiClient";
 import apiClient from "@/api/apiClient";
 import { useAuthStore } from "@/store/authStore";
-import axios from "axios";
+import axios, { AxiosError, AxiosRequestConfig } from "axios";
 
 // Mock the auth store
 jest.mock("@/store/authStore");
@@ -20,12 +20,17 @@ describe("API Client", () => {
     mockRedirect.mockReset();
 
     // Re-register interceptors
-    const requestHandler = (config: any) => {
-      const token = useAuthStore.getState().token;
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+    const requestHandler = (config: AxiosRequestConfig) => {
+      try {
+        const token = useAuthStore.getState().token;
+        if (token) {
+          config.headers = config.headers || {};
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      } catch (error) {
+        return Promise.reject(error);
       }
-      return config;
     };
 
     const responseHandler = (response: any) => response;
@@ -64,6 +69,39 @@ describe("API Client", () => {
       expect(result.headers.Authorization).toBe(`Bearer ${token}`);
     });
 
+    it("should handle request interceptor errors", async () => {
+      const requestHandler = mockApiClient.interceptors.request.use.mock.calls[0][0];
+      
+      // Mock useAuthStore.getState to throw an error
+      (useAuthStore.getState as jest.Mock).mockImplementation(() => {
+        throw new Error("Auth store error");
+      });
+
+      await expect(requestHandler({ headers: {} })).rejects.toThrow("Auth store error");
+    });
+
+    it("should handle request with undefined headers", async () => {
+      const token = "test-token";
+      (useAuthStore.getState as jest.Mock).mockReturnValue({
+        token,
+      });
+
+      const config = {};
+      const requestHandler = mockApiClient.interceptors.request.use.mock.calls[0][0];
+      const result = await requestHandler(config);
+      expect(result.headers?.Authorization).toBe(`Bearer ${token}`);
+    });
+
+    it("should handle request with null config", async () => {
+      const token = "test-token";
+      (useAuthStore.getState as jest.Mock).mockReturnValue({
+        token,
+      });
+
+      const requestHandler = mockApiClient.interceptors.request.use.mock.calls[0][0];
+      await expect(requestHandler(null)).rejects.toThrow();
+    });
+
     it("should handle different HTTP methods with auth header", async () => {
       const token = "test-token";
       (useAuthStore.getState as jest.Mock).mockReturnValue({
@@ -93,8 +131,52 @@ describe("API Client", () => {
       expect(result).toEqual(mockResponse);
     });
 
+    it("should handle response without status", async () => {
+      const error = new AxiosError(
+        "Network Error",
+        "NETWORK_ERROR",
+        undefined,
+        undefined,
+        {
+          data: { message: "Network Error" }
+        } as any
+      );
+
+      const errorHandler = mockApiClient.interceptors.response.use.mock.calls[0][1];
+      await expect(errorHandler(error)).rejects.toThrow();
+      expect(mockRedirect).not.toHaveBeenCalled();
+    });
+
+    it("should handle undefined error response", async () => {
+      const error = new AxiosError(
+        "Unknown Error",
+        "UNKNOWN",
+        undefined,
+        undefined,
+        undefined
+      );
+
+      const errorHandler = mockApiClient.interceptors.response.use.mock.calls[0][1];
+      await expect(errorHandler(error)).rejects.toThrow();
+      expect(mockRedirect).not.toHaveBeenCalled();
+    });
+
+    it("should handle error with empty response", async () => {
+      const error = new AxiosError(
+        "Empty Response",
+        "EMPTY_RESPONSE",
+        undefined,
+        undefined,
+        { response: {} } as any
+      );
+
+      const errorHandler = mockApiClient.interceptors.response.use.mock.calls[0][1];
+      await expect(errorHandler(error)).rejects.toThrow();
+      expect(mockRedirect).not.toHaveBeenCalled();
+    });
+
     it("should redirect to login on 401 unauthorized", async () => {
-      const error = new axios.AxiosError(
+      const error = new AxiosError(
         "Unauthorized",
         "401",
         undefined,
@@ -112,7 +194,7 @@ describe("API Client", () => {
     });
 
     it("should pass through other errors", async () => {
-      const error = new axios.AxiosError(
+      const error = new AxiosError(
         "Server Error",
         "500",
         undefined,
@@ -129,7 +211,7 @@ describe("API Client", () => {
     });
 
     it("should handle network errors", async () => {
-      const networkError = new axios.AxiosError(
+      const networkError = new AxiosError(
         "Network Error",
         "ECONNABORTED",
         undefined,
@@ -143,7 +225,7 @@ describe("API Client", () => {
     });
 
     it("should handle timeout errors", async () => {
-      const timeoutError = new axios.AxiosError(
+      const timeoutError = new AxiosError(
         "Timeout",
         "ECONNABORTED",
         undefined,
