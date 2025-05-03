@@ -11,9 +11,15 @@ jest.mock("@/api/repository", () => ({
 
 jest.mock("@/api/auth", () => ({
   authApi: {
-    login: jest.fn(() => Promise.resolve({ data: { data: mockUser, token: "test-token" } })),
-    resetPassword: jest.fn(() => Promise.resolve({ data: { message: "Password reset successful" } })),
-    changePassword: jest.fn(() => Promise.resolve({ data: { message: "Password changed successfully" } })),
+    login: jest.fn(() =>
+      Promise.resolve({ data: { data: mockUser, token: "test-token" } }),
+    ),
+    resetPassword: jest.fn(() =>
+      Promise.resolve({ data: { message: "Password reset successful" } }),
+    ),
+    changePassword: jest.fn(() =>
+      Promise.resolve({ data: { message: "Password changed successfully" } }),
+    ),
   },
 }));
 
@@ -48,8 +54,10 @@ describe("Auth Store", () => {
   });
 
   test("Should successfully login user", async () => {
-    await useAuthStore.getState().login("admin@idea.com", "admin", "127.0.0.1", "Chrome");
-    
+    await useAuthStore
+      .getState()
+      .login("admin@idea.com", "admin", "127.0.0.1", "Chrome");
+
     expect(authApi.login).toHaveBeenCalledWith({
       email: "admin@idea.com",
       password: "admin",
@@ -64,7 +72,7 @@ describe("Auth Store", () => {
 
   test("Should successfully reset password", async () => {
     const result = await useAuthStore.getState().resetPassword(1);
-    
+
     expect(authApi.resetPassword).toHaveBeenCalledWith(1);
     expect(result).toBe(true);
     expect(useAuthStore.getState().isLoading).toBe(false);
@@ -76,7 +84,7 @@ describe("Auth Store", () => {
     jest.spyOn(authApi, "resetPassword").mockRejectedValueOnce(mockError);
 
     const result = await useAuthStore.getState().resetPassword(1);
-    
+
     expect(result).toBe(false);
     expect(useAuthStore.getState().error).toBe("Password reset failed");
     expect(useAuthStore.getState().isLoading).toBe(false);
@@ -84,7 +92,7 @@ describe("Auth Store", () => {
 
   test("Should successfully change password", async () => {
     await useAuthStore.getState().changePassword("oldpass", "newpass");
-    
+
     expect(authApi.changePassword).toHaveBeenCalledWith({
       old_password: "oldpass",
       new_password: "newpass",
@@ -98,9 +106,9 @@ describe("Auth Store", () => {
     jest.spyOn(authApi, "changePassword").mockRejectedValueOnce(mockError);
 
     await expect(
-      useAuthStore.getState().changePassword("oldpass", "newpass")
+      useAuthStore.getState().changePassword("oldpass", "newpass"),
     ).rejects.toThrow("Password change failed");
-    
+
     expect(useAuthStore.getState().error).toBe("Password change failed");
     expect(useAuthStore.getState().isLoading).toBe(false);
   });

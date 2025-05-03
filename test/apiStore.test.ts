@@ -66,7 +66,8 @@ jest.mock("@/api/repository", () => ({
     getCSV: () => Promise.resolve(new Blob()),
   },
   commentApi: {
-    getCommentsForIdea: () => Promise.resolve({ data: { data: [mockComment] } }),
+    getCommentsForIdea: () =>
+      Promise.resolve({ data: { data: [mockComment] } }),
     create: () => Promise.resolve({ data: mockComment }),
     update: () => Promise.resolve({ data: mockComment }),
     delete: () => Promise.resolve({ data: { message: "Deleted" } }),
@@ -75,85 +76,99 @@ jest.mock("@/api/repository", () => ({
     create: () => Promise.resolve({ data: { message: "Vote created" } }),
   },
   userApi: {
-    getAll: () => Promise.resolve({ 
-      data: { 
-        data: [mockUser],
-        meta: { current_page: 1, last_page: 1, total: 1 }
-      }
-    }),
+    getAll: () =>
+      Promise.resolve({
+        data: {
+          data: [mockUser],
+          meta: { current_page: 1, last_page: 1, total: 1 },
+        },
+      }),
     getOne: () => Promise.resolve({ data: { data: mockUser } }),
     create: () => Promise.resolve({ data: mockUser }),
     update: () => Promise.resolve({ data: mockUser }),
   },
   roleApi: {
-    getAll: () => Promise.resolve({ data: { data: [{ id: 1, name: "Admin" }] } }),
+    getAll: () =>
+      Promise.resolve({ data: { data: [{ id: 1, name: "Admin" }] } }),
   },
   reportApi: {
     create: () => Promise.resolve({ data: { message: "Report created" } }),
     reportIdea: () => Promise.resolve({ data: { message: "Report created" } }),
-    getReportedIdeas: () => Promise.resolve({ 
-      data: { 
-        data: [mockReportedIdea],
-        meta: { current_page: 1, last_page: 1, total: 1 }
-      }
-    }),
+    getReportedIdeas: () =>
+      Promise.resolve({
+        data: {
+          data: [mockReportedIdea],
+          meta: { current_page: 1, last_page: 1, total: 1 },
+        },
+      }),
     getReportDetails: () => Promise.resolve({ data: [mockReportDetail] }),
     getReportedUsers: () => Promise.resolve({ data: [mockReportedUser] }),
-    getUserReportedIdeas: () => Promise.resolve({ data: { data: [mockReportedIdea] } }),
+    getUserReportedIdeas: () =>
+      Promise.resolve({ data: { data: [mockReportedIdea] } }),
   },
   hideApi: {
     hideIdea: () => Promise.resolve({ data: { message: "Idea hidden" } }),
     getHiddenIdeas: () => Promise.resolve({ data: [mockHiddenIdea] }),
     hideUserIdeas: () => Promise.resolve({ data: { message: "Ideas hidden" } }),
-    getHiddenUsers: () => Promise.resolve({ 
-      data: { 
-        data: [mockHiddenIdea],
-        meta: { current_page: 1, last_page: 1, total: 1 }
-      }
-    }),
+    getHiddenUsers: () =>
+      Promise.resolve({
+        data: {
+          data: [mockHiddenIdea],
+          meta: { current_page: 1, last_page: 1, total: 1 },
+        },
+      }),
   },
   permissionApi: {
-    removeIdeaPermissions: () => Promise.resolve({ data: { message: "Permissions removed" } }),
-    giveIdeaPermissions: () => Promise.resolve({ data: { message: "Permissions given" } }),
-    getBannedUsers: () => Promise.resolve({ 
-      data: { 
-        data: [mockBannedUser],
-        meta: { current_page: 1, last_page: 1, total: 1 }
-      }
-    }),
+    removeIdeaPermissions: () =>
+      Promise.resolve({ data: { message: "Permissions removed" } }),
+    giveIdeaPermissions: () =>
+      Promise.resolve({ data: { message: "Permissions given" } }),
+    getBannedUsers: () =>
+      Promise.resolve({
+        data: {
+          data: [mockBannedUser],
+          meta: { current_page: 1, last_page: 1, total: 1 },
+        },
+      }),
   },
   reportingApi: {
     getActiveUsers: () => Promise.resolve({ data: [mockActiveUser] }),
-    getDepartmentReport: () => Promise.resolve({ data: [mockDepartmentReport] }),
-    getAnonymousIdeas: () => Promise.resolve({ 
-      data: { 
-        data: [mockAnonymousIdea],
-        meta: { current_page: 1, last_page: 1, total: 1 }
-      }
-    }),
-    getAnonymousComments: () => Promise.resolve({ 
-      data: { 
-        data: [mockAnonymousComment],
-        meta: { current_page: 1, last_page: 1, total: 1 }
-      }
-    }),
+    getDepartmentReport: () =>
+      Promise.resolve({ data: [mockDepartmentReport] }),
+    getAnonymousIdeas: () =>
+      Promise.resolve({
+        data: {
+          data: [mockAnonymousIdea],
+          meta: { current_page: 1, last_page: 1, total: 1 },
+        },
+      }),
+    getAnonymousComments: () =>
+      Promise.resolve({
+        data: {
+          data: [mockAnonymousComment],
+          meta: { current_page: 1, last_page: 1, total: 1 },
+        },
+      }),
   },
   loginActivityApi: {
-    getAll: () => Promise.resolve({ 
-      data: { 
-        data: [mockLoginActivity],
-        meta: { current_page: 1, last_page: 1, total: 1 }
-      }
-    }),
-    getUserLoginActivities: (userId: number) => Promise.resolve({ data: [mockLoginActivity] }),
+    getAll: () =>
+      Promise.resolve({
+        data: {
+          data: [mockLoginActivity],
+          meta: { current_page: 1, last_page: 1, total: 1 },
+        },
+      }),
+    getUserLoginActivities: (userId: number) =>
+      Promise.resolve({ data: [mockLoginActivity] }),
   },
   userLogApi: {
-    getUserLogs: (id: number, page: number) => Promise.resolve({ 
-      data: { 
-        data: [mockUserLog],
-        meta: { current_page: 1, last_page: 1, total: 1 }
-      }
-    }),
+    getUserLogs: (id: number, page: number) =>
+      Promise.resolve({
+        data: {
+          data: [mockUserLog],
+          meta: { current_page: 1, last_page: 1, total: 1 },
+        },
+      }),
   },
 }));
 
@@ -210,14 +225,18 @@ describe("API Store", () => {
 
       const store = useApiStore.getState();
       expect(store.ideas).toEqual([{ ...mockIdea, is_enabled: true }]);
-      expect(store.ideaPagination.data).toEqual([{ ...mockIdea, is_enabled: true }]);
+      expect(store.ideaPagination.data).toEqual([
+        { ...mockIdea, is_enabled: true },
+      ]);
       expect(store.error).toBeNull();
     });
 
     it("should create idea and refresh list", async () => {
       const formData = new FormData();
       await useApiStore.getState().createIdea(formData);
-      expect(useApiStore.getState().ideas).toEqual([{ ...mockIdea, is_enabled: true }]);
+      expect(useApiStore.getState().ideas).toEqual([
+        { ...mockIdea, is_enabled: true },
+      ]);
     });
     it("should submit idea and refresh list", async () => {
       await useApiStore.getState().submitIdea(1);
@@ -350,8 +369,10 @@ describe("User Management", () => {
   it("should handle user fetch error", async () => {
     const mockError = new Error("Failed to fetch user");
     jest.spyOn(api.userApi, "getOne").mockRejectedValueOnce(mockError);
-    
-    await expect(useApiStore.getState().getUser(1)).rejects.toThrow("Failed to fetch user");
+
+    await expect(useApiStore.getState().getUser(1)).rejects.toThrow(
+      "Failed to fetch user",
+    );
     expect(useApiStore.getState().error).toBe("Failed to fetch user");
   });
 
@@ -403,9 +424,13 @@ describe("Comments", () => {
 
   it("should handle comment fetch error", async () => {
     const mockError = new Error("Failed to fetch comments");
-    jest.spyOn(api.commentApi, "getCommentsForIdea").mockRejectedValueOnce(mockError);
-    
-    await expect(useApiStore.getState().getCommentsForIdea(1)).rejects.toThrow("Failed to fetch comments");
+    jest
+      .spyOn(api.commentApi, "getCommentsForIdea")
+      .mockRejectedValueOnce(mockError);
+
+    await expect(useApiStore.getState().getCommentsForIdea(1)).rejects.toThrow(
+      "Failed to fetch comments",
+    );
     expect(useApiStore.getState().error).toBe("Failed to fetch comments");
   });
 });
@@ -427,8 +452,10 @@ describe("Voting System", () => {
   it("should handle vote creation error", async () => {
     const mockError = new Error("Failed to create vote");
     jest.spyOn(api.voteApi, "create").mockRejectedValueOnce(mockError);
-    
-    await expect(useApiStore.getState().createVote(1, 1)).rejects.toThrow("Failed to create vote");
+
+    await expect(useApiStore.getState().createVote(1, 1)).rejects.toThrow(
+      "Failed to create vote",
+    );
     expect(useApiStore.getState().error).toBe("Failed to create vote");
   });
 });
@@ -518,7 +545,9 @@ describe("Reporting System", () => {
 
   it("should fetch reported ideas", async () => {
     await useApiStore.getState().fetchReportedIdeas(1);
-    expect(useApiStore.getState().reportedIdeas.data).toEqual([mockReportedIdea]);
+    expect(useApiStore.getState().reportedIdeas.data).toEqual([
+      mockReportedIdea,
+    ]);
   });
 
   it("should fetch report details", async () => {
@@ -533,7 +562,9 @@ describe("Reporting System", () => {
 
   it("should fetch user reported ideas", async () => {
     await useApiStore.getState().fetchUserReportedIdeas(1);
-    expect(useApiStore.getState().reportedIdeas.data).toEqual([mockReportedIdea]);
+    expect(useApiStore.getState().reportedIdeas.data).toEqual([
+      mockReportedIdea,
+    ]);
   });
 });
 
@@ -609,17 +640,22 @@ describe("Analytics and Reporting", () => {
 
   it("should get department report", async () => {
     await useApiStore.getState().getDepartmentReport();
-    expect(useApiStore.getState().departmentReport).toEqual([mockDepartmentReport]);
+    expect(useApiStore.getState().departmentReport).toEqual([
+      mockDepartmentReport,
+    ]);
   });
 
   it("should get anonymous ideas", async () => {
     await useApiStore.getState().getAnonymousIdeas();
-    expect(useApiStore.getState().anonymousIdeas.data).toEqual([mockAnonymousIdea]);
+    expect(useApiStore.getState().anonymousIdeas.data).toEqual([
+      mockAnonymousIdea,
+    ]);
   });
 
   it("should get anonymous comments", async () => {
     await useApiStore.getState().getAnonymousComments();
-    expect(useApiStore.getState().anonymousComments.data).toEqual([mockAnonymousComment]);
+    expect(useApiStore.getState().anonymousComments.data).toEqual([
+      mockAnonymousComment,
+    ]);
   });
 });
-

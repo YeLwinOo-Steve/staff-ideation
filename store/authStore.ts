@@ -75,7 +75,7 @@ export const useAuthStore = create<AuthState>()(
           set({ error: message, isLoading: false });
           throw error;
         }
-      }, 
+      },
 
       clearError: () => set({ error: null }),
     }),

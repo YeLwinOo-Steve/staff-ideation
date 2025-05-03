@@ -9,16 +9,16 @@ const mockApiClient = {
     baseURL: process.env.NEXT_PUBLIC_BASE_URL,
     headers: {
       common: {
-        Authorization: undefined
+        Authorization: undefined,
       },
       Accept: "application/json",
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   },
   interceptors: {
     request: { use: jest.fn() },
-    response: { use: jest.fn() }
-  }
+    response: { use: jest.fn() },
+  },
 };
 
 jest.mock("@/api/apiClient", () => mockApiClient);

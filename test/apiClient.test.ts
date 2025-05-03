@@ -52,7 +52,8 @@ describe("API Client", () => {
       });
 
       const config = { headers: {} };
-      const requestHandler = mockApiClient.interceptors.request.use.mock.calls[0][0];
+      const requestHandler =
+        mockApiClient.interceptors.request.use.mock.calls[0][0];
       const result = await requestHandler(config);
       expect(result.headers.Authorization).toBeUndefined();
     });
@@ -64,20 +65,24 @@ describe("API Client", () => {
       });
 
       const config = { headers: {} };
-      const requestHandler = mockApiClient.interceptors.request.use.mock.calls[0][0];
+      const requestHandler =
+        mockApiClient.interceptors.request.use.mock.calls[0][0];
       const result = await requestHandler(config);
       expect(result.headers.Authorization).toBe(`Bearer ${token}`);
     });
 
     it("should handle request interceptor errors", async () => {
-      const requestHandler = mockApiClient.interceptors.request.use.mock.calls[0][0];
-      
+      const requestHandler =
+        mockApiClient.interceptors.request.use.mock.calls[0][0];
+
       // Mock useAuthStore.getState to throw an error
       (useAuthStore.getState as jest.Mock).mockImplementation(() => {
         throw new Error("Auth store error");
       });
 
-      await expect(requestHandler({ headers: {} })).rejects.toThrow("Auth store error");
+      await expect(requestHandler({ headers: {} })).rejects.toThrow(
+        "Auth store error",
+      );
     });
 
     it("should handle request with undefined headers", async () => {
@@ -87,7 +92,8 @@ describe("API Client", () => {
       });
 
       const config = {};
-      const requestHandler = mockApiClient.interceptors.request.use.mock.calls[0][0];
+      const requestHandler =
+        mockApiClient.interceptors.request.use.mock.calls[0][0];
       const result = await requestHandler(config);
       expect(result.headers?.Authorization).toBe(`Bearer ${token}`);
     });
@@ -98,7 +104,8 @@ describe("API Client", () => {
         token,
       });
 
-      const requestHandler = mockApiClient.interceptors.request.use.mock.calls[0][0];
+      const requestHandler =
+        mockApiClient.interceptors.request.use.mock.calls[0][0];
       await expect(requestHandler(null)).rejects.toThrow();
     });
 
@@ -117,7 +124,9 @@ describe("API Client", () => {
       await apiClient.put("/test", { data: "test" });
       await apiClient.delete("/test");
 
-      expect(mockApiClient.post).toHaveBeenCalledWith("/test", { data: "test" });
+      expect(mockApiClient.post).toHaveBeenCalledWith("/test", {
+        data: "test",
+      });
       expect(mockApiClient.put).toHaveBeenCalledWith("/test", { data: "test" });
       expect(mockApiClient.delete).toHaveBeenCalledWith("/test");
     });
@@ -126,7 +135,8 @@ describe("API Client", () => {
   describe("Response Handling", () => {
     it("should handle successful responses", async () => {
       const mockResponse = { data: { message: "success" } };
-      const responseHandler = mockApiClient.interceptors.response.use.mock.calls[0][0];
+      const responseHandler =
+        mockApiClient.interceptors.response.use.mock.calls[0][0];
       const result = await responseHandler(mockResponse);
       expect(result).toEqual(mockResponse);
     });
@@ -138,11 +148,12 @@ describe("API Client", () => {
         undefined,
         undefined,
         {
-          data: { message: "Network Error" }
-        } as any
+          data: { message: "Network Error" },
+        } as any,
       );
 
-      const errorHandler = mockApiClient.interceptors.response.use.mock.calls[0][1];
+      const errorHandler =
+        mockApiClient.interceptors.response.use.mock.calls[0][1];
       await expect(errorHandler(error)).rejects.toThrow();
       expect(mockRedirect).not.toHaveBeenCalled();
     });
@@ -153,10 +164,11 @@ describe("API Client", () => {
         "UNKNOWN",
         undefined,
         undefined,
-        undefined
+        undefined,
       );
 
-      const errorHandler = mockApiClient.interceptors.response.use.mock.calls[0][1];
+      const errorHandler =
+        mockApiClient.interceptors.response.use.mock.calls[0][1];
       await expect(errorHandler(error)).rejects.toThrow();
       expect(mockRedirect).not.toHaveBeenCalled();
     });
@@ -167,10 +179,11 @@ describe("API Client", () => {
         "EMPTY_RESPONSE",
         undefined,
         undefined,
-        { response: {} } as any
+        { response: {} } as any,
       );
 
-      const errorHandler = mockApiClient.interceptors.response.use.mock.calls[0][1];
+      const errorHandler =
+        mockApiClient.interceptors.response.use.mock.calls[0][1];
       await expect(errorHandler(error)).rejects.toThrow();
       expect(mockRedirect).not.toHaveBeenCalled();
     });
@@ -185,10 +198,11 @@ describe("API Client", () => {
           status: 401,
           data: { message: "Unauthorized" },
           statusText: "Unauthorized",
-        } as any
+        } as any,
       );
 
-      const errorHandler = mockApiClient.interceptors.response.use.mock.calls[0][1];
+      const errorHandler =
+        mockApiClient.interceptors.response.use.mock.calls[0][1];
       await expect(errorHandler(error)).rejects.toThrow();
       expect(mockRedirect).toHaveBeenCalledWith("/login");
     });
@@ -201,11 +215,12 @@ describe("API Client", () => {
         undefined,
         {
           status: 500,
-          data: { message: "Server Error" }
-        } as any
+          data: { message: "Server Error" },
+        } as any,
       );
 
-      const errorHandler = mockApiClient.interceptors.response.use.mock.calls[0][1];
+      const errorHandler =
+        mockApiClient.interceptors.response.use.mock.calls[0][1];
       await expect(errorHandler(error)).rejects.toThrow();
       expect(mockRedirect).not.toHaveBeenCalled();
     });
@@ -216,10 +231,11 @@ describe("API Client", () => {
         "ECONNABORTED",
         undefined,
         undefined,
-        undefined
+        undefined,
       );
 
-      const errorHandler = mockApiClient.interceptors.response.use.mock.calls[0][1];
+      const errorHandler =
+        mockApiClient.interceptors.response.use.mock.calls[0][1];
       await expect(errorHandler(networkError)).rejects.toThrow("Network Error");
       expect(mockRedirect).not.toHaveBeenCalled();
     });
@@ -230,10 +246,11 @@ describe("API Client", () => {
         "ECONNABORTED",
         undefined,
         undefined,
-        undefined
+        undefined,
       );
 
-      const errorHandler = mockApiClient.interceptors.response.use.mock.calls[0][1];
+      const errorHandler =
+        mockApiClient.interceptors.response.use.mock.calls[0][1];
       await expect(errorHandler(timeoutError)).rejects.toThrow();
       expect(mockRedirect).not.toHaveBeenCalled();
     });
@@ -241,9 +258,13 @@ describe("API Client", () => {
 
   describe("Base Configuration", () => {
     it("should have correct base configuration", () => {
-      expect(mockApiClient.defaults.baseURL).toBe(process.env.NEXT_PUBLIC_BASE_URL);
+      expect(mockApiClient.defaults.baseURL).toBe(
+        process.env.NEXT_PUBLIC_BASE_URL,
+      );
       expect(mockApiClient.defaults.headers.Accept).toBe("application/json");
-      expect(mockApiClient.defaults.headers["Content-Type"]).toBe("application/json");
+      expect(mockApiClient.defaults.headers["Content-Type"]).toBe(
+        "application/json",
+      );
     });
 
     it("should handle requests with different content types", async () => {

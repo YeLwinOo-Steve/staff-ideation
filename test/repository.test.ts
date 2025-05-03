@@ -42,7 +42,9 @@ describe("Repository APIs", () => {
 
   describe("Department API", () => {
     it("should get all departments", async () => {
-      mockApiClient.get.mockResolvedValueOnce({ data: { data: [mockDepartment] } });
+      mockApiClient.get.mockResolvedValueOnce({
+        data: { data: [mockDepartment] },
+      });
       const response = await departmentApi.getAll();
       expect(mockApiClient.get).toHaveBeenCalledWith("/departments");
       expect(response.data.data).toEqual([mockDepartment]);
@@ -64,20 +66,30 @@ describe("Repository APIs", () => {
 
     it("should create department", async () => {
       mockApiClient.post.mockResolvedValueOnce({ data: mockDepartment });
-      const response = await departmentApi.create({ department_name: "Test Department" });
-      expect(mockApiClient.post).toHaveBeenCalledWith("/departments", { department_name: "Test Department" });
+      const response = await departmentApi.create({
+        department_name: "Test Department",
+      });
+      expect(mockApiClient.post).toHaveBeenCalledWith("/departments", {
+        department_name: "Test Department",
+      });
       expect(response.data).toEqual(mockDepartment);
     });
 
     it("should update department", async () => {
       mockApiClient.put.mockResolvedValueOnce({ data: mockDepartment });
-      const response = await departmentApi.update(1, { department_name: "Updated Department" });
-      expect(mockApiClient.put).toHaveBeenCalledWith("/departments/1", { department_name: "Updated Department" });
+      const response = await departmentApi.update(1, {
+        department_name: "Updated Department",
+      });
+      expect(mockApiClient.put).toHaveBeenCalledWith("/departments/1", {
+        department_name: "Updated Department",
+      });
       expect(response.data).toEqual(mockDepartment);
     });
 
     it("should delete department", async () => {
-      mockApiClient.delete.mockResolvedValueOnce({ data: { message: "Deleted" } });
+      mockApiClient.delete.mockResolvedValueOnce({
+        data: { message: "Deleted" },
+      });
       await departmentApi.delete(1);
       expect(mockApiClient.delete).toHaveBeenCalledWith("/departments/1");
     });
@@ -88,8 +100,8 @@ describe("Repository APIs", () => {
       const mockResponse = {
         data: {
           data: [mockUser],
-          meta: { current_page: 1, last_page: 1, total: 1 }
-        }
+          meta: { current_page: 1, last_page: 1, total: 1 },
+        },
       };
       mockApiClient.get.mockResolvedValueOnce(mockResponse);
       const response = await userApi.getAll(1);
@@ -126,12 +138,14 @@ describe("Repository APIs", () => {
       const mockResponse = {
         data: {
           data: [mockIdea],
-          meta: { current_page: 1, last_page: 1, total: 1 }
-        }
+          meta: { current_page: 1, last_page: 1, total: 1 },
+        },
       };
       mockApiClient.get.mockResolvedValueOnce(mockResponse);
       const response = await ideaApi.getAll({ page: "1" });
-      expect(mockApiClient.get).toHaveBeenCalledWith("/idea", { params: { page: "1" } });
+      expect(mockApiClient.get).toHaveBeenCalledWith("/idea", {
+        params: { page: "1" },
+      });
       expect(response.data).toEqual(mockResponse.data);
     });
 
@@ -139,19 +153,23 @@ describe("Repository APIs", () => {
       const mockResponse = {
         data: {
           data: [mockIdea],
-          meta: { current_page: 1, last_page: 1, total: 1 }
-        }
+          meta: { current_page: 1, last_page: 1, total: 1 },
+        },
       };
       mockApiClient.get.mockResolvedValueOnce(mockResponse);
       const response = await ideaApi.getToSubmit(1);
-      expect(mockApiClient.get).toHaveBeenCalledWith("/idea/to-submit", { params: { page: 1 } });
+      expect(mockApiClient.get).toHaveBeenCalledWith("/idea/to-submit", {
+        params: { page: 1 },
+      });
       expect(response.data).toEqual(mockResponse.data);
     });
 
     it("should submit idea", async () => {
       mockApiClient.put.mockResolvedValueOnce({ data: mockIdea });
       const response = await ideaApi.submit(1);
-      expect(mockApiClient.put).toHaveBeenCalledWith("/idea/submit/1", { is_enabled: 1 });
+      expect(mockApiClient.put).toHaveBeenCalledWith("/idea/submit/1", {
+        is_enabled: 1,
+      });
       expect(response.data).toEqual(mockIdea);
     });
   });
@@ -161,12 +179,14 @@ describe("Repository APIs", () => {
       const mockResponse = {
         data: {
           data: [mockReportedIdea],
-          meta: { current_page: 1, last_page: 1, total: 1 }
-        }
+          meta: { current_page: 1, last_page: 1, total: 1 },
+        },
       };
       mockApiClient.get.mockResolvedValueOnce(mockResponse);
       const response = await reportApi.getReportedIdeas(1);
-      expect(mockApiClient.get).toHaveBeenCalledWith("/report/ideas", { params: { page: 1 } });
+      expect(mockApiClient.get).toHaveBeenCalledWith("/report/ideas", {
+        params: { page: 1 },
+      });
       expect(response.data).toEqual(mockResponse.data);
     });
 
@@ -180,7 +200,9 @@ describe("Repository APIs", () => {
 
   describe("Hide API", () => {
     it("should hide idea", async () => {
-      mockApiClient.put.mockResolvedValueOnce({ data: { message: "Idea hidden" } });
+      mockApiClient.put.mockResolvedValueOnce({
+        data: { message: "Idea hidden" },
+      });
       const response = await hideApi.hideIdea(1, 1);
       expect(mockApiClient.put).toHaveBeenCalledWith("/hide/1", { hide: 1 });
       expect(response.data).toEqual({ message: "Idea hidden" });
@@ -199,8 +221,8 @@ describe("Repository APIs", () => {
       const mockResponse = {
         data: {
           data: [mockBannedUser],
-          meta: { current_page: 1, last_page: 1, total: 1 }
-        }
+          meta: { current_page: 1, last_page: 1, total: 1 },
+        },
       };
       mockApiClient.get.mockResolvedValueOnce(mockResponse);
       const response = await permissionApi.getBannedUsers();
