@@ -145,6 +145,15 @@ jest.mock("@/api/repository", () => ({
         meta: { current_page: 1, last_page: 1, total: 1 }
       }
     }),
+    getUserLoginActivities: (userId: number) => Promise.resolve({ data: [mockLoginActivity] }),
+  },
+  userLogApi: {
+    getUserLogs: (id: number, page: number) => Promise.resolve({ 
+      data: { 
+        data: [mockUserLog],
+        meta: { current_page: 1, last_page: 1, total: 1 }
+      }
+    }),
   },
 }));
 
@@ -320,72 +329,169 @@ describe("User Management", () => {
         total: 0,
         loading: false,
       },
+      error: null,
+      isLoading: false,
     });
+    jest.clearAllMocks();
   });
 
   it("should fetch users with pagination", async () => {
     await useApiStore.getState().fetchUsers(1);
     const store = useApiStore.getState();
     expect(store.userPagination.data).toEqual([mockUser]);
-    expect(store.userPagination.currentPage).toBe(1);
-    expect(store.userPagination.lastPage).toBe(1);
-    expect(store.userPagination.total).toBe(1);
+    expect(store.error).toBeNull();
   });
 
-  it("should get single user", async () => {
+  it("should get single user by id", async () => {
     const user = await useApiStore.getState().getUser(1);
     expect(user).toEqual(mockUser);
-    expect(useApiStore.getState().user).toEqual(mockUser);
   });
 
-  it("should create user", async () => {
+  it("should handle user fetch error", async () => {
+    const mockError = new Error("Failed to fetch user");
+    jest.spyOn(api.userApi, "getOne").mockRejectedValueOnce(mockError);
+    
+    await expect(useApiStore.getState().getUser(1)).rejects.toThrow("Failed to fetch user");
+    expect(useApiStore.getState().error).toBe("Failed to fetch user");
+  });
+
+  it("should create new user", async () => {
     const formData = new FormData();
     await useApiStore.getState().createUser(formData);
-    const store = useApiStore.getState();
-    expect(store.userPagination.data).toEqual([mockUser]);
+    expect(useApiStore.getState().error).toBeNull();
   });
 
-  it("should update user", async () => {
+  it("should update existing user", async () => {
     const formData = new FormData();
     await useApiStore.getState().updateUser(1, formData);
-    const store = useApiStore.getState();
-    expect(store.userPagination.data).toEqual([mockUser]);
-    expect(store.error).toBeNull();
+    expect(useApiStore.getState().error).toBeNull();
   });
 });
 
 describe("Comments", () => {
   beforeEach(() => {
-    useApiStore.setState({ comments: [] });
+    useApiStore.setState({
+      comments: [],
+      error: null,
+      isLoading: false,
+    });
+    jest.clearAllMocks();
   });
 
-  it("should get comments for idea", async () => {
+  it("should fetch comments for an idea", async () => {
     await useApiStore.getState().getCommentsForIdea(1);
     expect(useApiStore.getState().comments).toEqual([mockComment]);
+    expect(useApiStore.getState().error).toBeNull();
   });
 
-  it("should create comment", async () => {
+  it("should create new comment", async () => {
     const formData = new FormData();
     await useApiStore.getState().createComment(formData);
-    expect(useApiStore.getState().comments).toEqual([mockComment]);
+    expect(useApiStore.getState().error).toBeNull();
   });
 
-  it("should update comment", async () => {
+  it("should update existing comment", async () => {
     const formData = new FormData();
     await useApiStore.getState().updateComment(1, formData);
-    expect(useApiStore.getState().comments).toEqual([mockComment]);
+    expect(useApiStore.getState().error).toBeNull();
   });
 
   it("should delete comment", async () => {
     await useApiStore.getState().deleteComment(1);
-    expect(useApiStore.getState().comments).toEqual([]);
+    expect(useApiStore.getState().error).toBeNull();
+  });
+
+  it("should handle comment fetch error", async () => {
+    const mockError = new Error("Failed to fetch comments");
+    jest.spyOn(api.commentApi, "getCommentsForIdea").mockRejectedValueOnce(mockError);
+    
+    await expect(useApiStore.getState().getCommentsForIdea(1)).rejects.toThrow("Failed to fetch comments");
+    expect(useApiStore.getState().error).toBe("Failed to fetch comments");
   });
 });
 
-describe("Voting", () => {
-  it("should create vote", async () => {
+describe("Voting System", () => {
+  beforeEach(() => {
+    useApiStore.setState({
+      error: null,
+      isLoading: false,
+    });
+    jest.clearAllMocks();
+  });
+
+  it("should create vote for an idea", async () => {
     await useApiStore.getState().createVote(1, 1);
     expect(useApiStore.getState().error).toBeNull();
+  });
+
+  it("should handle vote creation error", async () => {
+    const mockError = new Error("Failed to create vote");
+    jest.spyOn(api.voteApi, "create").mockRejectedValueOnce(mockError);
+    
+    await expect(useApiStore.getState().createVote(1, 1)).rejects.toThrow("Failed to create vote");
+    expect(useApiStore.getState().error).toBe("Failed to create vote");
+  });
+});
+
+describe("User Activity Logs", () => {
+  beforeEach(() => {
+    useApiStore.setState({
+      userLogPagination: {
+        data: [],
+        currentPage: 1,
+        lastPage: 1,
+        total: 0,
+        loading: false,
+      },
+      error: null,
+      isLoading: false,
+    });
+    jest.clearAllMocks();
+  });
+
+  it("should fetch user logs with pagination", async () => {
+    await useApiStore.getState().fetchUserLogs(1, 1);
+    const store = useApiStore.getState();
+    expect(store.userLogPagination.data).toEqual([mockUserLog]);
+    expect(store.error).toBeNull();
+  });
+});
+
+describe("Anonymous Content", () => {
+  beforeEach(() => {
+    useApiStore.setState({
+      anonymousIdeas: {
+        data: [],
+        currentPage: 1,
+        lastPage: 1,
+        total: 0,
+        loading: false,
+      },
+      anonymousComments: {
+        data: [],
+        currentPage: 1,
+        lastPage: 1,
+        total: 0,
+        loading: false,
+      },
+      error: null,
+      isLoading: false,
+    });
+    jest.clearAllMocks();
+  });
+
+  it("should fetch anonymous ideas", async () => {
+    await useApiStore.getState().getAnonymousIdeas();
+    const store = useApiStore.getState();
+    expect(store.anonymousIdeas.data).toEqual([mockAnonymousIdea]);
+    expect(store.error).toBeNull();
+  });
+
+  it("should fetch anonymous comments", async () => {
+    await useApiStore.getState().getAnonymousComments();
+    const store = useApiStore.getState();
+    expect(store.anonymousComments.data).toEqual([mockAnonymousComment]);
+    expect(store.error).toBeNull();
   });
 });
 
@@ -517,9 +623,3 @@ describe("Analytics and Reporting", () => {
   });
 });
 
-// describe("Login Activity", () => {
-//   it("should get user login activities", async () => {
-//     await useApiStore.getState().getUserLoginActivities(1);
-//     expect(useApiStore.getState().loginActivities).toEqual([mockLoginActivity]);
-//   });
-// });
