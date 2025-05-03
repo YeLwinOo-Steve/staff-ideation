@@ -1,10 +1,12 @@
-# EWSD-project
+# Staff Ideation Website
 
 ![CI Workflow](https://github.com/YeLwinOo-Steve/staff-ideation/actions/workflows/ci.yml/badge.svg)
 ![Coverage Statements](./coverage/badge-statements.svg)
 ![Coverage Branches](./coverage/badge-branches.svg)
 ![Coverage Functions](./coverage/badge-functions.svg)
 ![Coverage Lines](./coverage/badge-lines.svg)
+
+> Staff Ideation Website: https://staff-ideate.vercel.app
 
 # User Manual - Staff Ideation Platform
 
